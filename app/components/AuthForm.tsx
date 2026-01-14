@@ -31,7 +31,7 @@ export default function AuthForm({ isVisible, onAuthSuccess }: AuthFormProps) {
             duration: 0.5,
             ease: 'easeInOut',
           }}
-          className="absolute inset-0 flex items-center justify-center z-10"
+          className="absolute bottom-[10%] left-1/2 -translate-x-1/2 z-10"
         >
           <form
             onSubmit={handleSubmit}

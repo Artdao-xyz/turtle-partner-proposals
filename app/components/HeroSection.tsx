@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import AuthForm from './AuthForm';
+import CircleText from '../elements/CircleText';
 
 export default function HeroSection() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -13,20 +14,11 @@ export default function HeroSection() {
   return (
     <section className="relative w-full h-screen min-h-screen overflow-hidden">
       {/* Contenedor para la imagen animada */}
-      <div className="absolute inset-0 flex items-center justify-center">
-        {/* Contenedor principal para la imagen con animación */}
-        <div className="relative w-full h-full flex items-center justify-center">
-          {/* Círculo central - se agregará aquí */}
-          <div className="relative">
-            {/* Placeholder para el círculo central con glow */}
-          </div>
-          
-          {/* Círculos pequeños alrededor - se agregarán aquí */}
-          <div className="absolute inset-0 flex items-center justify-center">
-            {/* Placeholder para los 6 círculos pequeños con texto relativo */}
-          </div>
-        </div>
-      </div>
+      {/* <div className="absolute inset-0 flex items-center justify-center">
+        <HeroVisual />
+      </div> */}
+
+      <CircleText isActive={false} className="absolute left-1/2 -translate-x-1/2 top-[10%]" />
       
       {/* Formulario de autenticación */}
       <AuthForm isVisible={!isAuthenticated} onAuthSuccess={handleAuthSuccess} />

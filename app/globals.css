@@ -18,3 +18,13 @@ body {
   font-family: Arial, Helvetica, sans-serif;
   background-color: var(--black-turtle);
 }
+
+/* Mejorar renderizado de SVGs */
+img[src$=".svg"],
+svg {
+  image-rendering: auto;
+  shape-rendering: geometricPrecision;
+  text-rendering: geometricPrecision;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
