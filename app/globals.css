@@ -14,6 +14,7 @@
   --color-black-highlight: var(--black-highlight);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+  --radius-5xl: 40px;
 }
 
 body {
