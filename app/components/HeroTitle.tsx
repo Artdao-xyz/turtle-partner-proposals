@@ -43,7 +43,7 @@ export default function HeroTitle({ isVisible }: HeroTitleProps) {
             <div 
               className="absolute inset-0 h-[2px] top-[1.5px]"
               style={{
-                background: 'linear-gradient(to right, rgba(115, 243, 108, 0.8), #73f36c, #73f36c)',
+                background: `linear-gradient(to right, rgba(115, 243, 108, 0.8), var(--green-turtle), var(--green-turtle))`,
               }}
             ></div>
           </div>
@@ -65,7 +65,7 @@ export default function HeroTitle({ isVisible }: HeroTitleProps) {
             <div 
               className="absolute inset-0 h-[2px] top-[1.5px]"
               style={{
-                background: 'linear-gradient(to left, rgba(115, 243, 108, 0.8), #73f36c, #73f36c)',
+                background: `linear-gradient(to left, rgba(115, 243, 108, 0.8), var(--green-turtle), var(--green-turtle))`,
               }}
             ></div>
           </div>
@@ -78,8 +78,8 @@ export default function HeroTitle({ isVisible }: HeroTitleProps) {
         </div>
         
         {/* Text overlay */}
-        <h1 className="relative z-10 px-8 bg-black-turtle font-dm-sans">
-          <span className="text-[#f9f9f9] text-4xl font-normal leading-[48px]">
+        <h1 className="relative z-10 px-8 font-dm-sans" style={{ backgroundColor: 'var(--black-turtle)' }}>
+          <span className="text-4xl font-normal leading-[48px]" style={{ color: 'var(--white-turtle)' }}>
             The Central Coordination Layer for Liquidity
           </span>
         </h1>

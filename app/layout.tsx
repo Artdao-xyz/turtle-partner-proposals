@@ -20,7 +20,8 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${dmSans.variable} antialiased bg-black-turtle`}
+        className={`${dmSans.variable} antialiased`}
+        style={{ backgroundColor: 'var(--black-turtle)' }}
       >
         {children}
       </body>

@@ -3,12 +3,14 @@
 :root {
   --green-turtle: #73f36c;
   --black-turtle: #141514;
+  --white-turtle: #f9f9f9;
   --black-highlight: #F9F9F9;
 }
 
 @theme inline {
   --color-green-turtle: var(--green-turtle);
   --color-black-turtle: var(--black-turtle);
+  --color-white-turtle: var(--white-turtle);
   --color-black-highlight: var(--black-highlight);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);

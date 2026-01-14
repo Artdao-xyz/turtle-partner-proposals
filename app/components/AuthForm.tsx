@@ -35,7 +35,8 @@ export default function AuthForm({ isVisible, onAuthSuccess }: AuthFormProps) {
         >
           <form
             onSubmit={handleSubmit}
-            className="w-full max-w-xl p-9 bg-black-turtle rounded-[30px] shadow-lg outline outline-white/10 flex flex-col items-start gap-6"
+            className="w-full max-w-xl p-9 rounded-[30px] shadow-lg outline outline-white/10 flex flex-col items-start gap-6"
+            style={{ backgroundColor: 'var(--black-turtle)' }}
           >
             <div className="w-full flex flex-col gap-1">
               <h2 className="text-3xl font-normal text-white leading-9 text-left">
@@ -69,7 +70,8 @@ export default function AuthForm({ isVisible, onAuthSuccess }: AuthFormProps) {
 
               <button
                 type="submit"
-                className="w-full h-12 px-2.5 bg-black-highlight/[0.02] rounded-full outline outline-white/10 flex items-center justify-center gap-5 text-green-turtle text-xs font-medium hover:bg-white/5 transition-colors"
+                className="w-full h-12 px-2.5 bg-black-highlight/[0.02] rounded-full outline outline-white/10 flex items-center justify-center gap-5 text-xs font-medium hover:bg-white/5 transition-colors"
+                style={{ color: 'var(--green-turtle)' }}
               >
                 <span>Unlock</span>
               </button>
