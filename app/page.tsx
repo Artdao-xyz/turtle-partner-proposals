@@ -1,11 +1,13 @@
 import HeroSection from './components/HeroSection';
+import ScrollSection from './components/ScrollSection';
 import TurtleFees from './components/TurtleFees';
 import VideoPlayer from './components/VideoPlayer';
 
 export default function Home() {
   return (
-    <main>
+    <main className="w-full h-screen">
       <HeroSection />
+      <ScrollSection />
       <TurtleFees />
       <section className="w-full py-20" style={{ backgroundColor: 'var(--black-turtle)' }}>
         <VideoPlayer
