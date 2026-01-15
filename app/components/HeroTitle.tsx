@@ -23,7 +23,7 @@ export default function HeroTitle({ isVisible }: HeroTitleProps) {
     >
       <div className="relative flex items-center justify-center w-full py-6">
         {/* Horizontal line container */}
-        <div className="absolute left-0 right-0 top-1/2 -translate-y-1/2 h-px flex items-center">
+        <div className="hidden lg:flex absolute left-0 right-0 top-1/2 -translate-y-1/2 h-px items-center">
           {/* Left outer gray line */}
           <div 
             className="flex-1 h-px"
@@ -79,8 +79,8 @@ export default function HeroTitle({ isVisible }: HeroTitleProps) {
         </div>
         
         {/* Text overlay */}
-        <h1 className="relative z-10 px-8 font-dm-sans" style={{ backgroundColor: 'var(--black-turtle)' }}>
-          <span className="text-4xl font-normal leading-[48px]" style={{ color: 'var(--white-turtle)' }}>
+        <h1 className="relative z-10 lg:px-8 font-dm-sans text-center" style={{ backgroundColor: 'var(--black-turtle)' }}>
+          <span className="text-3xl lg:text-4xl font-normal leading-9 lg:leading-[48px]" style={{ color: 'var(--white-turtle)' }}>
             The Central Coordination Layer for Liquidity
           </span>
         </h1>
