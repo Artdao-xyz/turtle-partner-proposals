@@ -17,7 +17,7 @@ export default function HeroSection() {
 
   return (
     <section className={sectionClassName}>
-      {/* Logo */}
+      {/* Logo (arriba, pero anima DESPUÉS de la imagen) */}
       <AnimatePresence mode="wait">
         {isAuthenticated && (
           <motion.div
@@ -26,7 +26,8 @@ export default function HeroSection() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
             transition={{
-              duration: 0.9,
+              duration: 0.6,
+              delay: 0.6,
               ease: [0.25, 0.1, 0.25, 1],
             }}
             className="w-full flex justify-center"
@@ -36,12 +37,12 @@ export default function HeroSection() {
         )}
       </AnimatePresence>
 
-      {/* Título con líneas decorativas */}
+      {/* Título con líneas decorativas (arriba, pero anima DESPUÉS de la imagen) */}
       <AnimatePresence mode="wait">
         {isAuthenticated && <HeroTitle key="title" isVisible={isAuthenticated} />}
       </AnimatePresence>
 
-      {/* SVG Circle Text con animación de posición */}
+      {/* SVG Circle Text con animación de posición y color (PRIMERO en animar, pero visualmente abajo) */}
       <motion.div
         layout
         initial={false}
@@ -50,7 +51,7 @@ export default function HeroSection() {
           : "absolute left-1/2 -translate-x-1/2 top-[10%]"
         }
         transition={{
-          duration: 1.2,
+          duration: 0.6,
           ease: [0.25, 0.1, 0.25, 1],
         }}
       >

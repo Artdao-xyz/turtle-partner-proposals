@@ -134,7 +134,7 @@ export default function TurtleFees() {
   ];
 
   return (
-    <section className="w-full py-20" style={{ backgroundColor: 'var(--black-turtle)' }}>
+    <section className="w-full" style={{ backgroundColor: 'var(--black-turtle)' }}>
       <TurtleFeesHeader />
 
       {/* Sections */}
