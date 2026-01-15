@@ -79,7 +79,7 @@ export default function AuthForm({ isVisible, onAuthSuccess }: AuthFormProps) {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                className="w-full h-12 px-6 bg-black-highlight/[0.02] rounded-full text-white placeholder-white/50 text-xs font-medium focus:outline-none"
+                className="w-full h-12 px-6 bg-black-highlight/2 rounded-full text-white placeholder-white/50 text-xs font-medium focus:outline-none"
                 placeholder="Email"
               />
 
@@ -89,7 +89,7 @@ export default function AuthForm({ isVisible, onAuthSuccess }: AuthFormProps) {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
-                className="w-full h-12 px-6 bg-black-highlight/[0.02] rounded-full text-white placeholder-white/50 text-xs font-medium focus:outline-none"
+                className="w-full h-12 px-6 bg-black-highlight/2 rounded-full text-white placeholder-white/50 text-xs font-medium focus:outline-none"
                 placeholder="Password"
               />
 
@@ -102,7 +102,7 @@ export default function AuthForm({ isVisible, onAuthSuccess }: AuthFormProps) {
               <button
                 type="submit"
                 disabled={isLoading}
-                className="w-full h-12 px-2.5 bg-black-highlight/[0.02] rounded-full outline outline-white/10 flex items-center justify-center gap-5 text-xs font-medium hover:bg-white/5 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full h-12 px-2.5 bg-black-highlight/2 rounded-full outline outline-white/10 flex items-center justify-center gap-5 text-xs font-medium hover:bg-white/5 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 style={{ color: 'var(--green-turtle)' }}
               >
                 <span>{isLoading ? 'Verifying...' : 'Unlock'}</span>
