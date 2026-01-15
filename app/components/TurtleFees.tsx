@@ -9,25 +9,29 @@ interface FeeCardProps {
   description: string;
   price: string | string[];
   optional?: boolean;
+  maxHeight?: number;
 }
 
-function FeeCard({ title, description, price, optional }: FeeCardProps) {
+function FeeCard({ title, description, price, optional, maxHeight = 256 }: FeeCardProps) {
   const prices = Array.isArray(price) ? price : [price];
   
   return (
-    <div className="bg-black-highlight/2 rounded-5xl p-6 outline outline-black-highlight/10 h-full flex flex-col">
-      <div className="flex items-start justify-between mb-2 shrink-0">
-        <h3 className="text-white font-semibold text-lg pr-2">{title}</h3>
+    <div 
+      className="bg-black-highlight/2 rounded-5xl p-7.5 outline outline-black-highlight/10 h-full flex flex-col overflow-hidden"
+      style={{ maxHeight: `${maxHeight}px` }}
+    >
+      <div className="flex items-start mb-2 shrink-0">
+        <h3 className="text-white font-medium text-2xl pr-2 leading-7 tracking-tight">{title}</h3>
         {optional && (
           <span className="px-2 py-1 text-xs rounded-full bg-black-highlight/10 text-white-turtle whitespace-nowrap">
             Optional
           </span>
         )}
       </div>
-      <p className="text-white-turtle/50 text-sm mb-3 leading-6 lg:leading-relaxed grow">{description}</p>
+      <p className="text-white-turtle/50 text-sm mb-3 leading-6 lg:leading-relaxed grow tracking-tight">{description}</p>
       <div className="space-y-1 shrink-0">
         {prices.map((p, idx) => (
-          <p key={idx} className="text-white font-semibold text-xl">
+          <p key={idx} className="text-white font-semibold text-xl tracking-tight">
             {p}
           </p>
         ))}
@@ -41,9 +45,10 @@ interface SectionProps {
   subtitle: string;
   tag?: string;
   cards: FeeCardProps[];
+  maxCardHeight?: number;
 }
 
-function FeeSection({ title, subtitle, tag, cards }: SectionProps) {
+function FeeSection({ title, subtitle, tag, cards, maxCardHeight = 256 }: SectionProps) {
   return (
     <motion.div
       initial={{ opacity: 0, y: 30 }}
@@ -63,19 +68,21 @@ function FeeSection({ title, subtitle, tag, cards }: SectionProps) {
             </span>
           )}
         </div>
-        <p className="text-black-highlight/50 text-base max-w-3xl mx-auto">{subtitle}</p>
+        <p className="text-black-highlight/50 text-base max-w-5xl mx-auto">{subtitle}</p>
       </div>
       
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 grow items-stretch">
+      <div className={`grid grid-cols-1 md:grid-cols-2 gap-5 items-center justify-items-center ${
+        cards.length === 2 ? 'lg:grid-cols-2' : 'lg:grid-cols-3'
+      }`}>
         {cards.map((card, idx) => (
           <motion.div 
             key={idx}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: idx * 0.1 }}
-            className="h-full"
+            className={`h-full w-full ${cards.length === 2 ? '' : 'max-w-[380px]'}`}
           >
-            <FeeCard {...card} />
+            <FeeCard {...card} maxHeight={maxCardHeight} />
           </motion.div>
         ))}
       </div>
@@ -140,18 +147,20 @@ export default function TurtleFees() {
       <TurtleFeesHeader />
 
       {/* Sections */}
-      <div className="grid grid-cols-1 gap-16 auto-rows-auto lg:auto-rows-fr">
+      <div className="grid grid-cols-1 gap-12 auto-rows-auto">
         <FeeSection
           title="Activation & Alignment Deposits"
           subtitle="Upfront Deposits That Align Incentives And Are Fully Rebated Against Performance."
           tag="One-Time Credited"
           cards={activationCards}
+          maxCardHeight={190}
         />
 
         <FeeSection
           title="Platform Access & Ongoing Operations"
           subtitle="Baseline Access That Ensures Continuous Execution And Support."
           cards={platformAccessCards}
+          maxCardHeight={256}
         />
 
         <FeeSection
@@ -159,6 +168,7 @@ export default function TurtleFees() {
           subtitle="We Win When You Win. The Majority Of Turtle's Economics Are Earned Only Once Liquidity Is Live, Measurable, And Distributed."
           tag="Only Paid When Value is Created"
           cards={platformBasedCards}
+          maxCardHeight={200}
         />
       </div>
     </section>

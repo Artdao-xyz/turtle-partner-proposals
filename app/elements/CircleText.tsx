@@ -36,7 +36,7 @@ export default function CircleText({ isActive = true, className, style, ...props
         fill="none" 
         xmlns="http://www.w3.org/2000/svg"
         preserveAspectRatio="xMidYMid meet"
-        className="w-[95vw] max-w-[600px] lg:max-w-none lg:w-[830px] h-auto"
+        className="w-[95vw] max-w-[600px] lg:w-full lg:max-w-6xl h-auto"
       >
         <style>{`
           foreignObject, g[filter], path[opacity] {

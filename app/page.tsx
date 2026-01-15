@@ -11,7 +11,7 @@ export default function Home() {
       <AuthenticatedContent>
         <ScrollSection />
         <TurtleFees />
-        <section className="w-full py-10 lg:py-20" style={{ backgroundColor: 'var(--black-turtle)' }}>
+        <section className="w-full min-h-screen py-10 lg:py-20" style={{ backgroundColor: 'var(--black-turtle)' }}>
           <VideoPlayer
             loomId="https://www.loom.com/share/3a48bed3d1db4b888eaec015625d9f5e"
             title="Turtle Product Suite Overview"

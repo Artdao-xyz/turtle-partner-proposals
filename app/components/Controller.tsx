@@ -50,9 +50,6 @@ export default function Controller({ selectedMenu = 'Visibility', onMenuChange }
 
       {/* Menu options with separate background on mobile */}
       <div className="p-2.5 bg-black-turtle rounded-full outline outline-black-highlight/10 shadow lg:p-0 lg:bg-transparent lg:rounded-none lg:outline-none lg:shadow-none flex justify-center items-center gap-10"
-        style={{
-          boxShadow: 'var(--shadow-black-turtle)'
-        }}
       >
         <div className="p-1 flex items-center gap-4">
           {menus.map((menu) => {

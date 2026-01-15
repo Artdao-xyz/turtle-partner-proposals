@@ -12,8 +12,8 @@ export default function HeroSection() {
   const { isAuthenticated } = useAuth();
 
   const sectionClassName = isAuthenticated
-    ? 'relative w-full min-h-screen overflow-hidden flex flex-col justify-between py-10'
-    : 'relative w-full min-h-screen overflow-hidden';
+    ? 'relative w-full min-h-screen overflow-hidden flex flex-col justify-between py-10 max-w-7xl mx-auto'
+    : 'relative w-full min-h-screen overflow-hidden max-w-7xl mx-auto';
 
   return (
     <section className={sectionClassName}>
@@ -37,6 +37,28 @@ export default function HeroSection() {
         )}
       </AnimatePresence>
 
+      {/* Partnership Proposal text */}
+      <AnimatePresence mode="wait">
+        {isAuthenticated && (
+          <motion.div
+            key="partnership-proposal"
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            transition={{
+              duration: 0.6,
+              delay: 0.7,
+              ease: [0.25, 0.1, 0.25, 1],
+            }}
+            className="w-full flex justify-center mt-10"
+          >
+            <div className="text-green-turtle text-lg font-normal font-dm-sans leading-5">
+              Partnership Proposal
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       {/* Título con líneas decorativas (arriba, pero anima DESPUÉS de la imagen) */}
       <AnimatePresence mode="wait">
         {isAuthenticated && <HeroTitle key="title" isVisible={isAuthenticated} />}
@@ -47,8 +69,8 @@ export default function HeroSection() {
         layout
         initial={false}
         className={isAuthenticated 
-          ? "relative mx-auto mt-10" 
-          : "absolute left-1/2 -translate-x-1/2 top-[10%]"
+          ? "relative mx-auto mt-10 w-full" 
+          : "absolute left-1/2 -translate-x-1/2 top-[10%] w-full" 
         }
         transition={{
           duration: 0.6,
@@ -57,7 +79,6 @@ export default function HeroSection() {
       >
         <CircleText 
           isActive={isAuthenticated} 
-          className=""
         />
       </motion.div>
       

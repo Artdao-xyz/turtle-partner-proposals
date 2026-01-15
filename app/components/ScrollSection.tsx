@@ -11,9 +11,16 @@ interface InfoRowProps {
   items: readonly string[] | string[];
 }
 
-function InfoRow({ title, items }: InfoRowProps) {
+function InfoRow({ title, items, isSecond = false }: InfoRowProps & { isSecond?: boolean }) {
   return (
-    <div className="w-xs h-full lg:h-auto lg:w-full bg-black-highlight/2 rounded-5xl p-6 outline outline-black-highlight/10">
+    <div 
+      className={`w-xs h-full lg:h-auto lg:w-full rounded-5xl p-6 outline outline-black-highlight/10 ${
+        isSecond ? '' : 'bg-black-highlight/2'
+      }`}
+      style={isSecond ? {
+        background: 'linear-gradient(to bottom right, rgba(115, 243, 108, 0.0) 0%, rgba(115, 243, 108, 0.07) 35%, rgba(115, 243, 108, 0.1) 50%, rgba(115, 243, 108, 0.07) 65%, rgba(115, 243, 108, 0.0) 100%)'
+      } : undefined}
+    >
       <div className="flex items-center gap-3 mb-4">
         <GreenDot />
         <h3 className="text-white-turtle text-lg lg:text-2xl font-semibold">{title}</h3>
@@ -61,10 +68,10 @@ function ScrollSectionItem({ image, info, opacity, zIndex = 1 }: ScrollSectionIt
           {/* Info - Second on mobile, Left on desktop */}
           <div className="w-full lg:col-span-2 lg:col-start-1 order-2 lg:order-1 flex flex-row lg:flex-col gap-4 lg:gap-2.5 overflow-x-auto lg:overflow-x-visible">
             <div className="shrink-0 lg:shrink min-w-[280px] lg:min-w-0">
-              <InfoRow title={info.row1.title} items={info.row1.items} />
+              <InfoRow title={info.row1.title} items={info.row1.items} isSecond={false} />
             </div>
             <div className="shrink-0 lg:shrink min-w-[280px] lg:min-w-0">
-              <InfoRow title={info.row2.title} items={info.row2.items} />
+              <InfoRow title={info.row2.title} items={info.row2.items} isSecond={true} />
             </div>
           </div>
         </div>
