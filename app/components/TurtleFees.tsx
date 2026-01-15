@@ -24,7 +24,7 @@ function FeeCard({ title, description, price, optional }: FeeCardProps) {
           </span>
         )}
       </div>
-      <p className="text-white-turtle/50 text-sm mb-3 leading-relaxed grow">{description}</p>
+      <p className="text-white-turtle/50 text-sm mb-3 leading-6 lg:leading-relaxed grow">{description}</p>
       <div className="space-y-1 shrink-0">
         {prices.map((p, idx) => (
           <p key={idx} className="text-white font-semibold text-xl">
@@ -49,14 +49,16 @@ function FeeSection({ title, subtitle, tag, cards }: SectionProps) {
       initial={{ opacity: 0, y: 30 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.6, ease: 'easeOut' }}
-      className="w-full max-w-7xl mx-auto px-4 h-full flex flex-col"
+      className="w-full max-w-7xl mx-auto px-4 h-auto lg:h-full flex flex-col"
     >
       <div className="text-center mb-8 shrink-0">
-        <div className="flex items-center justify-center gap-3 mb-2">
-          <GreenDot />
-          <h2 className="text-white text-2xl font-semibold">{title}</h2>
+        <div className="flex flex-col lg:flex-row items-center justify-center mb-2">
+          <div className="flex items-start lg:items-center justify-center gap-1.5 lg:gap-3">
+            <GreenDot className='pt-2.5 lg:pt-0'/>
+            <h2 className="text-white text-2xl font-semibold">{title}</h2>
+          </div>
           {tag && (
-            <span className="px-3 py-1 text-xs rounded-full bg-black-highlight/10 text-white-turtle">
+            <span className="px-3 py-1 text-xs rounded-full bg-black-highlight/10 text-white-turtle mt-2 lg:mt-0">
               {tag}
             </span>
           )}
@@ -134,11 +136,11 @@ export default function TurtleFees() {
   ];
 
   return (
-    <section className="w-full" style={{ backgroundColor: 'var(--black-turtle)' }}>
+    <section className="w-full mt-10" style={{ backgroundColor: 'var(--black-turtle)' }}>
       <TurtleFeesHeader />
 
       {/* Sections */}
-      <div className="grid grid-cols-1 gap-16 auto-rows-fr">
+      <div className="grid grid-cols-1 gap-16 auto-rows-auto lg:auto-rows-fr">
         <FeeSection
           title="Activation & Alignment Deposits"
           subtitle="Upfront Deposits That Align Incentives And Are Fully Rebated Against Performance."

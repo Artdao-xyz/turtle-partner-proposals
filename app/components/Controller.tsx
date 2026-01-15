@@ -27,16 +27,21 @@ export default function Controller({ selectedMenu = 'Visibility', onMenuChange }
 
   return (
     <div 
-      className="p-2.5 bg-black-turtle rounded-full outline outline-black-highlight/10 flex justify-center items-center gap-5 shadow"
+      className="lg:p-2.5 lg:bg-black-turtle lg:rounded-full lg:outline lg:outline-black-highlight/10 flex flex-col lg:flex-row justify-center items-center gap-5 lg:gap-5 lg:shadow"
       style={{
         boxShadow: 'var(--shadow-black-turtle)'
       }}
     >
-        <Image src="/media/partner-logo.png" alt="Controller Left" width={225} height={75} className='object-contain'/>
+        {/* Logo - no background */}
+        <Image src="/media/partner-logo.png" alt="Controller Logo" width={225} height={75} className='object-contain'/>
         
 
-      {/* Right side - Menu options */}
-      <div className="flex justify-end items-center gap-10">
+      {/* Menu options with separate background on mobile */}
+      <div className="p-2.5 bg-black-turtle rounded-full outline outline-black-highlight/10 shadow lg:p-0 lg:bg-transparent lg:rounded-none lg:outline-none lg:shadow-none flex justify-center items-center gap-10"
+        style={{
+          boxShadow: 'var(--shadow-black-turtle)'
+        }}
+      >
         <div className="p-1 flex items-center gap-4">
           {menus.map((menu) => {
             const isSelected = activeMenu === menu;
