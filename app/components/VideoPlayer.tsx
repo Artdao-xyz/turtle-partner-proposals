@@ -73,8 +73,8 @@ export default function VideoPlayer({
   }, []);
 
   return (
-    <div ref={containerRef} className={`w-full max-w-6xl rounded-2xl mx-auto ${className} shadow-black-turtle`}>
-      <div className="relative rounded-2xl overflow-hidden outline outline-black-highlight/10 bg-black-highlight/2 p-3">
+    <div ref={containerRef} className={`w-full max-w-6xl rounded-2xl mx-auto px-4 lg:px-0 ${className} shadow-black-turtle`}>
+      <div className="relative rounded-2xl overflow-hidden outline outline-black-highlight/10 bg-black-highlight/2 p-2 lg:p-3">
         {/* Video Container */}
         <div className="relative w-full aspect-video bg-black rounded-xl">
           {shouldLoad ? (
@@ -96,9 +96,9 @@ export default function VideoPlayer({
         </div>
 
         {/* Text Below Video */}
-        <div className="p-3 space-y-2">
-          <h3 className="text-white-turtle text-xl font-semibold">{title}</h3>
-          <p className="text-white-turtle/70 text-sm leading-relaxed">{description}</p>
+        <div className="p-2 lg:p-3 space-y-1.5 lg:space-y-2">
+          <h3 className="text-white-turtle text-lg lg:text-xl font-semibold">{title}</h3>
+          <p className="text-white-turtle/70 text-xs lg:text-sm leading-relaxed">{description}</p>
         </div>
       </div>
     </div>
