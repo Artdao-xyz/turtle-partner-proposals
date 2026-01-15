@@ -42,12 +42,12 @@ function ScrollSectionItem({ image, info, opacity, zIndex = 1 }: ScrollSectionIt
   return (
     <motion.div
       style={{ opacity, zIndex }}
-      className="absolute inset-0 w-full h-full flex items-center justify-center pointer-events-none border border-red-500"
+      className="absolute inset-0 w-full h-full flex items-center justify-center pointer-events-none"
     >
-      <div className="w-full h-full max-w-7xl mx-auto px-4 border border-blue-500">
+      <div className="w-full h-full max-w-7xl mx-auto px-4">
         <div className="flex flex-col justify-end lg:grid lg:grid-cols-5 items-center lg:gap-6 h-full">
           {/* Image - First on mobile, Right on desktop */}
-          <div className="w-full flex-1 lg:col-span-3 flex items-center justify-center border border-yellow-500 lg:h-[600px]">
+          <div className="w-full flex-1 lg:col-span-3 lg:col-start-3 order-1 lg:order-2 flex items-center justify-center lg:h-[600px]">
             <Image
               src={image}
               alt={info.row1.title}
@@ -59,7 +59,7 @@ function ScrollSectionItem({ image, info, opacity, zIndex = 1 }: ScrollSectionIt
           </div>
 
           {/* Info - Second on mobile, Left on desktop */}
-          <div className="w-full lg:col-span-2 flex flex-row lg:flex-col gap-4 lg:gap-2.5 overflow-x-auto lg:overflow-x-visible border border-green-500">
+          <div className="w-full lg:col-span-2 lg:col-start-1 order-2 lg:order-1 flex flex-row lg:flex-col gap-4 lg:gap-2.5 overflow-x-auto lg:overflow-x-visible">
             <div className="shrink-0 lg:shrink min-w-[280px] lg:min-w-0">
               <InfoRow title={info.row1.title} items={info.row1.items} />
             </div>
