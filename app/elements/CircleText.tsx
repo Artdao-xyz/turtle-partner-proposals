@@ -23,7 +23,7 @@ export default function CircleText({ isActive = true, className, style, ...props
 
   return (
     <div 
-      className={className}
+      className={`${className} w-full flex justify-center px-4`}
       style={{ 
         filter: isActive ? 'none' : 'grayscale(100%)',
         transition: 'filter 0.6s cubic-bezier(0.25, 0.1, 0.25, 1)',
@@ -32,11 +32,11 @@ export default function CircleText({ isActive = true, className, style, ...props
       {...props}
     >
       <svg 
-        width="830" 
-        height="488" 
         viewBox="0 0 830 488" 
         fill="none" 
         xmlns="http://www.w3.org/2000/svg"
+        preserveAspectRatio="xMidYMid meet"
+        className="w-full max-w-[830px] h-auto"
       >
         <style>{`
           foreignObject, g[filter], path[opacity] {
