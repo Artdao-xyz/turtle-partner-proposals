@@ -5,6 +5,7 @@ import AuthForm from './AuthForm';
 import HeroTitle from './HeroTitle';
 import HeroDescription from './HeroDescription';
 import CircleText from '../elements/CircleText';
+import TurtleLogo from '../elements/TurtleLogo';
 import { useAuth } from '../contexts/AuthContext';
 
 export default function HeroSection() {
@@ -16,6 +17,25 @@ export default function HeroSection() {
 
   return (
     <section className={sectionClassName}>
+      {/* Logo */}
+      <AnimatePresence mode="wait">
+        {isAuthenticated && (
+          <motion.div
+            key="logo"
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            transition={{
+              duration: 0.9,
+              ease: [0.25, 0.1, 0.25, 1],
+            }}
+            className="w-full flex justify-center"
+          >
+            <TurtleLogo />
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       {/* Título con líneas decorativas */}
       <AnimatePresence mode="wait">
         {isAuthenticated && <HeroTitle key="title" isVisible={isAuthenticated} />}

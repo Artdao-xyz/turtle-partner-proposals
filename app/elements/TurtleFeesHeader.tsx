@@ -6,7 +6,7 @@ import GreenDot from './GreenDot';
 
 export default function TurtleFeesHeader() {
   return (
-    <div className="w-full max-w-72 mx-auto px-4 py-2.5 mb-16 bg-black-highlight/2 rounded-5xl outline outline-black-highlight/10">
+    <div className="w-full max-w-72 mx-auto p-2.5 pr-5 mb-16 bg-black-highlight/2 rounded-full outline outline-black-highlight/10">
       {/* Header with icon and button */}
       <motion.div
         initial={{ opacity: 0, y: -20 }}
@@ -26,8 +26,8 @@ export default function TurtleFeesHeader() {
             <Image
               src="/media/dollar-sign.png"
               alt="Dollar sign"
-              width={56}
-              height={56}
+              width={72}
+              height={72}
               className="object-contain"
             />
           </div>
