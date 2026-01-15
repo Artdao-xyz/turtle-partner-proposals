@@ -12,11 +12,23 @@ interface ControllerProps {
 
 export default function Controller({ selectedMenu = 'Visibility', onMenuChange }: ControllerProps) {
   const [activeMenu, setActiveMenu] = useState<MenuOption>(selectedMenu);
+  const [isDesktop, setIsDesktop] = useState(false);
 
   // Sincronizar con el prop selectedMenu cuando cambia
   useEffect(() => {
     setActiveMenu(selectedMenu);
   }, [selectedMenu]);
+
+  // Detectar si estamos en desktop
+  useEffect(() => {
+    const checkDesktop = () => {
+      setIsDesktop(window.innerWidth >= 1024);
+    };
+    
+    checkDesktop();
+    window.addEventListener('resize', checkDesktop);
+    return () => window.removeEventListener('resize', checkDesktop);
+  }, []);
 
   const handleMenuClick = (menu: MenuOption) => {
     setActiveMenu(menu);
@@ -29,7 +41,7 @@ export default function Controller({ selectedMenu = 'Visibility', onMenuChange }
     <div 
       className="lg:p-2.5 lg:bg-black-turtle lg:rounded-full lg:outline lg:outline-black-highlight/10 flex flex-col lg:flex-row justify-center items-center gap-5 lg:gap-5 lg:shadow"
       style={{
-        boxShadow: 'var(--shadow-black-turtle)'
+        boxShadow: isDesktop ? 'var(--shadow-black-turtle)' : undefined
       }}
     >
         {/* Logo - no background */}

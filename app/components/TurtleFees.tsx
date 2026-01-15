@@ -52,7 +52,7 @@ function FeeSection({ title, subtitle, tag, cards }: SectionProps) {
       className="w-full max-w-7xl mx-auto px-4 h-auto lg:h-full flex flex-col"
     >
       <div className="text-center mb-8 shrink-0">
-        <div className="flex flex-col lg:flex-row items-center justify-center mb-2">
+        <div className="flex flex-col lg:flex-row items-center justify-center lg:gap-2 mb-2">
           <div className="flex items-start lg:items-center justify-center gap-1.5 lg:gap-3">
             <GreenDot className='pt-2.5 lg:pt-0'/>
             <h2 className="text-white text-2xl font-semibold">{title}</h2>

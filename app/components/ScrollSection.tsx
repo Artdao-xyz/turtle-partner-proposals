@@ -45,15 +45,15 @@ function ScrollSectionItem({ image, info, opacity, zIndex = 1 }: ScrollSectionIt
       className="absolute inset-0 w-full h-full flex items-center justify-center pointer-events-none"
     >
       <div className="w-full h-full max-w-7xl mx-auto px-4">
-        <div className="flex flex-col justify-end lg:grid lg:grid-cols-5 items-center lg:gap-6 h-full">
+        <div className="flex flex-col justify-end pb-10 lg:grid lg:grid-cols-5 items-center lg:gap-6 h-full">
           {/* Image - First on mobile, Right on desktop */}
-          <div className="w-full flex-1 lg:col-span-3 lg:col-start-3 order-1 lg:order-2 flex items-center justify-center lg:h-[600px]">
+          <div className="w-full lg:col-span-3 lg:col-start-3 order-1 lg:order-2 flex items-center justify-center h-full lg:h-[600px]">
             <Image
               src={image}
               alt={info.row1.title}
               width={1200}
               height={600}
-              className="object-contain rounded-xl w-full h-full"
+              className="object-contain rounded-xl w-full h-full border border-red-500"
               unoptimized
             />
           </div>
