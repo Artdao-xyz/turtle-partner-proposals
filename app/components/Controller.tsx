@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import Image from 'next/image';
 
 type MenuOption = 'Visibility' | 'Streams' | 'Leaderboard';
 
@@ -28,41 +29,16 @@ export default function Controller({ selectedMenu = 'Visibility', onMenuChange }
 
   return (
     <div 
-      className="pl-2.5 pr-5 py-2.5 bg-black-turtle rounded-full outline outline-black-highlight/10 -outline-offset-1 inline-flex justify-center items-center gap-5"
+      className="p-2.5 bg-black-turtle rounded-full outline outline-black-highlight/10 flex justify-center items-center gap-5 shadow"
       style={{
         boxShadow: 'var(--shadow-black-turtle)'
       }}
     >
-      {/* Left side - "What's Included" indicator */}
-      <div 
-        className="bg-black-highlight/0 rounded-full outline outline-white/40 -outline-offset-1 flex justify-start items-center gap-2.5"
-        style={{
-          boxShadow: 'var(--shadow-black-turtle), inset 0px 0px 10px 0px rgba(115,243,108,0.16)'
-        }}
-      >
-        {/* Circular indicator with gradient */}
-        <div 
-          className="w-20 h-20 relative bg-linear-to-r from-black-turtle/60 to-green-turtle/0 rounded-full outline outline-white/40 -outline-offset-1 overflow-hidden"
-          style={{
-            boxShadow: 'inset 0px 0px 6px 0px var(--green-turtle)'
-          }}
-        >
-          <div 
-            className="w-16 h-20 left-0 top-[17px] absolute bg-linear-to-b from-green-turtle to-green-turtle/0"
-          ></div>
-        </div>
+        <Image src="/media/partner-logo.png" alt="Controller Left" width={225} height={75} className='object-contain'/>
         
-        {/* Text label */}
-        <div className="pl-2.5 pr-7 py-3.5 inline-flex flex-col justify-start items-start gap-2.5">
-          <div className="w-20 h-5 bg-green-turtle"></div>
-          <div className="w-24 h-2.5 justify-center text-green-turtle text-xs font-semibold font-dm-sans leading-5">
-            What's Included
-          </div>
-        </div>
-      </div>
 
       {/* Right side - Menu options */}
-      <div className="w-[454px] rounded-md shadow-[0px_4px_6px_0px_rgba(0,0,0,0.09)] flex justify-end items-start gap-10 overflow-hidden">
+      <div className="shadow-[0px_4px_6px_0px_rgba(0,0,0,0.09)] flex justify-end items-start gap-10 overflow-hidden">
         <div className="p-1 flex justify-start items-start gap-4">
           {menus.map((menu) => {
             const isSelected = activeMenu === menu;

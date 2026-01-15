@@ -1,6 +1,6 @@
 'use client';
 
-import { AnimatePresence } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
 import AuthForm from './AuthForm';
 import HeroTitle from './HeroTitle';
 import HeroDescription from './HeroDescription';
@@ -21,14 +21,24 @@ export default function HeroSection() {
         {isAuthenticated && <HeroTitle key="title" isVisible={isAuthenticated} />}
       </AnimatePresence>
 
-      {/* SVG Circle Text */}
-      <CircleText 
-        isActive={isAuthenticated} 
+      {/* SVG Circle Text con animación de posición */}
+      <motion.div
+        layout
+        initial={false}
         className={isAuthenticated 
           ? "relative mx-auto mt-10" 
           : "absolute left-1/2 -translate-x-1/2 top-[10%]"
-        } 
-      />
+        }
+        transition={{
+          duration: 1.2,
+          ease: [0.25, 0.1, 0.25, 1],
+        }}
+      >
+        <CircleText 
+          isActive={isAuthenticated} 
+          className=""
+        />
+      </motion.div>
       
       {/* Formulario de autenticación */}
       <AuthForm isVisible={!isAuthenticated} />

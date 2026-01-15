@@ -2,6 +2,7 @@
 
 import { motion } from 'framer-motion';
 import TurtleFeesHeader from '../elements/TurtleFeesHeader';
+import GreenDot from '../elements/GreenDot';
 
 interface FeeCardProps {
   title: string;
@@ -52,7 +53,7 @@ function FeeSection({ title, subtitle, tag, cards }: SectionProps) {
     >
       <div className="text-center mb-8 shrink-0">
         <div className="flex items-center justify-center gap-3 mb-2">
-          <div className="w-2 h-2 rounded-full bg-green-turtle"></div>
+          <GreenDot />
           <h2 className="text-white text-2xl font-semibold">{title}</h2>
           {tag && (
             <span className="px-3 py-1 text-xs rounded-full bg-black-highlight/10 text-white-turtle">

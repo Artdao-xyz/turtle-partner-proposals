@@ -11,6 +11,7 @@ export default function CircleText({ isActive = true, className, style, ...props
       className={className}
       style={{ 
         filter: isActive ? 'none' : 'grayscale(100%)',
+        transition: 'filter 1.2s cubic-bezier(0.4, 0, 0.2, 1)',
         ...style 
       }}
       {...props}

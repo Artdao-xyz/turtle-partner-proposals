@@ -1,6 +1,8 @@
 'use client';
 
 import { motion } from 'framer-motion';
+import Image from 'next/image';
+import GreenDot from './GreenDot';
 
 export default function TurtleFeesHeader() {
   return (
@@ -15,15 +17,19 @@ export default function TurtleFeesHeader() {
         {/* Green dollar sign icon with glow */}
         <div className="relative">
           <div 
-            className="w-16 h-16 rounded-full flex items-center justify-center text-3xl font-bold"
+            className="rounded-full flex items-center justify-center overflow-hidden"
             style={{
               backgroundColor: 'rgba(115, 243, 108, 0.1)',
-              border: '1px solid var(--green-turtle)',
-              color: 'var(--green-turtle)',
               boxShadow: '0 0 20px rgba(115, 243, 108, 0.3)',
             }}
           >
-            $
+            <Image
+              src="/media/dollar-sign.png"
+              alt="Dollar sign"
+              width={56}
+              height={56}
+              className="object-contain"
+            />
           </div>
         </div>
         
@@ -35,7 +41,7 @@ export default function TurtleFeesHeader() {
             boxShadow: 'var(--shadow-green-turtle), var(--shadow-black-turtle)'
           }}
         >
-          <div className="w-2 h-2 rounded-full bg-green-turtle"></div>
+          <GreenDot />
           <span className="text-sm text-green-turtle font-medium">Turtle Fees</span>
         </div>
       </motion.div>

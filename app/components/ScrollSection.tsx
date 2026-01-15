@@ -4,6 +4,7 @@ import { useRef, useState, useEffect } from 'react';
 import { useScroll, useTransform, motion, useMotionValueEvent } from 'framer-motion';
 import Image from 'next/image';
 import Controller from './Controller';
+import GreenDot from '../elements/GreenDot';
 
 interface InfoRowProps {
   title: string;
@@ -14,12 +15,12 @@ function InfoRow({ title, items }: InfoRowProps) {
   return (
     <div className="bg-black-highlight/2 rounded-5xl p-6 outline outline-black-highlight/10">
       <div className="flex items-center gap-3 mb-4">
-        <div className="w-2 h-2 rounded-full bg-green-turtle"></div>
-        <h3 className="text-white-turtle text-3xl font-semibold">{title}</h3>
+        <GreenDot />
+        <h3 className="text-white-turtle text-2xl font-semibold">{title}</h3>
       </div>
       <ul className="space-y-2">
         {items.map((item, idx) => (
-          <li key={idx} className="text-white-turtle text-lg leading-relaxed">
+          <li key={idx} className="text-white-turtle leading-relaxed">
             {item}
           </li>
         ))}
