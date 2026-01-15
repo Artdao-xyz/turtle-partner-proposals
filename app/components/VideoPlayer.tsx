@@ -1,5 +1,7 @@
 'use client';
 
+import { useState, useEffect, useRef } from 'react';
+
 interface VideoPlayerProps {
   loomId: string; // Para Loom embed (ID o URL completa)
   title: string;
@@ -36,24 +38,61 @@ export default function VideoPlayer({
   description,
   className = '',
 }: VideoPlayerProps) {
+  const [shouldLoad, setShouldLoad] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
+
   // Extraer el ID de Loom si se proporciona una URL
   const extractedLoomId = extractLoomId(loomId);
 
   // URL de embed para Loom
   const loomEmbedUrl = `https://www.loom.com/embed/${extractedLoomId}`;
 
+  // Cargar el iframe solo cuando esté cerca del viewport (lazy loading)
+  useEffect(() => {
+    if (!containerRef.current) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            setShouldLoad(true);
+            observer.disconnect(); // Desconectar después de cargar una vez
+          }
+        });
+      },
+      {
+        rootMargin: '200px', // Cargar cuando esté a 200px del viewport
+      }
+    );
+
+    observer.observe(containerRef.current);
+
+    return () => {
+      observer.disconnect();
+    };
+  }, []);
+
   return (
-    <div className={`w-full max-w-6xl rounded-2xl mx-auto ${className} shadow-black-turtle`}>
+    <div ref={containerRef} className={`w-full max-w-6xl rounded-2xl mx-auto ${className} shadow-black-turtle`}>
       <div className="relative rounded-2xl overflow-hidden outline outline-black-highlight/10 bg-black-highlight/2 p-3">
         {/* Video Container */}
         <div className="relative w-full aspect-video bg-black rounded-xl">
-          <iframe
-            src={loomEmbedUrl}
-            className="w-full h-full rounded-xl"
-            allow="autoplay; fullscreen; picture-in-picture"
-            allowFullScreen
-            title={title}
-          />
+          {shouldLoad ? (
+            <iframe
+              src={loomEmbedUrl}
+              className="w-full h-full rounded-xl"
+              allow="autoplay; fullscreen; picture-in-picture"
+              allowFullScreen
+              title={title}
+              loading="lazy"
+              tabIndex={-1}
+              style={{ border: 'none' }}
+            />
+          ) : (
+            <div className="w-full h-full flex items-center justify-center bg-black rounded-xl">
+              <div className="text-white/50 text-sm">Loading video...</div>
+            </div>
+          )}
         </div>
 
         {/* Text Below Video */}
