@@ -1,21 +1,21 @@
 'use client';
 
-import { useState } from 'react';
 import { AnimatePresence } from 'framer-motion';
 import AuthForm from './AuthForm';
 import HeroTitle from './HeroTitle';
 import HeroDescription from './HeroDescription';
 import CircleText from '../elements/CircleText';
+import { useAuth } from '../contexts/AuthContext';
 
 export default function HeroSection() {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const { isAuthenticated } = useAuth();
 
-  const handleAuthSuccess = () => {
-    setIsAuthenticated(true);
-  };
+  const sectionClassName = isAuthenticated
+    ? 'relative w-full min-h-screen overflow-hidden flex flex-col justify-between py-10'
+    : 'relative w-full min-h-screen overflow-hidden';
 
   return (
-    <section className={`relative w-full min-h-screen overflow-hidden ${isAuthenticated ? 'flex flex-col justify-between py-10' : ''}`}>
+    <section className={sectionClassName}>
       {/* Título con líneas decorativas */}
       <AnimatePresence mode="wait">
         {isAuthenticated && <HeroTitle key="title" isVisible={isAuthenticated} />}
@@ -31,7 +31,7 @@ export default function HeroSection() {
       />
       
       {/* Formulario de autenticación */}
-      <AuthForm isVisible={!isAuthenticated} onAuthSuccess={handleAuthSuccess} />
+      <AuthForm isVisible={!isAuthenticated} />
 
       {/* Texto descriptivo */}
       <AnimatePresence mode="wait">

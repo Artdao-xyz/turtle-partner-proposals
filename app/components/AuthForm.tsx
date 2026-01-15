@@ -1,22 +1,41 @@
 'use client';
 
 import { motion, AnimatePresence } from 'framer-motion';
-import { useState } from 'react';
+import { useState, FormEvent } from 'react';
+import { useAuth } from '../contexts/AuthContext';
 
 interface AuthFormProps {
   isVisible: boolean;
-  onAuthSuccess?: () => void;
 }
 
-export default function AuthForm({ isVisible, onAuthSuccess }: AuthFormProps) {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState('');
+interface AuthErrorResponse {
+  error?: string;
+}
 
-  const handleSubmit = async (e: React.FormEvent) => {
+export default function AuthForm({ isVisible }: AuthFormProps) {
+  const { setIsAuthenticated } = useAuth();
+  const [email, setEmail] = useState<string>('');
+  const [password, setPassword] = useState<string>('');
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string>('');
+
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError('');
+
+    // Validación básica del cliente
+    if (!email.trim() || !password.trim()) {
+      setError('Please fill in all fields');
+      return;
+    }
+
+    // Validación básica de formato de email
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email.trim())) {
+      setError('Please enter a valid email address');
+      return;
+    }
+
     setIsLoading(true);
 
     try {
@@ -25,20 +44,22 @@ export default function AuthForm({ isVisible, onAuthSuccess }: AuthFormProps) {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ email: email.trim(), password }),
       });
 
-      const data = await response.json();
+      const data: AuthErrorResponse = await response.json();
 
       if (!response.ok) {
-        setError(data.error || 'Authentication failed');
+        setError(data.error || 'Authentication failed. Please try again.');
         return;
       }
 
-      // Autenticación exitosa
-      onAuthSuccess?.();
+      // Autenticación exitosa - limpiar formulario y actualizar estado global
+      setEmail('');
+      setPassword('');
+      setIsAuthenticated(true);
     } catch (err) {
-      setError('Network error. Please try again.');
+      setError('Network error. Please check your connection and try again.');
       console.error('Auth error:', err);
     } finally {
       setIsLoading(false);
@@ -76,25 +97,42 @@ export default function AuthForm({ isVisible, onAuthSuccess }: AuthFormProps) {
               <input
                 type="email"
                 id="email"
+                name="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
+                autoComplete="email"
+                aria-label="Email address"
+                aria-invalid={error ? 'true' : 'false'}
+                aria-describedby={error ? 'error-message' : undefined}
                 className="w-full h-12 px-6 bg-black-highlight/2 rounded-full text-white placeholder-white/50 text-xs font-medium focus:outline-none"
                 placeholder="Email"
+                disabled={isLoading}
               />
 
               <input
                 type="password"
                 id="password"
+                name="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
+                autoComplete="current-password"
+                aria-label="Password"
+                aria-invalid={error ? 'true' : 'false'}
+                aria-describedby={error ? 'error-message' : undefined}
                 className="w-full h-12 px-6 bg-black-highlight/2 rounded-full text-white placeholder-white/50 text-xs font-medium focus:outline-none"
                 placeholder="Password"
+                disabled={isLoading}
               />
 
               {error && (
-                <div className="w-full px-4 py-2 text-xs text-red-400 bg-red-400/10 rounded-full">
+                <div
+                  id="error-message"
+                  role="alert"
+                  aria-live="polite"
+                  className="w-full px-4 py-2 text-xs text-red-400 bg-red-400/10 rounded-full"
+                >
                   {error}
                 </div>
               )}
