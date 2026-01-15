@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import bcrypt from 'bcryptjs';
+import { saveEmailToSheets } from '@/app/lib/google-sheets';
 
 export const runtime = 'nodejs';
 
@@ -144,6 +145,12 @@ export async function POST(req: NextRequest) {
       await sleep(FAIL_DELAY_MS);
       return NextResponse.json({ error: 'Invalid credentials' }, { status: 401 });
     }
+
+    // Autenticación exitosa - guardar email en Google Sheets (no bloquea si falla)
+    saveEmailToSheets(emailNorm).catch((err) => {
+      console.error('Failed to save email to Google Sheets:', err);
+      // No fallamos la autenticación si falla guardar el email
+    });
 
     // Autenticación exitosa - no incrementar rate limit
     return NextResponse.json({ success: true, message: 'Authentication successful' });
