@@ -15,9 +15,7 @@ export default function Controller({ selectedMenu = 'Visibility', onMenuChange }
 
   // Sincronizar con el prop selectedMenu cuando cambia
   useEffect(() => {
-    if (selectedMenu) {
-      setActiveMenu(selectedMenu);
-    }
+    setActiveMenu(selectedMenu);
   }, [selectedMenu]);
 
   const handleMenuClick = (menu: MenuOption) => {
@@ -38,15 +36,15 @@ export default function Controller({ selectedMenu = 'Visibility', onMenuChange }
         
 
       {/* Right side - Menu options */}
-      <div className="shadow-[0px_4px_6px_0px_rgba(0,0,0,0.09)] flex justify-end items-start gap-10 overflow-hidden">
-        <div className="p-1 flex justify-start items-start gap-4">
+      <div className="flex justify-end items-center gap-10">
+        <div className="p-1 flex items-center gap-4">
           {menus.map((menu) => {
             const isSelected = activeMenu === menu;
             return (
               <button
                 key={menu}
                 onClick={() => handleMenuClick(menu)}
-                className={`h-10 px-2.5 py-1.5 rounded-full flex justify-start items-center gap-1 transition-all ${
+                className={`h-10 px-2.5 py-1.5 rounded-full flex items-center gap-1 transition-all cursor-pointer ${
                   isSelected
                     ? 'pl-6 pr-2.5 bg-black-turtle outline outline-green-turtle'
                     : ''
@@ -55,13 +53,13 @@ export default function Controller({ selectedMenu = 'Visibility', onMenuChange }
                   boxShadow: 'var(--shadow-green-turtle)'
                 } : {}}
               >
-                <div
-                  className={`justify-start text-xs font-medium font-dm-sans leading-5 ${
+                <span
+                  className={`text-xs font-medium font-dm-sans leading-5 ${
                     isSelected ? 'text-green-turtle' : 'text-white-turtle/50'
                   }`}
                 >
                   {menu}
-                </div>
+                </span>
                 {isSelected && (
                   <div className="w-5 h-5 relative">
                     <div className="w-4 h-4 left-px top-px absolute">

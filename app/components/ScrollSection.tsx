@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef, useState, useEffect } from 'react';
+import { useRef, useState } from 'react';
 import { useScroll, useTransform, motion, useMotionValueEvent } from 'framer-motion';
 import Image from 'next/image';
 import Controller from './Controller';
@@ -8,7 +8,7 @@ import GreenDot from '../elements/GreenDot';
 
 interface InfoRowProps {
   title: string;
-  items: string[];
+  items: readonly string[] | string[];
 }
 
 function InfoRow({ title, items }: InfoRowProps) {
@@ -45,14 +45,14 @@ function ScrollSectionItem({ image, info, opacity, zIndex = 1 }: ScrollSectionIt
       className="absolute inset-0 w-full h-full flex items-center justify-center pointer-events-none"
     >
       <div className="w-full max-w-7xl mx-auto px-4">
-        <div className="grid grid-cols-5 items-center justify-center gap-6">
-          {/* Left Column - Info (1/3) */}
+        <div className="grid grid-cols-5 items-center gap-6">
+          {/* Left Column - Info (2/5) */}
           <div className="col-span-2 space-y-2.5">
             <InfoRow title={info.row1.title} items={info.row1.items} />
             <InfoRow title={info.row2.title} items={info.row2.items} />
           </div>
 
-          {/* Right Column - Image (2/3) */}
+          {/* Right Column - Image (3/5) */}
           <div className="col-span-3 w-full flex items-center justify-center" style={{ height: '600px' }}>
             <Image
               src={image}
@@ -69,6 +69,77 @@ function ScrollSectionItem({ image, info, opacity, zIndex = 1 }: ScrollSectionIt
   );
 }
 
+// Datos estáticos movidos fuera del componente para evitar recreación
+const SECTION_DATA: {
+  section1: { image: string; info: { row1: { title: string; items: string[] }; row2: { title: string; items: string[] } } };
+  section2: { image: string; info: { row1: { title: string; items: string[] }; row2: { title: string; items: string[] } } };
+  section3: { image: string; info: { row1: { title: string; items: string[] }; row2: { title: string; items: string[] } } };
+} = {
+  section1: {
+    image: "/media/images/image-1.png",
+    info: {
+      row1: {
+        title: 'Key Features',
+        items: [
+          'Deal listing and discovery via Turtle',
+          'Coordination with Turtle\'s LP and distribution network',
+          'Optional advisory support around program structure and rollout',
+        ],
+      },
+      row2: {
+        title: 'Value add',
+        items: [
+          'Broader reach',
+          'Coordinated launch timing',
+          'Reduced multi-party coordination cost',
+        ],
+      },
+    },
+  },
+  section2: {
+    image: "/media/images/image-2.png",
+    info: {
+      row1: {
+        title: 'Key Features',
+        items: [
+          'Incentive and reward distribution via Turtle Streams',
+          'Transparent, auditable distribution events',
+          'Supports multiple assets and reward schedules',
+        ],
+      },
+      row2: {
+        title: 'Value add',
+        items: [
+          'Turnkey incentive distribution',
+          'No bespoke contract or ops overhead',
+          'Clean accounting and reporting',
+        ],
+      },
+    },
+  },
+  section3: {
+    image: "/media/images/image-3.png",
+    info: {
+      row1: {
+        title: 'Key Features',
+        items: [
+          'Public-facing incentive leaderboard',
+          'Supports standard metrics (TVL, deposits, participation)',
+          'Configurable scoring logic, metrics and weighting',
+        ],
+      },
+      row2: {
+        title: 'Value add',
+        items: [
+          'Gamified participation',
+          'Clear Visibility into performance',
+          'Reduced need for custom front-end work',
+        ],
+      },
+    },
+  },
+};
+
 export default function ScrollSection() {
   const containerRef = useRef<HTMLDivElement>(null);
   
@@ -79,18 +150,18 @@ export default function ScrollSection() {
 
   const [activeSection, setActiveSection] = useState<'Visibility' | 'Streams' | 'Leaderboard'>('Visibility');
 
-  // Detectar qué sección está activa basado en el scroll
+  // Detectar qué sección está activa basado en el scroll (ajustado a los nuevos thresholds)
   useMotionValueEvent(scrollYProgress, 'change', (latest) => {
-    if (latest < 0.35) {
+    if (latest < 0.34) {
       setActiveSection('Visibility');
-    } else if (latest < 0.7) {
+    } else if (latest < 0.68) {
       setActiveSection('Streams');
     } else {
       setActiveSection('Leaderboard');
     }
   });
 
-  // Función para hacer scroll a una sección específica
+  // Función para hacer scroll suave a una sección específica
   const scrollToSection = (section: 'Visibility' | 'Streams' | 'Leaderboard') => {
     if (!containerRef.current) return;
     
@@ -98,107 +169,67 @@ export default function ScrollSection() {
     const containerTop = container.offsetTop;
     const containerHeight = container.offsetHeight;
     
-    // Calcular posiciones de scroll basadas en los puntos de transición
-    // Sección 1 (Visibility): inicio hasta ~35% del scroll
-    // Sección 2 (Streams): ~35% hasta ~70% del scroll  
-    // Sección 3 (Leaderboard): ~70% hasta el final
-    
-    let scrollPosition = 0;
+    // Calcular posiciones de scroll basadas en los puntos de transición (ajustados)
+    // Para Leaderboard, usamos un porcentaje ligeramente menor para alinear mejor con el contenido
+    let targetScroll = 0;
     if (section === 'Visibility') {
-      scrollPosition = containerTop;
+      targetScroll = containerTop;
     } else if (section === 'Streams') {
-      scrollPosition = containerTop + (containerHeight * 0.35);
+      targetScroll = containerTop + (containerHeight * 0.34);
     } else if (section === 'Leaderboard') {
-      scrollPosition = containerTop + (containerHeight * 0.7);
+      targetScroll = containerTop + (containerHeight * 0.66);
     }
     
-    window.scrollTo({
-      top: scrollPosition,
-      behavior: 'smooth',
-    });
+    // Scroll suave personalizado con mayor duración
+    const startScroll = window.pageYOffset;
+    const distance = targetScroll - startScroll;
+    const duration = 1200; // 1.2 segundos para scroll más suave
+    let startTime: number | null = null;
+    
+    const easeInOutCubic = (t: number): number => {
+      return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+    };
+    
+    const animateScroll = (currentTime: number) => {
+      if (startTime === null) startTime = currentTime;
+      const timeElapsed = currentTime - startTime;
+      const progress = Math.min(timeElapsed / duration, 1);
+      
+      window.scrollTo(0, startScroll + distance * easeInOutCubic(progress));
+      
+      if (progress < 1) {
+        requestAnimationFrame(animateScroll);
+      }
+    };
+    
+    requestAnimationFrame(animateScroll);
   };
 
-  // Dividir el scroll en 3 secciones sin superposiciones
-  // Sección 1: visible desde el inicio (0) hasta 0.3, fade out de 0.3 a 0.35
+  // Dividir el scroll en 3 secciones con transiciones más rápidas para evitar imágenes a mitad de fade
+  // Sección 1: visible desde el inicio hasta 0.32, fade out rápido de 0.32 a 0.34
   const opacity1 = useTransform(
     scrollYProgress,
-    [0, 0.3, 0.35],
+    [0, 0.32, 0.34],
     [1, 1, 0],
-    { clamp: false }
+    { clamp: true }
   );
   
-  // Sección 2: fade in de 0.3 a 0.35, visible de 0.35 a 0.65, fade out de 0.65 a 0.7
+  // Sección 2: fade in rápido de 0.32 a 0.34, visible de 0.34 a 0.66, fade out rápido de 0.66 a 0.68
   const opacity2 = useTransform(
     scrollYProgress,
-    [0.3, 0.35, 0.65, 0.7],
+    [0.32, 0.34, 0.66, 0.68],
     [0, 1, 1, 0],
-    { clamp: false }
+    { clamp: true }
   );
   
-  // Sección 3: fade in de 0.65 a 0.7, visible hasta el final
+  // Sección 3: fade in rápido de 0.66 a 0.68, visible hasta el final
   const opacity3 = useTransform(
     scrollYProgress,
-    [0.65, 0.7, 1],
+    [0.66, 0.68, 1],
     [0, 1, 1],
-    { clamp: false }
+    { clamp: true }
   );
 
-  const section1Info = {
-    row1: {
-      title: 'Key Features',
-      items: [
-        'Deal listing and discovery via Turtle',
-        'Coordination with Turtle\'s LP and distribution network',
-        'Optional advisory support around program structure and rollout',
-      ],
-    },
-    row2: {
-      title: 'Value add',
-      items: [
-        'Broader reach',
-        'Coordinated launch timing',
-        'Reduced multi-party coordination cost',
-      ],
-    },
-  };
-
-  const section2Info = {
-    row1: {
-      title: 'Key Features',
-      items: [
-        'Incentive and reward distribution via Turtle Streams',
-        'Transparent, auditable distribution events',
-        'Supports multiple assets and reward schedules',
-      ],
-    },
-    row2: {
-      title: 'Value add',
-      items: [
-        'Turnkey incentive distribution',
-        'No bespoke contract or ops overhead',
-        'Clean accounting and reporting',
-      ],
-    },
-  };
-
-  const section3Info = {
-    row1: {
-      title: 'Key Features',
-      items: [
-        'Public-facing incentive leaderboard',
-        'Supports standard metrics (TVL, deposits, participation)',
-        'Configurable scoring logic, metrics and weighting',
-      ],
-    },
-    row2: {
-      title: 'Value add',
-      items: [
-        'Gamified participation',
-        'Clear Visibility into performance',
-        'Reduced need for custom front-end work',
-      ],
-    },
-  };
 
   return (
     <section
@@ -214,24 +245,24 @@ export default function ScrollSection() {
         </div>
         {/* Section 1 */}
         <ScrollSectionItem
-          image="/media/images/image-1.png"
-          info={section1Info}
+          image={SECTION_DATA.section1.image}
+          info={SECTION_DATA.section1.info}
           opacity={opacity1}
           zIndex={3}
         />
 
         {/* Section 2 */}
         <ScrollSectionItem
-          image="/media/images/image-2.png"
-          info={section2Info}
+          image={SECTION_DATA.section2.image}
+          info={SECTION_DATA.section2.info}
           opacity={opacity2}
           zIndex={2}
         />
 
         {/* Section 3 */}
         <ScrollSectionItem
-          image="/media/images/image-3.png"
-          info={section3Info}
+          image={SECTION_DATA.section3.image}
+          info={SECTION_DATA.section3.info}
           opacity={opacity3}
           zIndex={1}
         />
