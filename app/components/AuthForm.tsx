@@ -77,15 +77,15 @@ export default function AuthForm({ isVisible }: AuthFormProps) {
             duration: 0.9,
             ease: [0.25, 0.1, 0.25, 1],
           }}
-          className="absolute bottom-[10%] left-1/2 -translate-x-1/2 z-10"
+          className="absolute bottom-8 md:bottom-[10%] left-1/2 -translate-x-1/2 z-10 w-full px-4"
         >
           <form
             onSubmit={handleSubmit}
-            className="w-full max-w-xl p-9 rounded-[30px] shadow-lg outline outline-white/10 flex flex-col items-start gap-6"
+            className="w-full max-w-lg mx-auto p-6 md:p-9 rounded-[30px] shadow-lg outline outline-white/10 flex flex-col items-start gap-4 md:gap-6"
             style={{ backgroundColor: 'var(--black-turtle)' }}
           >
             <div className="w-full flex flex-col gap-1">
-              <h2 className="text-3xl font-normal text-white leading-9 text-left">
+              <h2 className="text-2xl md:text-3xl font-normal text-white leading-7 md:leading-9 text-left">
                 Unlock content to continue
               </h2>
               <p className="text-xs font-normal text-white leading-4 text-left">
@@ -105,7 +105,7 @@ export default function AuthForm({ isVisible }: AuthFormProps) {
                 aria-label="Email address"
                 aria-invalid={error ? 'true' : 'false'}
                 aria-describedby={error ? 'error-message' : undefined}
-                className="w-full h-12 px-6 bg-black-highlight/2 rounded-full text-white placeholder-white/50 text-xs font-medium focus:outline-none"
+                className="w-full h-11 md:h-12 px-4 md:px-6 bg-black-highlight/2 rounded-full text-white placeholder-white/50 text-xs font-medium focus:outline-none"
                 placeholder="Email"
                 disabled={isLoading}
               />
@@ -121,7 +121,7 @@ export default function AuthForm({ isVisible }: AuthFormProps) {
                 aria-label="Password"
                 aria-invalid={error ? 'true' : 'false'}
                 aria-describedby={error ? 'error-message' : undefined}
-                className="w-full h-12 px-6 bg-black-highlight/2 rounded-full text-white placeholder-white/50 text-xs font-medium focus:outline-none"
+                className="w-full h-11 md:h-12 px-4 md:px-6 bg-black-highlight/2 rounded-full text-white placeholder-white/50 text-xs font-medium focus:outline-none"
                 placeholder="Password"
                 disabled={isLoading}
               />
@@ -140,7 +140,7 @@ export default function AuthForm({ isVisible }: AuthFormProps) {
               <button
                 type="submit"
                 disabled={isLoading}
-                className="w-full h-12 px-2.5 bg-black-highlight/2 rounded-full outline outline-white/10 flex items-center justify-center gap-5 text-xs font-medium hover:bg-white/5 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full h-11 md:h-12 px-2.5 bg-black-highlight/2 rounded-full outline outline-white/10 flex items-center justify-center gap-5 text-xs font-medium hover:bg-white/5 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 style={{ color: 'var(--green-turtle)' }}
               >
                 <span>{isLoading ? 'Verifying...' : 'Unlock'}</span>
