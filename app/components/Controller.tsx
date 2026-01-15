@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 type MenuOption = 'Visibility' | 'Streams' | 'Leaderboard';
 
@@ -9,8 +9,15 @@ interface ControllerProps {
   onMenuChange?: (menu: MenuOption) => void;
 }
 
-export default function Controller({ selectedMenu = 'Leaderboard', onMenuChange }: ControllerProps) {
+export default function Controller({ selectedMenu = 'Visibility', onMenuChange }: ControllerProps) {
   const [activeMenu, setActiveMenu] = useState<MenuOption>(selectedMenu);
+
+  // Sincronizar con el prop selectedMenu cuando cambia
+  useEffect(() => {
+    if (selectedMenu) {
+      setActiveMenu(selectedMenu);
+    }
+  }, [selectedMenu]);
 
   const handleMenuClick = (menu: MenuOption) => {
     setActiveMenu(menu);

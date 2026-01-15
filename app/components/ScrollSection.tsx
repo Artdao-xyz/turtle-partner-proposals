@@ -1,7 +1,7 @@
 'use client';
 
-import { useRef } from 'react';
-import { useScroll, useTransform, motion } from 'framer-motion';
+import { useRef, useState, useEffect } from 'react';
+import { useScroll, useTransform, motion, useMotionValueEvent } from 'framer-motion';
 import Image from 'next/image';
 import Controller from './Controller';
 
@@ -75,6 +75,47 @@ export default function ScrollSection() {
     target: containerRef,
     offset: ['start start', 'end end'],
   });
+
+  const [activeSection, setActiveSection] = useState<'Visibility' | 'Streams' | 'Leaderboard'>('Visibility');
+
+  // Detectar qué sección está activa basado en el scroll
+  useMotionValueEvent(scrollYProgress, 'change', (latest) => {
+    if (latest < 0.35) {
+      setActiveSection('Visibility');
+    } else if (latest < 0.7) {
+      setActiveSection('Streams');
+    } else {
+      setActiveSection('Leaderboard');
+    }
+  });
+
+  // Función para hacer scroll a una sección específica
+  const scrollToSection = (section: 'Visibility' | 'Streams' | 'Leaderboard') => {
+    if (!containerRef.current) return;
+    
+    const container = containerRef.current;
+    const containerTop = container.offsetTop;
+    const containerHeight = container.offsetHeight;
+    
+    // Calcular posiciones de scroll basadas en los puntos de transición
+    // Sección 1 (Visibility): inicio hasta ~35% del scroll
+    // Sección 2 (Streams): ~35% hasta ~70% del scroll  
+    // Sección 3 (Leaderboard): ~70% hasta el final
+    
+    let scrollPosition = 0;
+    if (section === 'Visibility') {
+      scrollPosition = containerTop;
+    } else if (section === 'Streams') {
+      scrollPosition = containerTop + (containerHeight * 0.35);
+    } else if (section === 'Leaderboard') {
+      scrollPosition = containerTop + (containerHeight * 0.7);
+    }
+    
+    window.scrollTo({
+      top: scrollPosition,
+      behavior: 'smooth',
+    });
+  };
 
   // Dividir el scroll en 3 secciones sin superposiciones
   // Sección 1: visible desde el inicio (0) hasta 0.3, fade out de 0.3 a 0.35
@@ -168,7 +209,7 @@ export default function ScrollSection() {
       <div className="sticky top-0 h-screen w-full max-w-6xl mx-auto overflow-hidden">
         {/* Controller - positioned absolutely at the top */}
         <div className="absolute top-8 left-1/2 -translate-x-1/2 z-50">
-          <Controller />
+          <Controller selectedMenu={activeSection} onMenuChange={scrollToSection} />
         </div>
         {/* Section 1 */}
         <ScrollSectionItem
