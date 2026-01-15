@@ -140,7 +140,7 @@ export default function AuthForm({ isVisible }: AuthFormProps) {
               <button
                 type="submit"
                 disabled={isLoading}
-                className="w-full h-11 md:h-12 px-2.5 bg-black-highlight/2 rounded-full outline outline-white/10 flex items-center justify-center gap-5 text-xs font-medium hover:bg-white/5 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full h-11 md:h-12 px-2.5 bg-black-highlight/2 rounded-full outline outline-white/10 flex items-center justify-center gap-5 font-medium hover:bg-white/5 transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
                 style={{ color: 'var(--green-turtle)' }}
               >
                 <span>{isLoading ? 'Verifying...' : 'Unlock'}</span>

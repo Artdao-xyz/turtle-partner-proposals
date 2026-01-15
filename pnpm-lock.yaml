@@ -26,6 +26,9 @@ importers:
       react-dom:
         specifier: 19.2.3
         version: 19.2.3(react@19.2.3)
+      react-swipeable-button:
+        specifier: ^1.6.5
+        version: 1.6.5(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
     devDependencies:
       '@tailwindcss/postcss':
         specifier: ^4
@@ -1802,6 +1805,12 @@ packages:
 
   react-is@16.13.1:
     resolution: {integrity: sha512-24e6ynE2H+OKt4kqsOvNd8kBpV65zoxbA4BVsEOB3ARVWQki/DHzaUoC5KuON/BiccDaCCTZBuOcfZs70kR8bQ==}
+
+  react-swipeable-button@1.6.5:
+    resolution: {integrity: sha512-YH3Y1TC54vfZKbCm7IFjo+KAJmHr9JQxi/faOTE6T9UT892q9xws8kuC+eEndXxcEtWrldGtt4YEhGX0SznFVQ==}
+    peerDependencies:
+      react: ^18.2.0
+      react-dom: ^18.2.0
 
   react@19.2.3:
     resolution: {integrity: sha512-Ku/hhYbVjOQnXDZFv2+RibmLFGwFdeeKHFcOTlrt7xplBnya5OGn/hIRDsqDiSUcfORsDC7MPxwork8jBwsIWA==}
@@ -4009,6 +4018,11 @@ snapshots:
       scheduler: 0.27.0
 
   react-is@16.13.1: {}
+
+  react-swipeable-button@1.6.5(react-dom@19.2.3(react@19.2.3))(react@19.2.3):
+    dependencies:
+      react: 19.2.3
+      react-dom: 19.2.3(react@19.2.3)
 
   react@19.2.3: {}
 

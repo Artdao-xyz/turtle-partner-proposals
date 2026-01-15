@@ -143,7 +143,7 @@ export async function POST(req: NextRequest) {
       incrementRateLimit(rlKey);
       // delay para frenar brute force online
       await sleep(FAIL_DELAY_MS);
-      return NextResponse.json({ error: 'Invalid credentials' }, { status: 401 });
+      return NextResponse.json({ error: 'Wrong password' }, { status: 401 });
     }
 
     // Autenticación exitosa - guardar email en Google Sheets (no bloquea si falla)
