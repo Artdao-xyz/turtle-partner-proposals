@@ -9,7 +9,7 @@ interface LineProps {
 
 export default function Line({ className }: LineProps) {
   return (
-    <div className={`w-[400px] h-[10px] ${className}`}>
+    <div className={`hidden md:block w-[400px] h-[10px] ${className}`}>
       {/* Línea base gris */}
       <div 
         className="absolute top-1/2 left-0 w-full h-px] transform -translate-y-1/2"
