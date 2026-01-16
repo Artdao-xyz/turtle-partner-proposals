@@ -21,6 +21,10 @@
   --shadow-black-turtle: var(--shadow-black-turtle);
 }
 
+html {
+  background-color: var(--black-turtle);
+}
+
 body {
   font-family: var(--font-dm-sans);
   background-color: var(--black-turtle);

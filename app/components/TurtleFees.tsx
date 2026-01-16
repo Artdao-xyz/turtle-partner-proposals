@@ -8,7 +8,7 @@ interface FeeCardProps {
   title: string;
   description: string;
   price: string | string[];
-  optional?: boolean;
+  optional?: boolean | string;
   maxHeight?: number;
 }
 
@@ -24,7 +24,7 @@ function FeeCard({ title, description, price, optional, maxHeight = 256 }: FeeCa
         <h3 className="text-white font-medium text-2xl pr-2 leading-7 tracking-tight">{title}</h3>
         {optional && (
           <span className="px-2 py-1 text-xs rounded-full bg-black-highlight/10 text-white-turtle whitespace-nowrap">
-            Optional
+            {typeof optional === 'string' ? optional : 'Optional'}
           </span>
         )}
       </div>
@@ -133,7 +133,8 @@ export default function TurtleFees() {
     {
       title: 'TVL Coordination Fee',
       description: 'Baseline fee for turtle liquidity provisioning services',
-      price: ['0.30% / First 30 Days', '0.50% / Annualized Thereafter'],
+      price: ['0.30% - 1% / First 30 Days', '0.50% - 1.5% / Annualized Thereafter'],
+      optional: 'Variable Rates According to Asset Type',
     },
     {
       title: 'Distribution Emissions Fee',
