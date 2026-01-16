@@ -60,7 +60,7 @@ function ScrollSectionItem({ image, info, opacity, zIndex = 1 }: ScrollSectionIt
               alt={info.row1.title}
               width={1200}
               height={600}
-              className="object-contain rounded-xl w-full h-full"
+              className="object-contain rounded-xl w-auto h-auto"
               unoptimized
             />
           </div>
