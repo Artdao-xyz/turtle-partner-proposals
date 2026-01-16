@@ -23,7 +23,7 @@ function InfoRow({ title, items, isSecond = false }: InfoRowProps & { isSecond?:
     >
       <div className="flex items-center gap-3 mb-4">
         <GreenDot />
-        <h3 className="text-white-turtle text-lg lg:text-2xl font-semibold">{title}</h3>
+        <h3 className="text-[#eff8ed] text-lg lg:text-2xl font-semibold">{title}</h3>
       </div>
       <ul className="space-y-2">
         {items.map((item, idx) => (
