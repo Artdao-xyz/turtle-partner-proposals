@@ -18,10 +18,6 @@ export default function TurtleFeesHeader() {
         <div className="relative">
           <div 
             className="rounded-full flex items-center justify-center overflow-hidden"
-            style={{
-              backgroundColor: 'rgba(115, 243, 108, 0.1)',
-              boxShadow: '0 0 20px rgba(115, 243, 108, 0.3)',
-            }}
           >
             <Image
               src="/media/dollar-sign.png"
