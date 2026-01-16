@@ -139,11 +139,12 @@ export default function CanvasAnimation() {
     const container = canvas.parentElement;
     if (!container) return;
 
-    // Get the DPR and size of the canvas using getBoundingClientRect for accuracy
+    // Get the DPR and size of the container (more reliable than canvas.getBoundingClientRect)
     const dpr = window.devicePixelRatio || 1;
-    const rect = canvas.getBoundingClientRect();
-    const width = rect.width || container.offsetWidth;
-    const height = rect.height || container.offsetHeight;
+    // Use container's bounding rect for accurate size, fallback to offsetWidth/Height
+    const containerRect = container.getBoundingClientRect();
+    const width = containerRect.width || container.offsetWidth;
+    const height = containerRect.height || container.offsetHeight;
 
     if (width === 0 || height === 0) return;
 
@@ -329,11 +330,15 @@ export default function CanvasAnimation() {
     draw();
 
     // Handle resize with requestAnimationFrame for performance
+    // Use double RAF to ensure layout has fully updated
     const handleResize = () => {
       if (rafIdRef.current !== null) {
         cancelAnimationFrame(rafIdRef.current);
       }
-      rafIdRef.current = requestAnimationFrame(draw);
+      // Double RAF ensures the container has resized before we read its size
+      rafIdRef.current = requestAnimationFrame(() => {
+        rafIdRef.current = requestAnimationFrame(draw);
+      });
     };
 
     window.addEventListener('resize', handleResize);
