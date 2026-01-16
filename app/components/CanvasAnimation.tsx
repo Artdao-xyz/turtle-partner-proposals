@@ -128,6 +128,15 @@ export default function CanvasAnimation() {
   const [grayscale, setGrayscale] = useState(100);
   const glowColorProgressRef = useRef(0);
   const [glowColorProgress, setGlowColorProgress] = useState(0);
+  // Initialize scale factor based on screen size (mobile vs desktop)
+  const getInitialScaleFactor = () => {
+    if (typeof window === 'undefined') return 1.12;
+    return window.innerWidth < 1024 ? 1.35 : 1.12; // Mobile: 135%, Desktop: 112%
+  };
+  const scaleFactorRef = useRef(getInitialScaleFactor());
+  const [scaleFactor, setScaleFactor] = useState(getInitialScaleFactor());
+  const verticalOffsetRef = useRef(-30); // Start higher when not authenticated (negative = up)
+  const [verticalOffset, setVerticalOffset] = useState(-30);
   const fadeAnimationRef = useRef<number | null>(null);
   const devicePixelRatioRef = useRef<number>(1);
 
@@ -139,11 +148,12 @@ export default function CanvasAnimation() {
     const container = canvas.parentElement;
     if (!container) return;
 
-    // Get the DPR and size of the canvas using getBoundingClientRect for accuracy
+    // Get the DPR and size of the container (more reliable than canvas.getBoundingClientRect)
     const dpr = window.devicePixelRatio || 1;
-    const rect = canvas.getBoundingClientRect();
-    const width = rect.width || container.offsetWidth;
-    const height = rect.height || container.offsetHeight;
+    // Use container's bounding rect for accurate size, fallback to offsetWidth/Height
+    const containerRect = container.getBoundingClientRect();
+    const width = containerRect.width || container.offsetWidth;
+    const height = containerRect.height || container.offsetHeight;
 
     if (width === 0 || height === 0) return;
 
@@ -169,19 +179,28 @@ export default function CanvasAnimation() {
     // Detect layout: vertical (mobile) if width < 1024px (lg breakpoint), horizontal (desktop) otherwise
     const isVertical = width < 1024;
     
-    // Use appropriate sizes based on layout
-    const ORBIT_RADIUS = isVertical ? MOBILE_ORBIT_RADIUS : DESKTOP_ORBIT_RADIUS;
-    const HERO_SIZE = isVertical ? MOBILE_HERO_SIZE : DESKTOP_HERO_SIZE;
-    const IMAGE_SIZE = isVertical ? MOBILE_IMAGE_SIZE : DESKTOP_IMAGE_SIZE;
-    const TEXT_OFFSET = isVertical ? MOBILE_TEXT_OFFSET : DESKTOP_TEXT_OFFSET;
-    const PERPENDICULAR_OFFSET = isVertical ? MOBILE_PERPENDICULAR_OFFSET : DESKTOP_PERPENDICULAR_OFFSET;
+    // Calculate base scale factor based on canvas width
+    // Base reference width: 1200px for desktop, 375px for mobile
+    const baseWidth = isVertical ? 375 : 1200;
+    const baseScaleFactor = Math.max(0.5, Math.min(2, width / baseWidth)); // Clamp between 0.5x and 2x
+    
+    // Apply authentication scale factor (larger when not authenticated)
+    const authScaleFactor = scaleFactorRef.current;
+    const finalScaleFactor = baseScaleFactor * authScaleFactor;
+    
+    // Use appropriate sizes based on layout and scale proportionally
+    const ORBIT_RADIUS = (isVertical ? MOBILE_ORBIT_RADIUS : DESKTOP_ORBIT_RADIUS) * finalScaleFactor;
+    const HERO_SIZE = (isVertical ? MOBILE_HERO_SIZE : DESKTOP_HERO_SIZE) * finalScaleFactor;
+    const IMAGE_SIZE = (isVertical ? MOBILE_IMAGE_SIZE : DESKTOP_IMAGE_SIZE) * finalScaleFactor;
+    const TEXT_OFFSET = (isVertical ? MOBILE_TEXT_OFFSET : DESKTOP_TEXT_OFFSET) * finalScaleFactor;
+    const PERPENDICULAR_OFFSET = (isVertical ? MOBILE_PERPENDICULAR_OFFSET : DESKTOP_PERPENDICULAR_OFFSET) * finalScaleFactor;
 
     const centerX = width / 2;
-    const centerY = height / 2;
+    const centerY = height / 2 + verticalOffsetRef.current; // Apply vertical offset
 
     // Draw orbit circle
     ctx.strokeStyle = ORBIT_STROKE_COLOR;
-    ctx.lineWidth = 2;
+    ctx.lineWidth = 2 * Math.min(finalScaleFactor, 1.5); // Scale line width but cap at 1.5x to avoid too thick lines
     ctx.beginPath();
     ctx.arc(centerX, centerY, ORBIT_RADIUS, 0, Math.PI * 2);
     ctx.stroke();
@@ -204,7 +223,7 @@ export default function CanvasAnimation() {
       const opacity = 0.3 + (0.75 - 0.3) * progress;
       const glowColor = `rgba(${r}, ${g}, ${b}, ${opacity})`;
       
-      ctx.shadowBlur = GLOW_BLUR;
+      ctx.shadowBlur = GLOW_BLUR * finalScaleFactor;
       ctx.shadowColor = glowColor;
       ctx.shadowOffsetX = 0;
       ctx.shadowOffsetY = 0;
@@ -246,9 +265,10 @@ export default function CanvasAnimation() {
 
         const textY = iconCenterY + textYOffset;
 
-        // Set text style
+        // Set text style (scaled proportionally)
         ctx.fillStyle = '#ffffff';
-        ctx.font = '14px sans-serif';
+        const fontSize = 14 * finalScaleFactor;
+        ctx.font = `${fontSize}px sans-serif`;
         ctx.textBaseline = 'middle';
 
         // Set text alignment based on position
@@ -272,7 +292,7 @@ export default function CanvasAnimation() {
           const midPoint = Math.ceil(words.length / 2);
           const line1 = words.slice(0, midPoint).join(' ');
           const line2 = words.slice(midPoint).join(' ');
-          const lineHeight = 18; // Spacing between lines
+          const lineHeight = 18 * finalScaleFactor; // Spacing between lines (scaled proportionally)
           
           ctx.fillText(line1, textX, textY - lineHeight / 2);
           ctx.fillText(line2, textX, textY + lineHeight / 2);
@@ -329,11 +349,15 @@ export default function CanvasAnimation() {
     draw();
 
     // Handle resize with requestAnimationFrame for performance
+    // Use double RAF to ensure layout has fully updated
     const handleResize = () => {
       if (rafIdRef.current !== null) {
         cancelAnimationFrame(rafIdRef.current);
       }
-      rafIdRef.current = requestAnimationFrame(draw);
+      // Double RAF ensures the container has resized before we read its size
+      rafIdRef.current = requestAnimationFrame(() => {
+        rafIdRef.current = requestAnimationFrame(draw);
+      });
     };
 
     window.addEventListener('resize', handleResize);
@@ -353,14 +377,24 @@ export default function CanvasAnimation() {
       cancelAnimationFrame(fadeAnimationRef.current);
     }
 
+    // Detect if mobile (same breakpoint as canvas: 1024px)
+    const isMobile = typeof window !== 'undefined' && window.innerWidth < 1024;
+
     const targetGrayscale = isAuthenticated ? 0 : 100;
     const targetGlowColorProgress = isAuthenticated ? 1 : 0;
+    // Different scale factors for mobile vs desktop when not authenticated
+    const targetScaleFactor = isAuthenticated 
+      ? 0.9 
+      : (isMobile ? 1.35 : 1.12); // Mobile: 135% when not authenticated, Desktop: 112%
+    const targetVerticalOffset = isAuthenticated ? 20 : -30; // Lower when authenticated (positive = down), higher when not (negative = up)
     const targetTextOpacities = isAuthenticated 
       ? new Array(IMAGE_DATA.length).fill(1)
       : new Array(IMAGE_DATA.length).fill(0);
     
     const startGrayscale = grayscaleRef.current;
     const startGlowColorProgress = glowColorProgressRef.current;
+    const startScaleFactor = scaleFactorRef.current;
+    const startVerticalOffset = verticalOffsetRef.current;
     const startTextOpacities = [...textOpacityRefs.current];
     const startTime = performance.now();
 
@@ -398,11 +432,17 @@ export default function CanvasAnimation() {
       
       const currentGrayscale = startGrayscale + (targetGrayscale - startGrayscale) * grayscaleProgress;
       const currentGlowColorProgress = startGlowColorProgress + (targetGlowColorProgress - startGlowColorProgress) * glowProgress;
+      const currentScaleFactor = startScaleFactor + (targetScaleFactor - startScaleFactor) * glowProgress;
+      const currentVerticalOffset = startVerticalOffset + (targetVerticalOffset - startVerticalOffset) * glowProgress;
       
       grayscaleRef.current = currentGrayscale;
       glowColorProgressRef.current = currentGlowColorProgress;
+      scaleFactorRef.current = currentScaleFactor;
+      verticalOffsetRef.current = currentVerticalOffset;
       setGrayscale(currentGrayscale);
       setGlowColorProgress(currentGlowColorProgress);
+      setScaleFactor(currentScaleFactor);
+      setVerticalOffset(currentVerticalOffset);
 
       // Animate each text opacity with its own delay
       const newTextOpacities = textOpacityRefs.current.map((startOpacity, index) => {
@@ -449,9 +489,13 @@ export default function CanvasAnimation() {
         // Ensure final values
         grayscaleRef.current = targetGrayscale;
         glowColorProgressRef.current = targetGlowColorProgress;
+        scaleFactorRef.current = targetScaleFactor;
+        verticalOffsetRef.current = targetVerticalOffset;
         textOpacityRefs.current = targetTextOpacities;
         setGrayscale(targetGrayscale);
         setGlowColorProgress(targetGlowColorProgress);
+        setScaleFactor(targetScaleFactor);
+        setVerticalOffset(targetVerticalOffset);
         setTextOpacities([...targetTextOpacities]);
         fadeAnimationRef.current = null;
         draw(); // Final draw to ensure correct values

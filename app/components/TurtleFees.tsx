@@ -17,21 +17,23 @@ function FeeCard({ title, description, price, optional, maxHeight = 256 }: FeeCa
   
   return (
     <div 
-      className="bg-black-highlight/2 rounded-5xl p-7.5 outline outline-black-highlight/10 h-full flex flex-col overflow-hidden"
+      className="bg-black-highlight/2 rounded-5xl p-6 outline outline-black-highlight/10 h-full flex flex-col overflow-hidden"
       style={{ maxHeight: `${maxHeight}px` }}
     >
-      <div className="flex items-start mb-2 shrink-0">
-        <h3 className="text-white font-medium text-2xl pr-2 leading-7 tracking-tight">{title}</h3>
-        {optional && (
-          <span className="px-2 py-1 text-xs rounded-full bg-black-highlight/10 text-white-turtle whitespace-nowrap">
-            {typeof optional === 'string' ? optional : 'Optional'}
-          </span>
-        )}
+      <div className="mb-2 shrink-0">
+        <div className="flex flex-col lg:flex-row lg:items-start gap-2">
+          <h3 className="text-[#eff8ed] font-medium text-2xl leading-7 tracking-tight">{title}</h3>
+          {optional && (
+            <span className="px-2 py-1 text-xs rounded-full bg-black-highlight/10 text-white-turtle whitespace-nowrap self-start lg:self-auto">
+              {typeof optional === 'string' ? optional : 'Optional'}
+            </span>
+          )}
+        </div>
       </div>
-      <p className="text-white-turtle/50 text-sm mb-3 leading-6 lg:leading-relaxed grow tracking-tight">{description}</p>
+      <p className="text-white/50 text-sm mb-2 leading-6 lg:leading-relaxed grow tracking-tight">{description}</p>
       <div className="space-y-1 shrink-0">
         {prices.map((p, idx) => (
-          <p key={idx} className="text-white font-semibold text-xl tracking-tight">
+          <p key={idx} className="text-[#eff8ed] font-semibold text-xl tracking-tight">
             {p}
           </p>
         ))}
@@ -60,7 +62,7 @@ function FeeSection({ title, subtitle, tag, cards, maxCardHeight = 256 }: Sectio
         <div className="flex flex-col lg:flex-row items-center justify-center lg:gap-2 mb-2">
           <div className="flex items-center gap-2 lg:gap-3" style={{ width: 'fit-content' }}>
             <GreenDot className='shrink-0'/>
-            <h2 className="text-white text-xl lg:text-2xl font-semibold tracking-tight">{title}</h2>
+            <h2 className="text-white-turtle text-xl lg:text-2xl font-semibold tracking-tight">{title}</h2>
           </div>
           {tag && (
             <span className="px-3 py-1 text-xs rounded-full bg-black-highlight/10 text-white-turtle mt-2 lg:mt-0">

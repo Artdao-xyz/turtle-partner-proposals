@@ -12,9 +12,9 @@ export const contentType = 'image/png'
 
 // Image generation
 export default async function Image() {
-  // Load the hero image from public folder
+  // Load the opengraph image from public folder
   const imageData = await readFile(
-    join(process.cwd(), 'public/media/partner-logo.png')
+    join(process.cwd(), 'public/media/opengraph-image.png')
   )
   const imageBase64 = `data:image/png;base64,${imageData.toString('base64')}`
 

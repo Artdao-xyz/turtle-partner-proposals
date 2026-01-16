@@ -18,22 +18,33 @@ const getBaseUrl = () => {
   return "https://turtle-partner-proposals.vercel.app";
 };
 
+const baseUrl = getBaseUrl();
+
 export const metadata: Metadata = {
-  metadataBase: new URL(getBaseUrl()),
+  metadataBase: new URL(baseUrl),
   title: "Turtle Partner Proposals",
   description: "We sit in front of an active base of LPs with on-chain, ready-to-deploy capital and provide a suite of tools for partners to run liquidity and incentive programs end to end.",
   openGraph: {
     title: "Turtle Partner Proposals",
     description: "We sit in front of an active base of LPs with on-chain, ready-to-deploy capital and provide a suite of tools for partners to run liquidity and incentive programs end to end.",
-    url: "https://turtle-partner-proposals.vercel.app", // Actualiza con tu URL real
+    url: baseUrl,
     siteName: "Turtle Partner Proposals",
     locale: "en_US",
     type: "website",
+    images: [
+      {
+        url: "/opengraph-image",
+        width: 1200,
+        height: 630,
+        alt: "Turtle Partner Proposals",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
     title: "Turtle Partner Proposals",
     description: "We sit in front of an active base of LPs with on-chain, ready-to-deploy capital and provide a suite of tools for partners to run liquidity and incentive programs end to end.",
+    images: ["/opengraph-image"],
   },
   robots: {
     index: true,

@@ -16,9 +16,9 @@ interface AuthProviderProps {
 export function AuthProvider({ children }: AuthProviderProps) {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
 
-  // setTimeout(() => {
-  //   setIsAuthenticated(true);
-  // }, 1000);
+  setTimeout(() => {
+    setIsAuthenticated(true);
+  }, 1000);
 
   // Memoizar el valor del contexto para evitar re-renders innecesarios
   const value = useMemo(

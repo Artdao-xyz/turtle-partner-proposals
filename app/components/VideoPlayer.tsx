@@ -71,8 +71,8 @@ export default function VideoPlayer({
 
         {/* Text Below Video */}
         <div className="p-2 lg:p-3 space-y-1.5 lg:space-y-2">
-          <h3 className="text-white-turtle text-lg lg:text-2xl font-semibold">{title}</h3>
-          <p className="text-white-turtle/70 text-xs lg:text-sm leading-relaxed">{description}</p>
+          <h3 className="text-[#eff8ed] text-lg lg:text-2xl font-semibold">{title}</h3>
+          <p className="text-white/50 text-xs lg:text-sm leading-relaxed">{description}</p>
         </div>
       </div>
     </div>
