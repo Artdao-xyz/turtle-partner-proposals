@@ -116,6 +116,7 @@ export default function CanvasAnimation() {
   const glowColorProgressRef = useRef(0);
   const [glowColorProgress, setGlowColorProgress] = useState(0);
   const fadeAnimationRef = useRef<number | null>(null);
+  const devicePixelRatioRef = useRef<number>(1);
 
   // Draw function - always draws everything
   const draw = useCallback(() => {
@@ -130,7 +131,9 @@ export default function CanvasAnimation() {
 
     if (width === 0 || height === 0) return;
 
-    const dpr = window.devicePixelRatio || 1;
+    // Update devicePixelRatio, clamped to max 2
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    devicePixelRatioRef.current = dpr;
 
     // Always set canvas size (it's safe to do so)
     canvas.style.width = `${width}px`;
@@ -141,6 +144,8 @@ export default function CanvasAnimation() {
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
+    // Reset transform before scaling to avoid accumulation
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
     ctx.scale(dpr, dpr);
     ctx.clearRect(0, 0, width, height);
 
