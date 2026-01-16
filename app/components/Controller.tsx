@@ -45,13 +45,13 @@ export default function Controller({ selectedMenu = 'Visibility', onMenuChange }
       }}
     >
         {/* Logo - no background */}
-        <div className="h-full flex items-center">
+        <div className="h-[70px] lg:h-full flex items-center">
           <Image 
             src="/media/partner-logo.png" 
             alt="Controller Logo" 
             width={276}
             height={92}
-            className="h-auto w-auto object-contain"
+            className="h-full w-auto object-contain"
             unoptimized
           />
         </div>

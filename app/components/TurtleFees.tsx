@@ -56,11 +56,11 @@ function FeeSection({ title, subtitle, tag, cards, maxCardHeight = 256 }: Sectio
       transition={{ duration: 0.6, ease: 'easeOut' }}
       className="w-full max-w-6xl mx-auto px-4 h-auto lg:h-full flex flex-col"
     >
-      <div className="text-center mb-8 shrink-0">
+      <div className="text-center mb-8 shrink-0 px-4">
         <div className="flex flex-col lg:flex-row items-center justify-center lg:gap-2 mb-2">
-          <div className="flex items-start lg:items-center justify-center gap-1.5 lg:gap-3">
-            <GreenDot className='pt-2.5 lg:pt-0'/>
-            <h2 className="text-white text-2xl font-semibold">{title}</h2>
+          <div className="flex items-center gap-2 lg:gap-3" style={{ width: 'fit-content' }}>
+            <GreenDot className='shrink-0'/>
+            <h2 className="text-white text-xl lg:text-2xl font-semibold tracking-tight">{title}</h2>
           </div>
           {tag && (
             <span className="px-3 py-1 text-xs rounded-full bg-black-highlight/10 text-white-turtle mt-2 lg:mt-0">
