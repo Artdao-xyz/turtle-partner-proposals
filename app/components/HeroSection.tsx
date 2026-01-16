@@ -7,12 +7,13 @@ import HeroDescription from './HeroDescription';
 import CircleText from '../elements/CircleText';
 import TurtleLogo from '../elements/TurtleLogo';
 import { useAuth } from '../contexts/AuthContext';
+import CanvasAnimation from './CanvasAnimation';
 
 export default function HeroSection() {
   const { isAuthenticated } = useAuth();
 
   const sectionClassName = isAuthenticated
-    ? 'relative w-full min-h-screen overflow-hidden flex flex-col justify-between py-10 max-w-7xl mx-auto'
+    ? 'relative w-full min-h-screen overflow-hidden flex flex-col justify-between py-4 max-w-7xl mx-auto'
     : 'relative w-full min-h-screen overflow-hidden max-w-7xl mx-auto';
 
   return (
@@ -50,7 +51,7 @@ export default function HeroSection() {
               delay: 0.7,
               ease: [0.25, 0.1, 0.25, 1],
             }}
-            className="w-full flex justify-center mt-10"
+            className="w-full flex justify-center mt-6"
           >
             <div className="text-green-turtle text-lg font-normal font-dm-sans leading-5">
               Partnership Proposal
@@ -65,7 +66,7 @@ export default function HeroSection() {
       </AnimatePresence>
 
       {/* SVG Circle Text con animación de posición y color (PRIMERO en animar, pero visualmente abajo) */}
-      <motion.div
+      {/* <motion.div
         layout
         initial={false}
         className={isAuthenticated 
@@ -80,7 +81,8 @@ export default function HeroSection() {
         <CircleText 
           isActive={isAuthenticated} 
         />
-      </motion.div>
+      </motion.div> */}
+      <CanvasAnimation />
       
       {/* Formulario de autenticación */}
       <AuthForm isVisible={!isAuthenticated} />

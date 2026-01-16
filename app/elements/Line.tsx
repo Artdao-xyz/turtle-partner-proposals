@@ -12,7 +12,7 @@ export default function Line({ className }: LineProps) {
     <div className={`w-[400px] h-[10px] ${className}`}>
       {/* Línea base gris */}
       <div 
-        className="absolute top-1/2 left-0 w-full h-[1px] transform -translate-y-1/2"
+        className="absolute top-1/2 left-0 w-full h-px] transform -translate-y-1/2"
         style={{
           background: 'linear-gradient(to right, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0.2) 80%, transparent 100%)'
         }}
@@ -20,7 +20,7 @@ export default function Line({ className }: LineProps) {
       
       {/* Línea verde animada con glow */}
       <motion.div
-        className="absolute top-1/2 left-0 w-[100px] h-[2px] bg-gradient-to-r to-[#73F36C] from-transparent transform -translate-y-1/2 rounded-full"
+        className="absolute top-1/2 left-0 w-[100px] h-[2px] bg-linear-to-r to-[#73F36C] from-transparent transform -translate-y-1/2 rounded-full"
         animate={{
           x: [0, 310], // 400 - 100 (para que no se salga)
           opacity: [1, 1, 0], // Cambio de opacidad
