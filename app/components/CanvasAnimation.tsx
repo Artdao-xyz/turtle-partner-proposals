@@ -14,7 +14,7 @@ const IMAGE_DATA = [
   { path: '/media/hero-image/icons/6_PostListing.svg', text: 'Post Listing Management' },
 ] as const;
 
-const HERO_IMAGE_PATH = '/media/hero-image/hero-image.svg';
+const HERO_IMAGE_PATH = '/media/hero-image/hero-image.png';
 const ORBIT_RADIUS = 175;
 const HERO_SIZE = 200;
 const IMAGE_SIZE = 56;
@@ -43,6 +43,64 @@ const FADE_DURATION = 600; // Duration in milliseconds
 
 // Convert seconds to milliseconds
 const toMs = (seconds: number) => seconds * 1000;
+
+// Helper function to apply grayscale filter manually (Safari compatible)
+const applyGrayscale = (
+  ctx: CanvasRenderingContext2D,
+  image: HTMLImageElement,
+  x: number,
+  y: number,
+  width: number,
+  height: number,
+  grayscalePercent: number
+): void => {
+  if (grayscalePercent === 0) {
+    // No grayscale needed, draw directly
+    ctx.drawImage(image, x, y, width, height);
+    return;
+  }
+
+  // Create a temporary canvas to apply grayscale
+  const tempCanvas = document.createElement('canvas');
+  tempCanvas.width = width;
+  tempCanvas.height = height;
+  const tempCtx = tempCanvas.getContext('2d');
+  if (!tempCtx) {
+    ctx.drawImage(image, x, y, width, height);
+    return;
+  }
+
+  // Draw image to temporary canvas
+  tempCtx.drawImage(image, 0, 0, width, height);
+  
+  // Get image data
+  const imageData = tempCtx.getImageData(0, 0, width, height);
+  const data = imageData.data;
+  
+  // Apply grayscale formula: 0.299*R + 0.587*G + 0.114*B
+  const grayscaleFactor = grayscalePercent / 100;
+  
+  for (let i = 0; i < data.length; i += 4) {
+    const r = data[i];
+    const g = data[i + 1];
+    const b = data[i + 2];
+    
+    // Calculate grayscale value
+    const gray = 0.299 * r + 0.587 * g + 0.114 * b;
+    
+    // Interpolate between original color and grayscale
+    data[i] = r + (gray - r) * grayscaleFactor;     // R
+    data[i + 1] = g + (gray - g) * grayscaleFactor;   // G
+    data[i + 2] = b + (gray - b) * grayscaleFactor;   // B
+    // Alpha channel (data[i + 3]) remains unchanged
+  }
+  
+  // Put modified image data back
+  tempCtx.putImageData(imageData, 0, 0);
+  
+  // Draw the processed image to the main canvas
+  ctx.drawImage(tempCanvas, x, y);
+};
 
 export default function CanvasAnimation() {
   const { isAuthenticated } = useAuth();
@@ -103,8 +161,6 @@ export default function CanvasAnimation() {
       const heroY = centerY - HERO_SIZE / 2;
 
       ctx.save();
-      // Apply grayscale filter
-      ctx.filter = `grayscale(${grayscaleRef.current}%)`;
       
       // Interpolate glow color between disabled (gray) and enabled (green) based on authentication
       const progress = glowColorProgressRef.current;
@@ -121,7 +177,8 @@ export default function CanvasAnimation() {
       ctx.shadowOffsetX = 0;
       ctx.shadowOffsetY = 0;
 
-      ctx.drawImage(heroImg, heroX, heroY, HERO_SIZE, HERO_SIZE);
+      // Apply grayscale filter manually (Safari compatible)
+      applyGrayscale(ctx, heroImg, heroX, heroY, HERO_SIZE, HERO_SIZE, grayscaleRef.current);
 
       ctx.restore();
     }
@@ -139,10 +196,9 @@ export default function CanvasAnimation() {
         const iconX = centerX + Math.cos(angle) * ORBIT_RADIUS - IMAGE_SIZE / 2;
         const iconY = centerY + Math.sin(angle) * ORBIT_RADIUS - IMAGE_SIZE / 2;
 
-        // Draw icon with grayscale filter
+        // Draw icon with grayscale filter (Safari compatible)
         ctx.save();
-        ctx.filter = `grayscale(${grayscaleRef.current}%)`;
-        ctx.drawImage(img, iconX, iconY, IMAGE_SIZE, IMAGE_SIZE);
+        applyGrayscale(ctx, img, iconX, iconY, IMAGE_SIZE, IMAGE_SIZE, grayscaleRef.current);
         ctx.restore();
 
         // Calculate text position
