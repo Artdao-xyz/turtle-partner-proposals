@@ -170,19 +170,24 @@ export default function CanvasAnimation() {
     // Detect layout: vertical (mobile) if width < 1024px (lg breakpoint), horizontal (desktop) otherwise
     const isVertical = width < 1024;
     
-    // Use appropriate sizes based on layout
-    const ORBIT_RADIUS = isVertical ? MOBILE_ORBIT_RADIUS : DESKTOP_ORBIT_RADIUS;
-    const HERO_SIZE = isVertical ? MOBILE_HERO_SIZE : DESKTOP_HERO_SIZE;
-    const IMAGE_SIZE = isVertical ? MOBILE_IMAGE_SIZE : DESKTOP_IMAGE_SIZE;
-    const TEXT_OFFSET = isVertical ? MOBILE_TEXT_OFFSET : DESKTOP_TEXT_OFFSET;
-    const PERPENDICULAR_OFFSET = isVertical ? MOBILE_PERPENDICULAR_OFFSET : DESKTOP_PERPENDICULAR_OFFSET;
+    // Calculate scale factor based on canvas width
+    // Base reference width: 1200px for desktop, 375px for mobile
+    const baseWidth = isVertical ? 375 : 1200;
+    const scaleFactor = Math.max(0.5, Math.min(2, width / baseWidth)); // Clamp between 0.5x and 2x
+    
+    // Use appropriate sizes based on layout and scale proportionally
+    const ORBIT_RADIUS = (isVertical ? MOBILE_ORBIT_RADIUS : DESKTOP_ORBIT_RADIUS) * scaleFactor;
+    const HERO_SIZE = (isVertical ? MOBILE_HERO_SIZE : DESKTOP_HERO_SIZE) * scaleFactor;
+    const IMAGE_SIZE = (isVertical ? MOBILE_IMAGE_SIZE : DESKTOP_IMAGE_SIZE) * scaleFactor;
+    const TEXT_OFFSET = (isVertical ? MOBILE_TEXT_OFFSET : DESKTOP_TEXT_OFFSET) * scaleFactor;
+    const PERPENDICULAR_OFFSET = (isVertical ? MOBILE_PERPENDICULAR_OFFSET : DESKTOP_PERPENDICULAR_OFFSET) * scaleFactor;
 
     const centerX = width / 2;
     const centerY = height / 2;
 
     // Draw orbit circle
     ctx.strokeStyle = ORBIT_STROKE_COLOR;
-    ctx.lineWidth = 2;
+    ctx.lineWidth = 2 * Math.min(scaleFactor, 1.5); // Scale line width but cap at 1.5x to avoid too thick lines
     ctx.beginPath();
     ctx.arc(centerX, centerY, ORBIT_RADIUS, 0, Math.PI * 2);
     ctx.stroke();
@@ -205,7 +210,7 @@ export default function CanvasAnimation() {
       const opacity = 0.3 + (0.75 - 0.3) * progress;
       const glowColor = `rgba(${r}, ${g}, ${b}, ${opacity})`;
       
-      ctx.shadowBlur = GLOW_BLUR;
+      ctx.shadowBlur = GLOW_BLUR * scaleFactor;
       ctx.shadowColor = glowColor;
       ctx.shadowOffsetX = 0;
       ctx.shadowOffsetY = 0;
@@ -247,9 +252,10 @@ export default function CanvasAnimation() {
 
         const textY = iconCenterY + textYOffset;
 
-        // Set text style
+        // Set text style (scaled proportionally)
         ctx.fillStyle = '#ffffff';
-        ctx.font = '14px sans-serif';
+        const fontSize = 14 * scaleFactor;
+        ctx.font = `${fontSize}px sans-serif`;
         ctx.textBaseline = 'middle';
 
         // Set text alignment based on position
@@ -273,7 +279,7 @@ export default function CanvasAnimation() {
           const midPoint = Math.ceil(words.length / 2);
           const line1 = words.slice(0, midPoint).join(' ');
           const line2 = words.slice(midPoint).join(' ');
-          const lineHeight = 18; // Spacing between lines
+          const lineHeight = 18 * scaleFactor; // Spacing between lines (scaled proportionally)
           
           ctx.fillText(line1, textX, textY - lineHeight / 2);
           ctx.fillText(line2, textX, textY + lineHeight / 2);
