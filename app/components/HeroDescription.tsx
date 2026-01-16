@@ -1,6 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
+import { ANIMATION_TIMINGS, EASING } from '../config/animationTimings';
 
 interface HeroDescriptionProps {
   isVisible: boolean;
@@ -15,9 +16,9 @@ export default function HeroDescription({ isVisible }: HeroDescriptionProps) {
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: 10 }}
       transition={{
-        duration: 0.6,
-        delay: 0.7,
-        ease: [0.25, 0.1, 0.25, 1],
+        duration: ANIMATION_TIMINGS.authenticated.heroDescription.duration,
+        delay: ANIMATION_TIMINGS.authenticated.heroDescription.delay,
+        ease: EASING,
       }}
       className="w-full px-4"
     >

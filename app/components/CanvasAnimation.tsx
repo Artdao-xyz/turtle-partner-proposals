@@ -2,6 +2,7 @@
 
 import { useRef, useEffect, useCallback, useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
+import { ANIMATION_TIMINGS, getTextOpacityDelay } from '../config/animationTimings';
 
 // Constants
 const IMAGE_DATA = [
@@ -40,6 +41,9 @@ const loadImage = (src: string): Promise<HTMLImageElement> => {
 
 const FADE_DURATION = 600; // Duration in milliseconds
 
+// Convert seconds to milliseconds
+const toMs = (seconds: number) => seconds * 1000;
+
 export default function CanvasAnimation() {
   const { isAuthenticated } = useAuth();
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -47,8 +51,8 @@ export default function CanvasAnimation() {
   const heroImageRef = useRef<HTMLImageElement | null>(null);
   const lastSizeRef = useRef({ width: 0, height: 0 });
   const rafIdRef = useRef<number | null>(null);
-  const textOpacityRef = useRef(0);
-  const [textOpacity, setTextOpacity] = useState(0);
+  const textOpacityRefs = useRef<number[]>(new Array(IMAGE_DATA.length).fill(0));
+  const [textOpacities, setTextOpacities] = useState<number[]>(new Array(IMAGE_DATA.length).fill(0));
   const grayscaleRef = useRef(100);
   const [grayscale, setGrayscale] = useState(100);
   const glowColorProgressRef = useRef(0);
@@ -168,9 +172,9 @@ export default function CanvasAnimation() {
           ctx.textAlign = 'right';
         }
 
-        // Apply opacity to text based on authentication state
+        // Apply opacity to text based on authentication state and index
         ctx.save();
-        ctx.globalAlpha = textOpacityRef.current;
+        ctx.globalAlpha = textOpacityRefs.current[index];
         ctx.fillText(item.text, textX, textY);
         ctx.restore();
       });
@@ -191,15 +195,34 @@ export default function CanvasAnimation() {
 
         heroImageRef.current = heroImg;
         imagesRef.current = iconImages;
-        draw();
+        
+        // Force a redraw after all images are loaded
+        // Use double RAF to ensure DOM is ready and canvas is properly sized
+        requestAnimationFrame(() => {
+          requestAnimationFrame(() => {
+            draw();
+            // Also trigger one more draw after a tiny delay to catch any edge cases
+            setTimeout(() => {
+              draw();
+            }, 50);
+          });
+        });
       } catch (error) {
         // Continue even if some images fail to load
         console.error('Error loading images:', error);
-        draw();
+        // Still try to draw with what we have
+        requestAnimationFrame(() => {
+          requestAnimationFrame(() => {
+            draw();
+          });
+        });
       }
     };
 
     loadAllImages();
+
+    // Also draw immediately to show the orbit circle while images load
+    draw();
 
     // Handle resize with requestAnimationFrame for performance
     const handleResize = () => {
@@ -226,46 +249,106 @@ export default function CanvasAnimation() {
       cancelAnimationFrame(fadeAnimationRef.current);
     }
 
-    const targetOpacity = isAuthenticated ? 1 : 0;
     const targetGrayscale = isAuthenticated ? 0 : 100;
     const targetGlowColorProgress = isAuthenticated ? 1 : 0;
-    const startOpacity = textOpacityRef.current;
+    const targetTextOpacities = isAuthenticated 
+      ? new Array(IMAGE_DATA.length).fill(1)
+      : new Array(IMAGE_DATA.length).fill(0);
+    
     const startGrayscale = grayscaleRef.current;
     const startGlowColorProgress = glowColorProgressRef.current;
+    const startTextOpacities = [...textOpacityRefs.current];
     const startTime = performance.now();
+
+    // Calculate delays in milliseconds based on authentication state
+    const imageColorDelay = isAuthenticated 
+      ? toMs(ANIMATION_TIMINGS.authenticated.imageColorAndGlow.delay)
+      : toMs(ANIMATION_TIMINGS.unauthenticated.canvas.delay);
+    const imageColorDuration = isAuthenticated
+      ? toMs(ANIMATION_TIMINGS.authenticated.imageColorAndGlow.duration)
+      : toMs(ANIMATION_TIMINGS.unauthenticated.canvas.duration);
+    const textDuration = isAuthenticated
+      ? toMs(ANIMATION_TIMINGS.authenticated.textOpacity.duration)
+      : toMs(ANIMATION_TIMINGS.unauthenticated.canvas.duration);
 
     const animate = (currentTime: number) => {
       const elapsed = currentTime - startTime;
-      const progress = Math.min(elapsed / FADE_DURATION, 1);
       
-      // Easing function for smooth fade (ease-in-out)
-      const eased = progress < 0.5
-        ? 2 * progress * progress
-        : 1 - Math.pow(-2 * progress + 2, 2) / 2;
-
-      const currentOpacity = startOpacity + (targetOpacity - startOpacity) * eased;
-      const currentGrayscale = startGrayscale + (targetGrayscale - startGrayscale) * eased;
-      const currentGlowColorProgress = startGlowColorProgress + (targetGlowColorProgress - startGlowColorProgress) * eased;
+      // Animate grayscale and glow color (with delay)
+      let grayscaleProgress = 0;
+      let glowProgress = 0;
       
-      textOpacityRef.current = currentOpacity;
+      if (elapsed >= imageColorDelay) {
+        const imageElapsed = elapsed - imageColorDelay;
+        grayscaleProgress = Math.min(imageElapsed / imageColorDuration, 1);
+        glowProgress = grayscaleProgress;
+        
+        // Easing function for smooth fade (ease-in-out)
+        const eased = grayscaleProgress < 0.5
+          ? 2 * grayscaleProgress * grayscaleProgress
+          : 1 - Math.pow(-2 * grayscaleProgress + 2, 2) / 2;
+        
+        grayscaleProgress = eased;
+        glowProgress = eased;
+      }
+      
+      const currentGrayscale = startGrayscale + (targetGrayscale - startGrayscale) * grayscaleProgress;
+      const currentGlowColorProgress = startGlowColorProgress + (targetGlowColorProgress - startGlowColorProgress) * glowProgress;
+      
       grayscaleRef.current = currentGrayscale;
       glowColorProgressRef.current = currentGlowColorProgress;
-      setTextOpacity(currentOpacity);
       setGrayscale(currentGrayscale);
       setGlowColorProgress(currentGlowColorProgress);
+
+      // Animate each text opacity with its own delay
+      const newTextOpacities = textOpacityRefs.current.map((startOpacity, index) => {
+        // When not authenticated, all texts appear at the same time
+        const textDelay = isAuthenticated 
+          ? toMs(getTextOpacityDelay(index))
+          : toMs(ANIMATION_TIMINGS.unauthenticated.canvas.delay);
+        
+        if (elapsed < textDelay) {
+          return startOpacity;
+        }
+        
+        const textElapsed = elapsed - textDelay;
+        const textProgress = Math.min(textElapsed / textDuration, 1);
+        
+        // Easing function for smooth fade (ease-in-out)
+        const eased = textProgress < 0.5
+          ? 2 * textProgress * textProgress
+          : 1 - Math.pow(-2 * textProgress + 2, 2) / 2;
+        
+        return startOpacity + (targetTextOpacities[index] - startOpacity) * eased;
+      });
+      
+      textOpacityRefs.current = newTextOpacities;
+      setTextOpacities([...newTextOpacities]);
 
       // Redraw canvas with new values
       draw();
 
-      if (progress < 1) {
+      // Check if all animations are complete
+      const allComplete = 
+        grayscaleProgress >= 1 &&
+        glowProgress >= 1 &&
+        newTextOpacities.every((opacity, index) => {
+          const textDelay = isAuthenticated
+            ? toMs(getTextOpacityDelay(index))
+            : toMs(ANIMATION_TIMINGS.unauthenticated.canvas.delay);
+          return elapsed >= textDelay + textDuration;
+        });
+
+      if (!allComplete) {
         fadeAnimationRef.current = requestAnimationFrame(animate);
       } else {
-        textOpacityRef.current = targetOpacity;
+        // Ensure final values
         grayscaleRef.current = targetGrayscale;
         glowColorProgressRef.current = targetGlowColorProgress;
-        setTextOpacity(targetOpacity);
+        textOpacityRefs.current = targetTextOpacities;
         setGrayscale(targetGrayscale);
         setGlowColorProgress(targetGlowColorProgress);
+        setTextOpacities([...targetTextOpacities]);
         fadeAnimationRef.current = null;
         draw(); // Final draw to ensure correct values
       }

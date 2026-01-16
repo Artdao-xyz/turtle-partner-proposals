@@ -3,6 +3,7 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import { useState, FormEvent } from 'react';
 import { useAuth } from '../contexts/AuthContext';
+import { ANIMATION_TIMINGS, EASING } from '../config/animationTimings';
 
 interface AuthFormProps {
   isVisible: boolean;
@@ -74,8 +75,9 @@ export default function AuthForm({ isVisible }: AuthFormProps) {
           animate={{ opacity: 1, y: 0, scale: 1 }}
           exit={{ opacity: 0, y: 10, scale: 0.98 }}
           transition={{
-            duration: 0.9,
-            ease: [0.25, 0.1, 0.25, 1],
+            duration: ANIMATION_TIMINGS.unauthenticated.authForm.duration,
+            delay: ANIMATION_TIMINGS.unauthenticated.authForm.delay,
+            ease: EASING,
           }}
           className="absolute bottom-8 md:bottom-[10%] left-1/2 -translate-x-1/2 z-10 w-full px-4"
         >

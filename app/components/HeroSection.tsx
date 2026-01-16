@@ -8,6 +8,7 @@ import CircleText from '../elements/CircleText';
 import TurtleLogo from '../elements/TurtleLogo';
 import { useAuth } from '../contexts/AuthContext';
 import CanvasAnimation from './CanvasAnimation';
+import { ANIMATION_TIMINGS, EASING } from '../config/animationTimings';
 
 export default function HeroSection() {
   const { isAuthenticated } = useAuth();
@@ -16,7 +17,14 @@ export default function HeroSection() {
     <section className="relative w-full h-screen max-h-screen flex flex-col overflow-hidden">
       
       {/* Top section with Logo, Partnership, and Title - Dynamic height */}
-      <div className="shrink-0">
+      <motion.div 
+        className="shrink-0 relative"
+        layout
+        transition={{
+          duration: 0.4,
+          ease: EASING,
+        }}
+      >
           <div className="h-20 flex justify-between items-center px-10">
           <AnimatePresence mode="wait">
             {/* Logo - aparece siempre */}
@@ -26,9 +34,9 @@ export default function HeroSection() {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
               transition={{
-                duration: 0.6,
-                delay: 0.6,
-                ease: [0.25, 0.1, 0.25, 1],
+                duration: ANIMATION_TIMINGS.unauthenticated.header.duration,
+                delay: isAuthenticated ? 0.6 : ANIMATION_TIMINGS.unauthenticated.header.delay,
+                ease: EASING,
               }}
             >
               <TurtleLogo />
@@ -41,9 +49,9 @@ export default function HeroSection() {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
               transition={{
-                duration: 0.6,
-                delay: 0.7,
-                ease: [0.25, 0.1, 0.25, 1],
+                duration: ANIMATION_TIMINGS.unauthenticated.header.duration,
+                delay: isAuthenticated ? 0.7 : ANIMATION_TIMINGS.unauthenticated.header.delay,
+                ease: EASING,
               }}
             >
               <div className="text-green-turtle text-lg font-normal font-dm-sans whitespace-nowrap">
@@ -57,10 +65,7 @@ export default function HeroSection() {
           <AnimatePresence mode="wait">
             {isAuthenticated && <HeroTitle key="title" isVisible={isAuthenticated} />}
           </AnimatePresence>
-
-          {/* Formulario de autenticación */}
-          {!isAuthenticated && <AuthForm isVisible={!isAuthenticated} />}
-      </div>
+      </motion.div>
 
       {/* Canvas - Dynamic height, grows/shrinks based on available space */}
       <div className="relative w-full flex-1 min-h-0 overflow-hidden">
@@ -75,6 +80,9 @@ export default function HeroSection() {
           )}
         </AnimatePresence>
       </div>
+
+      {/* Formulario de autenticación */}
+      {!isAuthenticated && <AuthForm isVisible={!isAuthenticated} />}
     </section>
   );
 }

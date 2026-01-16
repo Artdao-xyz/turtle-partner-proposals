@@ -2,6 +2,7 @@
 
 import { motion } from 'framer-motion';
 import Line from '../elements/Line';
+import { ANIMATION_TIMINGS, EASING } from '../config/animationTimings';
 
 interface HeroTitleProps {
   isVisible: boolean;
@@ -15,10 +16,15 @@ export default function HeroTitle({ isVisible }: HeroTitleProps) {
       initial={{ opacity: 0, y: -10 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -10 }}
+      layout
       transition={{
-        duration: 0.6,
-        delay: 0.6,
-        ease: [0.25, 0.1, 0.25, 1],
+        duration: ANIMATION_TIMINGS.authenticated.title.duration,
+        delay: ANIMATION_TIMINGS.authenticated.title.delay,
+        ease: EASING,
+        layout: {
+          duration: 0.4,
+          ease: EASING,
+        },
       }}
       className="w-full px-4 relative"
     >
