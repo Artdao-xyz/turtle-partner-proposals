@@ -62,7 +62,8 @@ const applyGrayscale = (
   y: number,
   width: number,
   height: number,
-  grayscalePercent: number
+  grayscalePercent: number,
+  dpr: number = 1
 ): void => {
   if (grayscalePercent === 0) {
     // No grayscale needed, draw directly
@@ -70,21 +71,23 @@ const applyGrayscale = (
     return;
   }
 
-  // Create a temporary canvas to apply grayscale
+  // Create a temporary canvas to apply grayscale with DPR support
   const tempCanvas = document.createElement('canvas');
-  tempCanvas.width = width;
-  tempCanvas.height = height;
+  // Set actual size accounting for DPR
+  tempCanvas.width = width * dpr;
+  tempCanvas.height = height * dpr;
+  
   const tempCtx = tempCanvas.getContext('2d');
   if (!tempCtx) {
     ctx.drawImage(image, x, y, width, height);
     return;
   }
 
-  // Draw image to temporary canvas
-  tempCtx.drawImage(image, 0, 0, width, height);
+  // Draw image to temporary canvas at full resolution
+  tempCtx.drawImage(image, 0, 0, width * dpr, height * dpr);
   
-  // Get image data
-  const imageData = tempCtx.getImageData(0, 0, width, height);
+  // Get image data at full resolution
+  const imageData = tempCtx.getImageData(0, 0, width * dpr, height * dpr);
   const data = imageData.data;
   
   // Apply grayscale formula: 0.299*R + 0.587*G + 0.114*B
@@ -109,7 +112,7 @@ const applyGrayscale = (
   tempCtx.putImageData(imageData, 0, 0);
   
   // Draw the processed image to the main canvas
-  ctx.drawImage(tempCanvas, x, y);
+  ctx.drawImage(tempCanvas, x, y, width, height);
 };
 
 export default function CanvasAnimation() {
@@ -136,10 +139,32 @@ export default function CanvasAnimation() {
     const container = canvas.parentElement;
     if (!container) return;
 
-    const width = container.offsetWidth;
-    const height = container.offsetHeight;
+    // Get the DPR and size of the canvas using getBoundingClientRect for accuracy
+    const dpr = window.devicePixelRatio || 1;
+    const rect = canvas.getBoundingClientRect();
+    const width = rect.width || container.offsetWidth;
+    const height = rect.height || container.offsetHeight;
 
     if (width === 0 || height === 0) return;
+
+    // Set the actual size of the canvas's drawing buffer
+    canvas.width = width * dpr;
+    canvas.height = height * dpr;
+
+    // Set the drawn size of the canvas using CSS (keeps it the same visual size)
+    canvas.style.width = `${width}px`;
+    canvas.style.height = `${height}px`;
+
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    // Scale the context to ensure all drawing operations use the new, larger resolution
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
+    ctx.scale(dpr, dpr);
+    ctx.clearRect(0, 0, width, height);
+
+    // Store DPR for reference
+    devicePixelRatioRef.current = dpr;
 
     // Detect layout: vertical (mobile) if width < 1024px (lg breakpoint), horizontal (desktop) otherwise
     const isVertical = width < 1024;
@@ -150,24 +175,6 @@ export default function CanvasAnimation() {
     const IMAGE_SIZE = isVertical ? MOBILE_IMAGE_SIZE : DESKTOP_IMAGE_SIZE;
     const TEXT_OFFSET = isVertical ? MOBILE_TEXT_OFFSET : DESKTOP_TEXT_OFFSET;
     const PERPENDICULAR_OFFSET = isVertical ? MOBILE_PERPENDICULAR_OFFSET : DESKTOP_PERPENDICULAR_OFFSET;
-
-    // Update devicePixelRatio, clamped to max 2
-    const dpr = Math.min(window.devicePixelRatio || 1, 2);
-    devicePixelRatioRef.current = dpr;
-
-    // Always set canvas size (it's safe to do so)
-    canvas.style.width = `${width}px`;
-    canvas.style.height = `${height}px`;
-    canvas.width = width * dpr;
-    canvas.height = height * dpr;
-
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
-
-    // Reset transform before scaling to avoid accumulation
-    ctx.setTransform(1, 0, 0, 1, 0, 0);
-    ctx.scale(dpr, dpr);
-    ctx.clearRect(0, 0, width, height);
 
     const centerX = width / 2;
     const centerY = height / 2;
@@ -203,7 +210,7 @@ export default function CanvasAnimation() {
       ctx.shadowOffsetY = 0;
 
       // Apply grayscale filter manually (Safari compatible)
-      applyGrayscale(ctx, heroImg, heroX, heroY, HERO_SIZE, HERO_SIZE, grayscaleRef.current);
+      applyGrayscale(ctx, heroImg, heroX, heroY, HERO_SIZE, HERO_SIZE, grayscaleRef.current, dpr);
 
       ctx.restore();
     }
@@ -223,7 +230,7 @@ export default function CanvasAnimation() {
 
         // Draw icon with grayscale filter (Safari compatible)
         ctx.save();
-        applyGrayscale(ctx, img, iconX, iconY, IMAGE_SIZE, IMAGE_SIZE, grayscaleRef.current);
+        applyGrayscale(ctx, img, iconX, iconY, IMAGE_SIZE, IMAGE_SIZE, grayscaleRef.current, dpr);
         ctx.restore();
 
         // Calculate text position
