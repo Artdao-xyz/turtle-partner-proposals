@@ -47,7 +47,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" style={{ backgroundColor: 'var(--black-turtle)' }}>
       <body
         className={`${dmSans.variable} antialiased`}
         style={{ backgroundColor: 'var(--black-turtle)' }}
