@@ -25,6 +25,12 @@ body {
   font-family: var(--font-dm-sans);
   background-color: var(--black-turtle);
   scrollbar-gutter: stable;
+  overflow-x: hidden;
+}
+
+canvas {
+  display: block;
+  max-width: 100%;
 }
 
 /* Mejorar renderizado de SVGs */

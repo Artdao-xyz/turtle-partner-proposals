@@ -12,15 +12,15 @@ import CanvasAnimation from './CanvasAnimation';
 export default function HeroSection() {
   const { isAuthenticated } = useAuth();
 
-  const sectionClassName = isAuthenticated
-    ? 'relative w-full min-h-screen overflow-hidden flex flex-col justify-between py-4 max-w-7xl mx-auto'
-    : 'relative w-full min-h-screen overflow-hidden max-w-7xl mx-auto';
-
   return (
-    <section className={sectionClassName}>
-      {/* Logo (arriba, pero anima DESPUÉS de la imagen) */}
-      <AnimatePresence mode="wait">
-        {isAuthenticated && (
+    <section className="relative w-full min-h-screen flex flex-col gap-8">
+      
+
+      
+      {/* Top section with Logo, Partnership, and Title */}
+      <div className="grow flex flex-col justify-start items-center pt-4">
+        <AnimatePresence mode="wait">
+          {/* Logo - aparece siempre */}
           <motion.div
             key="logo"
             initial={{ opacity: 0, y: -20 }}
@@ -31,16 +31,12 @@ export default function HeroSection() {
               delay: 0.6,
               ease: [0.25, 0.1, 0.25, 1],
             }}
-            className="w-full flex justify-center"
+            className="w-full flex justify-center mb-6"
           >
             <TurtleLogo />
           </motion.div>
-        )}
-      </AnimatePresence>
 
-      {/* Partnership Proposal text */}
-      <AnimatePresence mode="wait">
-        {isAuthenticated && (
+          {/* Partnership Proposal text - aparece siempre */}
           <motion.div
             key="partnership-proposal"
             initial={{ opacity: 0, y: -10 }}
@@ -57,40 +53,30 @@ export default function HeroSection() {
               Partnership Proposal
             </div>
           </motion.div>
-        )}
-      </AnimatePresence>
+        </AnimatePresence>
 
-      {/* Título con líneas decorativas (arriba, pero anima DESPUÉS de la imagen) */}
-      <AnimatePresence mode="wait">
-        {isAuthenticated && <HeroTitle key="title" isVisible={isAuthenticated} />}
-      </AnimatePresence>
+        {/* Título - aparece cuando está autenticado */}
+        <AnimatePresence mode="wait">
+          {isAuthenticated && <HeroTitle key="title" isVisible={isAuthenticated} />}
+        </AnimatePresence>
 
-      {/* SVG Circle Text con animación de posición y color (PRIMERO en animar, pero visualmente abajo) */}
-      {/* <motion.div
-        layout
-        initial={false}
-        className={isAuthenticated 
-          ? "relative mx-auto mt-10 w-full" 
-          : "absolute left-1/2 -translate-x-1/2 top-[10%] w-full" 
-        }
-        transition={{
-          duration: 0.6,
-          ease: [0.25, 0.1, 0.25, 1],
-        }}
-      >
-        <CircleText 
-          isActive={isAuthenticated} 
-        />
-      </motion.div> */}
-      <CanvasAnimation />
-      
-      {/* Formulario de autenticación */}
-      <AuthForm isVisible={!isAuthenticated} />
+        {/* Formulario de autenticación */}
+        {!isAuthenticated && <AuthForm isVisible={!isAuthenticated} />}
+      </div>
 
-      {/* Texto descriptivo */}
-      <AnimatePresence mode="wait">
-        {isAuthenticated && <HeroDescription key="description" isVisible={isAuthenticated} />}
-      </AnimatePresence>
+      {/* Canvas - 50% of screen height */}
+      <div className="relative w-full h-[60vh] shrink-0 overflow-hidden">
+        <CanvasAnimation />
+      </div>
+
+      {/* Bottom section with Text */}
+      <div className="grow flex flex-col justify-center items-center py-4">
+        <AnimatePresence mode="wait">
+          {isAuthenticated && (
+            <HeroDescription key="description" isVisible={isAuthenticated} />
+          )}
+        </AnimatePresence>
+      </div>
     </section>
   );
 }

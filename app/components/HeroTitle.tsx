@@ -22,7 +22,7 @@ export default function HeroTitle({ isVisible }: HeroTitleProps) {
       }}
       className="w-full px-4 relative"
     >
-      <div className="relative flex items-center justify-center w-full py-4">
+      <div className="relative flex items-center justify-center w-full py-2">
         {/* Lines container - hidden on mobile */}
         {/* <div className="hidden lg:flex absolute left-0 right-0 top-1/2 -translate-y-1/2 items-center justify-center gap-8 z-0 border border-blue-200"> */}
           {/* Left Line */}

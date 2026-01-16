@@ -1,195 +1,201 @@
 'use client';
 
-import { useRef, useEffect } from 'react';
+import { useRef, useEffect, useCallback } from 'react';
+
+// Constants
+const IMAGE_DATA = [
+  { path: '/media/hero-image/icons/1_Discovery.svg', text: 'Discovery & Due Diligence' },
+  { path: '/media/hero-image/icons/2_Organisation.svg', text: 'Organisation Onboarding' },
+  { path: '/media/hero-image/icons/3_Incentive.svg', text: 'Incentive Structuring' },
+  { path: '/media/hero-image/icons/4_Launch.svg', text: 'Launch' },
+  { path: '/media/hero-image/icons/5_Additional.svg', text: 'Additional Distribution' },
+  { path: '/media/hero-image/icons/6_PostListing.svg', text: 'Post Listing Management' },
+] as const;
+
+const HERO_IMAGE_PATH = '/media/hero-image/hero-image.svg';
+const ORBIT_RADIUS = 175;
+const HERO_SIZE = 200;
+const IMAGE_SIZE = 56;
+const TEXT_OFFSET = 40;
+const PERPENDICULAR_OFFSET = 60;
+const SIZE_THRESHOLD = 2;
+const ORBIT_STROKE_COLOR = 'rgba(255, 255, 255, 0.3)';
+const GLOW_COLOR = 'rgba(115, 243, 108, 0.75)';
+const GLOW_BLUR = 50;
+
+// Helper function to load an image
+const loadImage = (src: string): Promise<HTMLImageElement> => {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    img.onload = () => resolve(img);
+    img.onerror = () => {
+      console.error(`Failed to load image: ${src}`);
+      reject(new Error(`Failed to load image: ${src}`));
+    };
+    img.src = src;
+  });
+};
 
 export default function CanvasAnimation() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const imagesRef = useRef<HTMLImageElement[]>([]);
   const heroImageRef = useRef<HTMLImageElement | null>(null);
+  const lastSizeRef = useRef({ width: 0, height: 0 });
+  const rafIdRef = useRef<number | null>(null);
+
+  const draw = useCallback(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    const container = canvas.parentElement;
+    if (!container) return;
+
+    const width = container.offsetWidth;
+    const height = container.offsetHeight;
+
+    if (width === 0 || height === 0) return;
+
+    // Skip if size hasn't changed significantly
+    const { width: lastWidth, height: lastHeight } = lastSizeRef.current;
+    if (
+      Math.abs(width - lastWidth) < SIZE_THRESHOLD &&
+      Math.abs(height - lastHeight) < SIZE_THRESHOLD
+    ) {
+      return;
+    }
+
+    lastSizeRef.current = { width, height };
+
+    const dpr = window.devicePixelRatio || 1;
+
+    // Set canvas size
+    canvas.style.width = `${width}px`;
+    canvas.style.height = `${height}px`;
+    canvas.width = width * dpr;
+    canvas.height = height * dpr;
+
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    ctx.scale(dpr, dpr);
+    ctx.clearRect(0, 0, width, height);
+
+    const centerX = width / 2;
+    const centerY = height / 2;
+
+    // Draw orbit circle
+    ctx.strokeStyle = ORBIT_STROKE_COLOR;
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.arc(centerX, centerY, ORBIT_RADIUS, 0, Math.PI * 2);
+    ctx.stroke();
+
+    // Draw hero image with glow effect
+    const heroImg = heroImageRef.current;
+    if (heroImg?.complete && heroImg.naturalWidth > 0) {
+      const heroX = centerX - HERO_SIZE / 2;
+      const heroY = centerY - HERO_SIZE / 2;
+
+      ctx.shadowBlur = GLOW_BLUR;
+      ctx.shadowColor = GLOW_COLOR;
+      ctx.shadowOffsetX = 0;
+      ctx.shadowOffsetY = 0;
+
+      ctx.drawImage(heroImg, heroX, heroY, HERO_SIZE, HERO_SIZE);
+
+      ctx.shadowBlur = 0;
+      ctx.shadowColor = 'transparent';
+    }
+
+    // Draw icons and text
+    if (imagesRef.current.length === IMAGE_DATA.length) {
+      const angleStep = (Math.PI * 2) / IMAGE_DATA.length;
+      const textRadius = ORBIT_RADIUS + IMAGE_SIZE / 2 + TEXT_OFFSET;
+
+      IMAGE_DATA.forEach((item, index) => {
+        const img = imagesRef.current[index];
+        if (!img?.complete || img.naturalWidth === 0) return;
+
+        const angle = index * angleStep - Math.PI / 2;
+        const iconX = centerX + Math.cos(angle) * ORBIT_RADIUS - IMAGE_SIZE / 2;
+        const iconY = centerY + Math.sin(angle) * ORBIT_RADIUS - IMAGE_SIZE / 2;
+
+        // Draw icon
+        ctx.drawImage(img, iconX, iconY, IMAGE_SIZE, IMAGE_SIZE);
+
+        // Calculate text position
+        const iconCenterY = centerY + Math.sin(angle) * ORBIT_RADIUS;
+        const textX = centerX + Math.cos(angle) * textRadius;
+        let textYOffset = 0;
+
+        if (index === 0) {
+          textYOffset = -PERPENDICULAR_OFFSET;
+        } else if (index === 3) {
+          textYOffset = PERPENDICULAR_OFFSET;
+        }
+
+        const textY = iconCenterY + textYOffset;
+
+        // Set text style
+        ctx.fillStyle = '#ffffff';
+        ctx.font = '14px sans-serif';
+        ctx.textBaseline = 'middle';
+
+        // Set text alignment based on position
+        if (index === 0 || index === 3) {
+          ctx.textAlign = 'center';
+        } else if (index === 1 || index === 2) {
+          ctx.textAlign = 'left';
+        } else {
+          ctx.textAlign = 'right';
+        }
+
+        ctx.fillText(item.text, textX, textY);
+      });
+    }
+  }, []);
 
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
 
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
+    // Load all images
+    const loadAllImages = async () => {
+      try {
+        const [heroImg, ...iconImages] = await Promise.all([
+          loadImage(HERO_IMAGE_PATH),
+          ...IMAGE_DATA.map((item) => loadImage(item.path)),
+        ]);
 
-    // Image paths with their corresponding texts (in order 1-6)
-    const imageData = [
-      { path: '/media/hero-image/icons/1_Discovery.svg', text: 'Discovery & Due Dilligence' },
-      { path: '/media/hero-image/icons/2_Organisation.svg', text: 'Organisation Onboarding' },
-      { path: '/media/hero-image/icons/3_Incentive.svg', text: 'Incentive Structuring' },
-      { path: '/media/hero-image/icons/4_Launch.svg', text: 'Launch' },
-      { path: '/media/hero-image/icons/5_Additional.svg', text: 'Additional Distribution' },
-      { path: '/media/hero-image/icons/6_PostListing.svg', text: 'Post Listing Management' },
-    ];
-
-    // Load images
-    let loadedCount = 0;
-    const totalImages = imageData.length + 1; // +1 for hero image
-
-    const loadImages = () => {
-      // Load hero image
-      const heroImg = new Image();
-      heroImg.onload = () => {
-        loadedCount++;
-        if (loadedCount === totalImages) {
-          draw(); // Redraw when all images are loaded
-        }
-      };
-      heroImg.onerror = () => {
-        console.error('Failed to load hero image');
-        loadedCount++;
-        if (loadedCount === totalImages) {
-          draw(); // Redraw even if hero image failed
-        }
-      };
-      heroImg.src = '/media/hero-image/hero-image.svg';
-      heroImageRef.current = heroImg;
-
-      // Load icon images
-      imageData.forEach((item) => {
-        const img = new Image();
-        img.onload = () => {
-          loadedCount++;
-          if (loadedCount === totalImages) {
-            draw(); // Redraw when all images are loaded
-          }
-        };
-        img.onerror = () => {
-          console.error(`Failed to load image: ${item.path}`);
-          loadedCount++;
-          if (loadedCount === totalImages) {
-            draw(); // Redraw even if some images failed
-          }
-        };
-        img.src = item.path;
-        imagesRef.current.push(img);
-      });
-    };
-
-    // Function to draw everything
-    const draw = () => {
-      const width = window.innerWidth;
-      const height = window.innerHeight;
-      
-      // Set canvas size
-      canvas.width = width;
-      canvas.height = height;
-
-      // Fill with black background
-      ctx.fillStyle = '#000000';
-      ctx.fillRect(0, 0, width, height);
-
-      // Center of canvas
-      const centerX = width / 2;
-      const centerY = height / 2;
-
-      // Orbit radius (fixed 350px diameter = 175px radius)
-      const orbitRadius = 175;
-
-      // Draw orbit (circle)
-      ctx.strokeStyle = 'rgba(255, 255, 255, 0.3)';
-      ctx.lineWidth = 2;
-      ctx.beginPath();
-      ctx.arc(centerX, centerY, orbitRadius, 0, Math.PI * 2);
-      ctx.stroke();
-
-      // Draw hero image in the center (fixed 200px size) with glow/shadow effect
-      if (heroImageRef.current && heroImageRef.current.complete && heroImageRef.current.naturalWidth > 0) {
-        const heroSize = 200;
-        const heroX = centerX - heroSize / 2;
-        const heroY = centerY - heroSize / 2;
-        
-        // Apply glow/shadow effect
-        ctx.shadowBlur = 50;
-        ctx.shadowColor = 'rgba(115, 243, 108, 0.75)'; // Bright lime green glow
-        ctx.shadowOffsetX = 0;
-        ctx.shadowOffsetY = 0;
-        
-        ctx.drawImage(heroImageRef.current, heroX, heroY, heroSize, heroSize);
-        
-        // Reset shadow properties
-        ctx.shadowBlur = 0;
-        ctx.shadowColor = 'transparent';
-      }
-
-      // Draw images in circle (starting from top, like clock hands at 12)
-      const images = imagesRef.current.filter(img => img.complete && img.naturalWidth > 0);
-      
-      if (images.length > 0) {
-        const imageSize = 56; // Size of each image
-        const angleStep = (Math.PI * 2) / images.length;
-        const textOffset = 40; // Offset to push text further away from icon (perpendicular to center)
-        const textRadius = orbitRadius + imageSize / 2 + textOffset; // Text radius (outside the orbit)
-
-        images.forEach((img, index) => {
-          // Start from top (subtract Math.PI/2 to rotate 90 degrees counterclockwise)
-          const angle = index * angleStep - Math.PI / 2;
-          
-          const x = centerX + Math.cos(angle) * orbitRadius - imageSize / 2;
-          const y = centerY + Math.sin(angle) * orbitRadius - imageSize / 2;
-
-          // Draw image
-          ctx.drawImage(img, x, y, imageSize, imageSize);
-
-          // Icon center position (same Y as text should align to)
-          const iconCenterY = centerY + Math.sin(angle) * orbitRadius;
-          
-          // Draw text outside the circle (further from center)
-          const textX = centerX + Math.cos(angle) * textRadius;
-          
-          // Apply perpendicular offset for images 1 (top) and 4 (bottom)
-          const perpendicularOffset = 80; // Offset perpendicular to center
-          let textYOffset = 0;
-          if (index === 0) {
-            // Image 1 (top): offset upward (negative Y)
-            textYOffset = -perpendicularOffset;
-          } else if (index === 3) {
-            // Image 4 (bottom): offset downward (positive Y)
-            textYOffset = perpendicularOffset;
-          }
-          
-          ctx.fillStyle = '#ffffff';
-          ctx.font = '14px sans-serif';
-          // Dynamic text alignment: 1&4=center, 2&3=left, 5&6=right
-          if (index === 0 || index === 3) {
-            ctx.textAlign = 'center';
-          } else if (index === 1 || index === 2) {
-            ctx.textAlign = 'left';
-          } else {
-            ctx.textAlign = 'right';
-          }
-          ctx.textBaseline = 'middle';
-          
-          // Draw text in a single line (no line breaks)
-          const text = imageData[index].text;
-          const textY = iconCenterY + textYOffset;
-          
-          // Draw text
-          ctx.fillText(text, textX, textY);
-        });
+        heroImageRef.current = heroImg;
+        imagesRef.current = iconImages;
+        draw();
+      } catch (error) {
+        // Continue even if some images fail to load
+        console.error('Error loading images:', error);
+        draw();
       }
     };
 
-    // Initial draw (black background and orbit)
-    draw();
+    loadAllImages();
 
-    // Load images
-    loadImages();
+    // Handle resize with requestAnimationFrame for performance
+    const handleResize = () => {
+      if (rafIdRef.current !== null) {
+        cancelAnimationFrame(rafIdRef.current);
+      }
+      rafIdRef.current = requestAnimationFrame(draw);
+    };
 
-    // Resize on window resize
-    window.addEventListener('resize', draw);
-    
+    window.addEventListener('resize', handleResize);
+
     return () => {
-      window.removeEventListener('resize', draw);
+      window.removeEventListener('resize', handleResize);
+      if (rafIdRef.current !== null) {
+        cancelAnimationFrame(rafIdRef.current);
+      }
     };
-  }, []);
+  }, [draw]);
 
-  return (
-    <canvas 
-      ref={canvasRef}
-      className="w-full h-screen fixed top-0 left-0 -z-10"
-    />
-  );
+  return <canvas ref={canvasRef} className="w-full h-full relative" />;
 }
