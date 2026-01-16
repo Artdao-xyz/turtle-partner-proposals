@@ -26,13 +26,10 @@ export default function HeroSection() {
         }}
       >
           <div className="h-20 flex justify-between items-center px-10">
-          <AnimatePresence mode="wait">
             {/* Logo - aparece siempre */}
             <motion.div
-              key="logo"
               initial={{ opacity: 0, y: -20 }}
               animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
               transition={{
                 duration: ANIMATION_TIMINGS.unauthenticated.header.duration,
                 delay: isAuthenticated ? 0.6 : ANIMATION_TIMINGS.unauthenticated.header.delay,
@@ -44,10 +41,8 @@ export default function HeroSection() {
 
             {/* Partnership Proposal text - aparece siempre */}
             <motion.div
-              key="partnership-proposal"
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -10 }}
               transition={{
                 duration: ANIMATION_TIMINGS.unauthenticated.header.duration,
                 delay: isAuthenticated ? 0.7 : ANIMATION_TIMINGS.unauthenticated.header.delay,
@@ -58,7 +53,6 @@ export default function HeroSection() {
                 Partnership Proposal
               </div>
             </motion.div>
-          </AnimatePresence>
           </div>
 
           {/* Título - siempre presente, invisible cuando no está autenticado */}

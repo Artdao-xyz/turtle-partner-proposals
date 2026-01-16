@@ -14,6 +14,8 @@ export default function TurtleLogo({ className = '' }: TurtleLogoProps) {
       width={145}
       height={35}
       className={`object-contain ${className}`}
+      loading="eager"
+      priority
     />
   );
 }

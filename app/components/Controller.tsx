@@ -51,7 +51,7 @@ export default function Controller({ selectedMenu = 'Visibility', onMenuChange }
             alt="Controller Logo" 
             width={276}
             height={92}
-            className="h-full w-auto object-contain"
+            className="h-auto w-auto object-contain"
             unoptimized
           />
         </div>
