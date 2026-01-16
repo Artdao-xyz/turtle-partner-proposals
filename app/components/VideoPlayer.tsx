@@ -73,7 +73,7 @@ export default function VideoPlayer({
   }, []);
 
   return (
-    <div ref={containerRef} className={`w-full max-w-6xl rounded-2xl mx-auto px-4 lg:px-0 ${className} shadow-black-turtle`}>
+    <div ref={containerRef} className={`w-full max-w-5xl rounded-2xl mx-auto px-4 lg:px-0 ${className} shadow-black-turtle`}>
       <div className="relative rounded-2xl overflow-hidden outline outline-black-highlight/10 bg-black-highlight/2 p-2 lg:p-3">
         {/* Video Container */}
         <div className="relative w-full aspect-video bg-black rounded-xl">

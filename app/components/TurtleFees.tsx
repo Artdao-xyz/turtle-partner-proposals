@@ -54,7 +54,7 @@ function FeeSection({ title, subtitle, tag, cards, maxCardHeight = 256 }: Sectio
       initial={{ opacity: 0, y: 30 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.6, ease: 'easeOut' }}
-      className="w-full max-w-7xl mx-auto px-4 h-auto lg:h-full flex flex-col"
+      className="w-full max-w-6xl mx-auto px-4 h-auto lg:h-full flex flex-col"
     >
       <div className="text-center mb-8 shrink-0">
         <div className="flex flex-col lg:flex-row items-center justify-center lg:gap-2 mb-2">

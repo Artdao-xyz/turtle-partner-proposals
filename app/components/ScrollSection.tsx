@@ -51,7 +51,7 @@ function ScrollSectionItem({ image, info, opacity, zIndex = 1 }: ScrollSectionIt
       style={{ opacity, zIndex }}
       className="absolute inset-0 w-full h-full flex items-center justify-center pointer-events-none"
     >
-      <div className="w-full h-full max-w-7xl mx-auto px-4">
+      <div className="w-full h-full max-w-6xl mx-auto px-4">
         <div className="flex flex-col justify-end pb-10 lg:grid lg:grid-cols-5 items-center lg:gap-6 h-full">
           {/* Image - First on mobile, Right on desktop */}
           <div className="w-full lg:col-span-3 lg:col-start-3 order-1 lg:order-2 flex items-center justify-center h-full lg:h-[600px]">
@@ -245,7 +245,7 @@ export default function ScrollSection() {
   return (
     <section
       ref={containerRef}
-      className="relative h-[300vh] w-full"
+      className="relative h-[300vh] w-full mt-26"
       style={{ backgroundColor: 'var(--black-turtle)' }}
     >
       {/* Sticky container */}
