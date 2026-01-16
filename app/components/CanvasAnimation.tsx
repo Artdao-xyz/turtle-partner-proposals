@@ -128,8 +128,13 @@ export default function CanvasAnimation() {
   const [grayscale, setGrayscale] = useState(100);
   const glowColorProgressRef = useRef(0);
   const [glowColorProgress, setGlowColorProgress] = useState(0);
-  const scaleFactorRef = useRef(1.12); // Start larger when not authenticated (12% bigger)
-  const [scaleFactor, setScaleFactor] = useState(1.12);
+  // Initialize scale factor based on screen size (mobile vs desktop)
+  const getInitialScaleFactor = () => {
+    if (typeof window === 'undefined') return 1.12;
+    return window.innerWidth < 1024 ? 1.35 : 1.12; // Mobile: 135%, Desktop: 112%
+  };
+  const scaleFactorRef = useRef(getInitialScaleFactor());
+  const [scaleFactor, setScaleFactor] = useState(getInitialScaleFactor());
   const verticalOffsetRef = useRef(-30); // Start higher when not authenticated (negative = up)
   const [verticalOffset, setVerticalOffset] = useState(-30);
   const fadeAnimationRef = useRef<number | null>(null);
@@ -372,9 +377,15 @@ export default function CanvasAnimation() {
       cancelAnimationFrame(fadeAnimationRef.current);
     }
 
+    // Detect if mobile (same breakpoint as canvas: 1024px)
+    const isMobile = typeof window !== 'undefined' && window.innerWidth < 1024;
+
     const targetGrayscale = isAuthenticated ? 0 : 100;
     const targetGlowColorProgress = isAuthenticated ? 1 : 0;
-    const targetScaleFactor = isAuthenticated ? 0.9 : 1.12; // Smaller when authenticated (90%), larger when not (112%)
+    // Different scale factors for mobile vs desktop when not authenticated
+    const targetScaleFactor = isAuthenticated 
+      ? 0.9 
+      : (isMobile ? 1.35 : 1.12); // Mobile: 135% when not authenticated, Desktop: 112%
     const targetVerticalOffset = isAuthenticated ? 20 : -30; // Lower when authenticated (positive = down), higher when not (negative = up)
     const targetTextOpacities = isAuthenticated 
       ? new Array(IMAGE_DATA.length).fill(1)
