@@ -39,13 +39,22 @@ export default function Controller({ selectedMenu = 'Visibility', onMenuChange }
 
   return (
     <div 
-      className="lg:p-2.5 lg:bg-black-turtle lg:rounded-full lg:outline lg:outline-black-highlight/10 flex flex-col lg:flex-row justify-center items-center gap-5 lg:gap-5 lg:shadow"
+      className="lg:p-2.5 lg:bg-black-turtle lg:rounded-full lg:outline lg:outline-black-highlight/10 flex flex-col lg:flex-row justify-center items-center gap-5 lg:gap-5 lg:shadow h-[92px]"
       style={{
         boxShadow: isDesktop ? 'var(--shadow-black-turtle)' : undefined
       }}
     >
         {/* Logo - no background */}
-        <Image src="/media/partner-logo.png" alt="Controller Logo" width={225} height={75} className='object-contain'/>
+        <div className="h-full flex items-center">
+          <Image 
+            src="/media/partner-logo.png" 
+            alt="Controller Logo" 
+            width={276}
+            height={92}
+            className="h-full w-auto object-contain"
+            unoptimized
+          />
+        </div>
         
 
       {/* Menu options with separate background on mobile */}
