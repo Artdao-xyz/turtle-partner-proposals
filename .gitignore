@@ -4,6 +4,7 @@
 /node_modules
 /.pnp
 .pnp.*
+.pnpm-store/
 .yarn/*
 !.yarn/patches
 !.yarn/plugins
@@ -23,6 +24,11 @@
 # misc
 .DS_Store
 *.pem
+*.json
+!package.json
+!package-lock.json
+!tsconfig.json
+!pnpm-lock.yaml
 
 # debug
 npm-debug.log*
@@ -39,3 +45,6 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# plan de accion
+PLAN_ACCION.md

@@ -1,26 +1,44 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --green-turtle: #73f36c;
+  --black-turtle: #141514;
+  --white-turtle: #f9f9f9;
+  --black-highlight: #F9F9F9;
+  --shadow-green-turtle: 0px 0px 4px 0px rgba(115, 243, 108, 1.00);
+  --shadow-black-turtle: 0px 0px 40px 0px rgba(0, 0, 0, 0.50);
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
+  --color-green-turtle: var(--green-turtle);
+  --color-black-turtle: var(--black-turtle);
+  --color-white-turtle: var(--white-turtle);
+  --color-black-highlight: var(--black-highlight);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --radius-5xl: 40px;
+  --shadow-green-turtle: var(--shadow-green-turtle);
+  --shadow-black-turtle: var(--shadow-black-turtle);
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-dm-sans);
+  background-color: var(--black-turtle);
+  scrollbar-gutter: stable;
+  overflow-x: hidden;
+}
+
+canvas {
+  display: block;
+  max-width: 100%;
+}
+
+/* Mejorar renderizado de SVGs */
+img[src$=".svg"],
+svg {
+  image-rendering: auto;
+  shape-rendering: geometricPrecision;
+  text-rendering: geometricPrecision;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
