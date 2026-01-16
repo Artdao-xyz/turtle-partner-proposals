@@ -1,6 +1,7 @@
 'use client';
 
-import { useRef, useEffect, useCallback } from 'react';
+import { useRef, useEffect, useCallback, useState } from 'react';
+import { useAuth } from '../contexts/AuthContext';
 
 // Constants
 const IMAGE_DATA = [
@@ -36,13 +37,20 @@ const loadImage = (src: string): Promise<HTMLImageElement> => {
   });
 };
 
+const FADE_DURATION = 600; // Duration in milliseconds
+
 export default function CanvasAnimation() {
+  const { isAuthenticated } = useAuth();
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const imagesRef = useRef<HTMLImageElement[]>([]);
   const heroImageRef = useRef<HTMLImageElement | null>(null);
   const lastSizeRef = useRef({ width: 0, height: 0 });
   const rafIdRef = useRef<number | null>(null);
+  const textOpacityRef = useRef(0);
+  const [textOpacity, setTextOpacity] = useState(0);
+  const fadeAnimationRef = useRef<number | null>(null);
 
+  // Draw function - always draws everything
   const draw = useCallback(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -55,20 +63,9 @@ export default function CanvasAnimation() {
 
     if (width === 0 || height === 0) return;
 
-    // Skip if size hasn't changed significantly
-    const { width: lastWidth, height: lastHeight } = lastSizeRef.current;
-    if (
-      Math.abs(width - lastWidth) < SIZE_THRESHOLD &&
-      Math.abs(height - lastHeight) < SIZE_THRESHOLD
-    ) {
-      return;
-    }
-
-    lastSizeRef.current = { width, height };
-
     const dpr = window.devicePixelRatio || 1;
 
-    // Set canvas size
+    // Always set canvas size (it's safe to do so)
     canvas.style.width = `${width}px`;
     canvas.style.height = `${height}px`;
     canvas.width = width * dpr;
@@ -150,7 +147,11 @@ export default function CanvasAnimation() {
           ctx.textAlign = 'right';
         }
 
+        // Apply opacity to text based on authentication state
+        ctx.save();
+        ctx.globalAlpha = textOpacityRef.current;
         ctx.fillText(item.text, textX, textY);
+        ctx.restore();
       });
     }
   }, []);
@@ -196,6 +197,52 @@ export default function CanvasAnimation() {
       }
     };
   }, [draw]);
+
+  // Animate text opacity based on authentication state
+  useEffect(() => {
+    // Cancel any ongoing animation
+    if (fadeAnimationRef.current !== null) {
+      cancelAnimationFrame(fadeAnimationRef.current);
+    }
+
+    const targetOpacity = isAuthenticated ? 1 : 0;
+    const startOpacity = textOpacityRef.current;
+    const startTime = performance.now();
+
+    const animate = (currentTime: number) => {
+      const elapsed = currentTime - startTime;
+      const progress = Math.min(elapsed / FADE_DURATION, 1);
+      
+      // Easing function for smooth fade (ease-in-out)
+      const eased = progress < 0.5
+        ? 2 * progress * progress
+        : 1 - Math.pow(-2 * progress + 2, 2) / 2;
+
+      const currentOpacity = startOpacity + (targetOpacity - startOpacity) * eased;
+      textOpacityRef.current = currentOpacity;
+      setTextOpacity(currentOpacity);
+
+      // Redraw canvas with new opacity
+      draw();
+
+      if (progress < 1) {
+        fadeAnimationRef.current = requestAnimationFrame(animate);
+      } else {
+        textOpacityRef.current = targetOpacity;
+        setTextOpacity(targetOpacity);
+        fadeAnimationRef.current = null;
+        draw(); // Final draw to ensure correct opacity
+      }
+    };
+
+    fadeAnimationRef.current = requestAnimationFrame(animate);
+
+    return () => {
+      if (fadeAnimationRef.current !== null) {
+        cancelAnimationFrame(fadeAnimationRef.current);
+      }
+    };
+  }, [isAuthenticated, draw]);
 
   return <canvas ref={canvasRef} className="w-full h-full relative" />;
 }
