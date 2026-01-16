@@ -1,7 +1,7 @@
 'use client';
 
-import { useRef, useState } from 'react';
-import { useScroll, useTransform, motion, useMotionValueEvent } from 'framer-motion';
+import { useRef, useState, useEffect } from 'react';
+import { useScroll, useTransform, motion, useMotionValueEvent, useMotionValue } from 'framer-motion';
 import Image from 'next/image';
 import Controller from './Controller';
 import GreenDot from '../elements/GreenDot';
@@ -46,31 +46,57 @@ interface ScrollSectionItemProps {
 }
 
 function ScrollSectionItem({ image, info, opacity, zIndex = 1 }: ScrollSectionItemProps & { zIndex?: number }) {
+  const [isVisible, setIsVisible] = useState(false);
+  
+  // Listen to opacity changes to enable/disable pointer events
+  useEffect(() => {
+    const unsubscribe = opacity.on('change', (latest: any) => {
+      setIsVisible(latest > 0.5);
+    });
+    
+    // Initial check
+    setIsVisible(opacity.get() > 0.5);
+    
+    return () => unsubscribe();
+  }, [opacity]);
+  
   return (
     <motion.div
       style={{ opacity, zIndex }}
-      className="absolute inset-0 w-full h-full flex items-center justify-center pointer-events-none"
+      className={`absolute inset-0 w-full h-full flex items-center justify-center ${isVisible ? 'pointer-events-auto' : 'pointer-events-none'}`}
     >
-      <div className="w-full h-full max-w-7xl mx-auto px-4">
+      <div className="w-full h-full max-w-6xl mx-auto px-4 pointer-events-none">
         <div className="flex flex-col justify-end pb-10 lg:grid lg:grid-cols-5 items-center lg:gap-6 h-full">
           {/* Image - First on mobile, Right on desktop */}
-          <div className="w-full lg:col-span-3 lg:col-start-3 order-1 lg:order-2 flex items-center justify-center h-full lg:h-[600px]">
+          <div className="w-full lg:col-span-3 lg:col-start-3 order-1 lg:order-2 flex items-center justify-center h-[40vh] lg:h-[600px]">
             <Image
               src={image}
               alt={info.row1.title}
-              width={1200}
-              height={600}
-              className="object-contain rounded-xl w-full h-full"
+              width={800}
+              height={400}
+              className="object-contain rounded-xl w-full h-full max-w-[90vw] lg:max-w-full"
+              sizes="(max-width: 1024px) 90vw, 1200px"
               unoptimized
             />
           </div>
 
           {/* Info - Second on mobile, Left on desktop */}
-          <div className="w-full lg:col-span-2 lg:col-start-1 order-2 lg:order-1 flex flex-row lg:flex-col gap-4 lg:gap-2.5 overflow-x-auto lg:overflow-x-visible">
-            <div className="shrink-0 lg:shrink min-w-[280px] lg:min-w-0">
+          <div 
+            className="w-screen lg:w-full lg:col-span-2 lg:col-start-1 order-2 lg:order-1 flex flex-row lg:flex-col p-4 lg:p-0 gap-4 lg:gap-2.5 overflow-x-scroll lg:overflow-x-visible snap-x snap-mandatory"
+            style={{ 
+              WebkitOverflowScrolling: 'touch',
+              scrollbarWidth: 'none',
+              msOverflowStyle: 'none',
+              touchAction: 'pan-x',
+              pointerEvents: isVisible ? 'auto' : 'none',
+              position: 'relative',
+              zIndex: isVisible ? 1000 : zIndex
+            }}
+          >
+            <div className="shrink-0 lg:shrink min-w-[180px] lg:min-w-0">
               <InfoRow title={info.row1.title} items={info.row1.items} isSecond={false} />
             </div>
-            <div className="shrink-0 lg:shrink min-w-[280px] lg:min-w-0">
+            <div className="shrink-0 lg:shrink min-w-[180px] lg:min-w-0">
               <InfoRow title={info.row2.title} items={info.row2.items} isSecond={true} />
             </div>
           </div>
@@ -245,7 +271,7 @@ export default function ScrollSection() {
   return (
     <section
       ref={containerRef}
-      className="relative h-[300vh] w-full"
+      className="relative h-[300vh] w-full mt-26"
       style={{ backgroundColor: 'var(--black-turtle)' }}
     >
       {/* Sticky container */}

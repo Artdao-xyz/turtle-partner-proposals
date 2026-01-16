@@ -7,88 +7,71 @@ import HeroDescription from './HeroDescription';
 import CircleText from '../elements/CircleText';
 import TurtleLogo from '../elements/TurtleLogo';
 import { useAuth } from '../contexts/AuthContext';
+import CanvasAnimation from './CanvasAnimation';
+import { ANIMATION_TIMINGS, EASING } from '../config/animationTimings';
 
 export default function HeroSection() {
   const { isAuthenticated } = useAuth();
 
-  const sectionClassName = isAuthenticated
-    ? 'relative w-full min-h-screen overflow-hidden flex flex-col justify-between py-10 max-w-7xl mx-auto'
-    : 'relative w-full min-h-screen overflow-hidden max-w-7xl mx-auto';
-
   return (
-    <section className={sectionClassName}>
-      {/* Logo (arriba, pero anima DESPUÉS de la imagen) */}
-      <AnimatePresence mode="wait">
-        {isAuthenticated && (
-          <motion.div
-            key="logo"
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            transition={{
-              duration: 0.6,
-              delay: 0.6,
-              ease: [0.25, 0.1, 0.25, 1],
-            }}
-            className="w-full flex justify-center"
-          >
-            <TurtleLogo />
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      {/* Partnership Proposal text */}
-      <AnimatePresence mode="wait">
-        {isAuthenticated && (
-          <motion.div
-            key="partnership-proposal"
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-            transition={{
-              duration: 0.6,
-              delay: 0.7,
-              ease: [0.25, 0.1, 0.25, 1],
-            }}
-            className="w-full flex justify-center mt-10"
-          >
-            <div className="text-green-turtle text-lg font-normal font-dm-sans leading-5">
-              Partnership Proposal
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      {/* Título con líneas decorativas (arriba, pero anima DESPUÉS de la imagen) */}
-      <AnimatePresence mode="wait">
-        {isAuthenticated && <HeroTitle key="title" isVisible={isAuthenticated} />}
-      </AnimatePresence>
-
-      {/* SVG Circle Text con animación de posición y color (PRIMERO en animar, pero visualmente abajo) */}
-      <motion.div
+    <section className="relative w-full h-dvh lg:h-screen max-h-screen flex flex-col overflow-hidden gap-3 md:gap-0">
+      
+      {/* Top section with Logo, Partnership, and Title - Dynamic height */}
+      <motion.div 
+        className="shrink-0 relative"
         layout
-        initial={false}
-        className={isAuthenticated 
-          ? "relative mx-auto mt-10 w-full" 
-          : "absolute left-1/2 -translate-x-1/2 top-[10%] w-full" 
-        }
         transition={{
-          duration: 0.6,
-          ease: [0.25, 0.1, 0.25, 1],
+          duration: 0.4,
+          ease: EASING,
         }}
       >
-        <CircleText 
-          isActive={isAuthenticated} 
-        />
-      </motion.div>
-      
-      {/* Formulario de autenticación */}
-      <AuthForm isVisible={!isAuthenticated} />
+          <div className="h-20 flex flex-col md:flex-row justify-between items-center px-10">
+            {/* Logo - aparece siempre */}
+            <motion.div
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{
+                duration: ANIMATION_TIMINGS.unauthenticated.header.duration,
+                delay: isAuthenticated ? 0.6 : ANIMATION_TIMINGS.unauthenticated.header.delay,
+                ease: EASING,
+              }}
+            >
+              <TurtleLogo />
+            </motion.div>
 
-      {/* Texto descriptivo */}
-      <AnimatePresence mode="wait">
-        {isAuthenticated && <HeroDescription key="description" isVisible={isAuthenticated} />}
-      </AnimatePresence>
+            {/* Partnership Proposal text - aparece siempre */}
+            <motion.div
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{
+                duration: ANIMATION_TIMINGS.unauthenticated.header.duration,
+                delay: isAuthenticated ? 0.7 : ANIMATION_TIMINGS.unauthenticated.header.delay,
+                ease: EASING,
+              }}
+            >
+              <div className="text-green-turtle text-lg font-normal font-dm-sans whitespace-nowrap">
+                Partnership Proposal
+              </div>
+            </motion.div>
+          </div>
+
+          {/* Título - siempre presente, invisible cuando no está autenticado */}
+          <HeroTitle isVisible={isAuthenticated} />
+      </motion.div>
+
+      {/* Canvas - Dynamic height, grows/shrinks based on available space */}
+      <div className="relative w-full flex-1 min-h-0 overflow-hidden">
+        <CanvasAnimation />
+      </div>
+
+      {/* Bottom section with Text - Natural size, no shrinking */}
+      <div className="shrink-0 flex flex-col justify-center items-center pb-4">
+        {/* Descripción - siempre presente, invisible cuando no está autenticado */}
+        <HeroDescription isVisible={isAuthenticated} />
+      </div>
+
+      {/* Formulario de autenticación */}
+      {!isAuthenticated && <AuthForm isVisible={!isAuthenticated} />}
     </section>
   );
 }

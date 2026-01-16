@@ -2,7 +2,9 @@
 
 import { motion, AnimatePresence } from 'framer-motion';
 import { useState, FormEvent } from 'react';
+import { Eye, EyeOff } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
+import { ANIMATION_TIMINGS, EASING } from '../config/animationTimings';
 
 interface AuthFormProps {
   isVisible: boolean;
@@ -18,6 +20,7 @@ export default function AuthForm({ isVisible }: AuthFormProps) {
   const [password, setPassword] = useState<string>('');
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string>('');
+  const [showPassword, setShowPassword] = useState<boolean>(false);
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -74,8 +77,9 @@ export default function AuthForm({ isVisible }: AuthFormProps) {
           animate={{ opacity: 1, y: 0, scale: 1 }}
           exit={{ opacity: 0, y: 10, scale: 0.98 }}
           transition={{
-            duration: 0.9,
-            ease: [0.25, 0.1, 0.25, 1],
+            duration: ANIMATION_TIMINGS.unauthenticated.authForm.duration,
+            delay: ANIMATION_TIMINGS.unauthenticated.authForm.delay,
+            ease: EASING,
           }}
           className="absolute bottom-8 md:bottom-[10%] left-1/2 -translate-x-1/2 z-10 w-full px-4"
         >
@@ -105,26 +109,41 @@ export default function AuthForm({ isVisible }: AuthFormProps) {
                 aria-label="Email address"
                 aria-invalid={error ? 'true' : 'false'}
                 aria-describedby={error ? 'error-message' : undefined}
-                className="w-full h-11 md:h-12 px-4 md:px-6 bg-black-highlight/2 rounded-full text-white placeholder-white/50 text-xs font-medium focus:outline-none"
+                className="w-full h-11 md:h-12 px-4 md:px-6 bg-black-highlight/2 rounded-full text-white placeholder-white/50 text-base md:text-xs font-medium focus:outline-none"
                 placeholder="Email"
                 disabled={isLoading}
               />
 
-              <input
-                type="password"
-                id="password"
-                name="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-                autoComplete="current-password"
-                aria-label="Password"
-                aria-invalid={error ? 'true' : 'false'}
-                aria-describedby={error ? 'error-message' : undefined}
-                className="w-full h-11 md:h-12 px-4 md:px-6 bg-black-highlight/2 rounded-full text-white placeholder-white/50 text-xs font-medium focus:outline-none"
-                placeholder="Password"
-                disabled={isLoading}
-              />
+              <div className="w-full relative">
+                <input
+                  type={showPassword ? 'text' : 'password'}
+                  id="password"
+                  name="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                  autoComplete="current-password"
+                  aria-label="Password"
+                  aria-invalid={error ? 'true' : 'false'}
+                  aria-describedby={error ? 'error-message' : undefined}
+                  className="w-full h-11 md:h-12 px-4 md:px-6 pr-12 md:pr-12 bg-black-highlight/2 rounded-full text-white placeholder-white/50 text-base md:text-xs font-medium focus:outline-none"
+                  placeholder="Password"
+                  disabled={isLoading}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-4 md:right-6 top-1/2 -translate-y-1/2 text-white/50 hover:text-white transition-colors cursor-pointer"
+                  aria-label={showPassword ? 'Hide password' : 'Show password'}
+                  tabIndex={-1}
+                >
+                  {showPassword ? (
+                    <EyeOff size={20} />
+                  ) : (
+                    <Eye size={20} />
+                  )}
+                </button>
+              </div>
 
               {error && (
                 <div
