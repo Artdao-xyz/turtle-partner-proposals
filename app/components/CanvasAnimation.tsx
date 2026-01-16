@@ -48,6 +48,8 @@ export default function CanvasAnimation() {
   const rafIdRef = useRef<number | null>(null);
   const textOpacityRef = useRef(0);
   const [textOpacity, setTextOpacity] = useState(0);
+  const grayscaleRef = useRef(100);
+  const [grayscale, setGrayscale] = useState(100);
   const fadeAnimationRef = useRef<number | null>(null);
 
   // Draw function - always draws everything
@@ -93,6 +95,10 @@ export default function CanvasAnimation() {
       const heroX = centerX - HERO_SIZE / 2;
       const heroY = centerY - HERO_SIZE / 2;
 
+      ctx.save();
+      // Apply grayscale filter
+      ctx.filter = `grayscale(${grayscaleRef.current}%)`;
+      
       ctx.shadowBlur = GLOW_BLUR;
       ctx.shadowColor = GLOW_COLOR;
       ctx.shadowOffsetX = 0;
@@ -100,8 +106,7 @@ export default function CanvasAnimation() {
 
       ctx.drawImage(heroImg, heroX, heroY, HERO_SIZE, HERO_SIZE);
 
-      ctx.shadowBlur = 0;
-      ctx.shadowColor = 'transparent';
+      ctx.restore();
     }
 
     // Draw icons and text
@@ -117,8 +122,11 @@ export default function CanvasAnimation() {
         const iconX = centerX + Math.cos(angle) * ORBIT_RADIUS - IMAGE_SIZE / 2;
         const iconY = centerY + Math.sin(angle) * ORBIT_RADIUS - IMAGE_SIZE / 2;
 
-        // Draw icon
+        // Draw icon with grayscale filter
+        ctx.save();
+        ctx.filter = `grayscale(${grayscaleRef.current}%)`;
         ctx.drawImage(img, iconX, iconY, IMAGE_SIZE, IMAGE_SIZE);
+        ctx.restore();
 
         // Calculate text position
         const iconCenterY = centerY + Math.sin(angle) * ORBIT_RADIUS;
@@ -198,7 +206,7 @@ export default function CanvasAnimation() {
     };
   }, [draw]);
 
-  // Animate text opacity based on authentication state
+  // Animate text opacity and grayscale based on authentication state
   useEffect(() => {
     // Cancel any ongoing animation
     if (fadeAnimationRef.current !== null) {
@@ -206,7 +214,9 @@ export default function CanvasAnimation() {
     }
 
     const targetOpacity = isAuthenticated ? 1 : 0;
+    const targetGrayscale = isAuthenticated ? 0 : 100;
     const startOpacity = textOpacityRef.current;
+    const startGrayscale = grayscaleRef.current;
     const startTime = performance.now();
 
     const animate = (currentTime: number) => {
@@ -219,19 +229,25 @@ export default function CanvasAnimation() {
         : 1 - Math.pow(-2 * progress + 2, 2) / 2;
 
       const currentOpacity = startOpacity + (targetOpacity - startOpacity) * eased;
+      const currentGrayscale = startGrayscale + (targetGrayscale - startGrayscale) * eased;
+      
       textOpacityRef.current = currentOpacity;
+      grayscaleRef.current = currentGrayscale;
       setTextOpacity(currentOpacity);
+      setGrayscale(currentGrayscale);
 
-      // Redraw canvas with new opacity
+      // Redraw canvas with new values
       draw();
 
       if (progress < 1) {
         fadeAnimationRef.current = requestAnimationFrame(animate);
       } else {
         textOpacityRef.current = targetOpacity;
+        grayscaleRef.current = targetGrayscale;
         setTextOpacity(targetOpacity);
+        setGrayscale(targetGrayscale);
         fadeAnimationRef.current = null;
-        draw(); // Final draw to ensure correct opacity
+        draw(); // Final draw to ensure correct values
       }
     };
 
