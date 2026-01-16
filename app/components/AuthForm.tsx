@@ -107,7 +107,7 @@ export default function AuthForm({ isVisible }: AuthFormProps) {
                 aria-label="Email address"
                 aria-invalid={error ? 'true' : 'false'}
                 aria-describedby={error ? 'error-message' : undefined}
-                className="w-full h-11 md:h-12 px-4 md:px-6 bg-black-highlight/2 rounded-full text-white placeholder-white/50 text-xs font-medium focus:outline-none"
+                className="w-full h-11 md:h-12 px-4 md:px-6 bg-black-highlight/2 rounded-full text-white placeholder-white/50 text-base md:text-xs font-medium focus:outline-none"
                 placeholder="Email"
                 disabled={isLoading}
               />
@@ -123,7 +123,7 @@ export default function AuthForm({ isVisible }: AuthFormProps) {
                 aria-label="Password"
                 aria-invalid={error ? 'true' : 'false'}
                 aria-describedby={error ? 'error-message' : undefined}
-                className="w-full h-11 md:h-12 px-4 md:px-6 bg-black-highlight/2 rounded-full text-white placeholder-white/50 text-xs font-medium focus:outline-none"
+                className="w-full h-11 md:h-12 px-4 md:px-6 bg-black-highlight/2 rounded-full text-white placeholder-white/50 text-base md:text-xs font-medium focus:outline-none"
                 placeholder="Password"
                 disabled={isLoading}
               />

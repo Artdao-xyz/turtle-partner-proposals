@@ -14,7 +14,7 @@ export default function HeroSection() {
   const { isAuthenticated } = useAuth();
 
   return (
-    <section className="relative w-full h-screen max-h-screen flex flex-col overflow-hidden gap-6 md:gap-0">
+    <section className="relative w-full h-dvh lg:h-screen max-h-screen flex flex-col overflow-hidden gap-3 md:gap-0">
       
       {/* Top section with Logo, Partnership, and Title - Dynamic height */}
       <motion.div 
@@ -25,7 +25,7 @@ export default function HeroSection() {
           ease: EASING,
         }}
       >
-          <div className="h-20 flex flex-col md:flex-row justify-between items-center px-10 border-2 border-red-500">
+          <div className="h-20 flex flex-col md:flex-row justify-between items-center px-10">
             {/* Logo - aparece siempre */}
             <motion.div
               initial={{ opacity: 0, y: -20 }}
@@ -49,7 +49,7 @@ export default function HeroSection() {
                 ease: EASING,
               }}
             >
-              <div className="text-green-turtle text-lg font-normal font-dm-sans whitespace-nowrap border-2 border-blue-500">
+              <div className="text-green-turtle text-lg font-normal font-dm-sans whitespace-nowrap">
                 Partnership Proposal
               </div>
             </motion.div>
@@ -60,12 +60,12 @@ export default function HeroSection() {
       </motion.div>
 
       {/* Canvas - Dynamic height, grows/shrinks based on available space */}
-      <div className="relative w-full flex-1 min-h-0 overflow-hidden border-2 border-green-500">
+      <div className="relative w-full flex-1 min-h-0 overflow-hidden">
         <CanvasAnimation />
       </div>
 
       {/* Bottom section with Text - Natural size, no shrinking */}
-      <div className="shrink-0 flex flex-col justify-center items-center pb-4 border-2 border-yellow-500">
+      <div className="shrink-0 flex flex-col justify-center items-center pb-4">
         {/* Descripción - siempre presente, invisible cuando no está autenticado */}
         <HeroDescription isVisible={isAuthenticated} />
       </div>

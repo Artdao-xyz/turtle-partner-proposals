@@ -15,11 +15,21 @@ const IMAGE_DATA = [
 ] as const;
 
 const HERO_IMAGE_PATH = '/media/hero-image/hero-image.png';
-const ORBIT_RADIUS = 175;
-const HERO_SIZE = 200;
-const IMAGE_SIZE = 56;
-const TEXT_OFFSET = 40;
-const PERPENDICULAR_OFFSET = 60;
+
+// Layout constants - Desktop (horizontal)
+const DESKTOP_ORBIT_RADIUS = 175;
+const DESKTOP_HERO_SIZE = 200;
+const DESKTOP_IMAGE_SIZE = 56;
+const DESKTOP_TEXT_OFFSET = 40;
+const DESKTOP_PERPENDICULAR_OFFSET = 60;
+
+// Layout constants - Mobile (vertical)
+const MOBILE_ORBIT_RADIUS = 80;
+const MOBILE_HERO_SIZE = 100;
+const MOBILE_IMAGE_SIZE = 28;
+const MOBILE_TEXT_OFFSET = 20;
+const MOBILE_PERPENDICULAR_OFFSET = 25;
+
 const SIZE_THRESHOLD = 2;
 const ORBIT_STROKE_COLOR = 'rgba(255, 255, 255, 0.3)';
 const GLOW_COLOR = 'rgba(115, 243, 108, 0.75)';
@@ -131,6 +141,16 @@ export default function CanvasAnimation() {
 
     if (width === 0 || height === 0) return;
 
+    // Detect layout: vertical (mobile) if width < 1024px (lg breakpoint), horizontal (desktop) otherwise
+    const isVertical = width < 1024;
+    
+    // Use appropriate sizes based on layout
+    const ORBIT_RADIUS = isVertical ? MOBILE_ORBIT_RADIUS : DESKTOP_ORBIT_RADIUS;
+    const HERO_SIZE = isVertical ? MOBILE_HERO_SIZE : DESKTOP_HERO_SIZE;
+    const IMAGE_SIZE = isVertical ? MOBILE_IMAGE_SIZE : DESKTOP_IMAGE_SIZE;
+    const TEXT_OFFSET = isVertical ? MOBILE_TEXT_OFFSET : DESKTOP_TEXT_OFFSET;
+    const PERPENDICULAR_OFFSET = isVertical ? MOBILE_PERPENDICULAR_OFFSET : DESKTOP_PERPENDICULAR_OFFSET;
+
     // Update devicePixelRatio, clamped to max 2
     const dpr = Math.min(window.devicePixelRatio || 1, 2);
     devicePixelRatioRef.current = dpr;
@@ -236,7 +256,23 @@ export default function CanvasAnimation() {
         // Apply opacity to text based on authentication state and index
         ctx.save();
         ctx.globalAlpha = textOpacityRefs.current[index];
-        ctx.fillText(item.text, textX, textY);
+        
+        // Split long texts (indices 1, 2, 4, 5) into multiple lines
+        const needsLineBreak = index === 1 || index === 2 || index === 4 || index === 5;
+        if (needsLineBreak) {
+          // Split text at spaces and draw on multiple lines
+          const words = item.text.split(' ');
+          const midPoint = Math.ceil(words.length / 2);
+          const line1 = words.slice(0, midPoint).join(' ');
+          const line2 = words.slice(midPoint).join(' ');
+          const lineHeight = 18; // Spacing between lines
+          
+          ctx.fillText(line1, textX, textY - lineHeight / 2);
+          ctx.fillText(line2, textX, textY + lineHeight / 2);
+        } else {
+          ctx.fillText(item.text, textX, textY);
+        }
+        
         ctx.restore();
       });
     }
