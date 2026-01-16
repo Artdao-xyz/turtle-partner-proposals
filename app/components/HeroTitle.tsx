@@ -9,17 +9,14 @@ interface HeroTitleProps {
 }
 
 export default function HeroTitle({ isVisible }: HeroTitleProps) {
-  if (!isVisible) return null;
-
   return (
     <motion.div
-      initial={{ opacity: 0, y: -10 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: -10 }}
+      initial={false}
+      animate={{ opacity: isVisible ? 1 : 0, y: isVisible ? 0 : -10 }}
       layout
       transition={{
-        duration: ANIMATION_TIMINGS.authenticated.title.duration,
-        delay: ANIMATION_TIMINGS.authenticated.title.delay,
+        duration: isVisible ? ANIMATION_TIMINGS.authenticated.title.duration : 0,
+        delay: isVisible ? ANIMATION_TIMINGS.authenticated.title.delay : 0,
         ease: EASING,
         layout: {
           duration: 0.4,
@@ -27,6 +24,7 @@ export default function HeroTitle({ isVisible }: HeroTitleProps) {
         },
       }}
       className="w-full px-4 relative"
+      style={{ visibility: isVisible ? 'visible' : 'hidden' }}
     >
       <div className="relative flex items-center justify-center w-full pt-4">
           <Line /> 

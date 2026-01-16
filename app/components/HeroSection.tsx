@@ -61,10 +61,8 @@ export default function HeroSection() {
           </AnimatePresence>
           </div>
 
-          {/* Título - aparece cuando está autenticado */}
-          <AnimatePresence mode="wait">
-            {isAuthenticated && <HeroTitle key="title" isVisible={isAuthenticated} />}
-          </AnimatePresence>
+          {/* Título - siempre presente, invisible cuando no está autenticado */}
+          <HeroTitle isVisible={isAuthenticated} />
       </motion.div>
 
       {/* Canvas - Dynamic height, grows/shrinks based on available space */}
@@ -74,11 +72,8 @@ export default function HeroSection() {
 
       {/* Bottom section with Text - Natural size, no shrinking */}
       <div className="shrink-0 flex flex-col justify-center items-center pb-4">
-        <AnimatePresence mode="wait">
-          {isAuthenticated && (
-            <HeroDescription key="description" isVisible={isAuthenticated} />
-          )}
-        </AnimatePresence>
+        {/* Descripción - siempre presente, invisible cuando no está autenticado */}
+        <HeroDescription isVisible={isAuthenticated} />
       </div>
 
       {/* Formulario de autenticación */}

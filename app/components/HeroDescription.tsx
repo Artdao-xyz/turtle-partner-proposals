@@ -8,19 +8,17 @@ interface HeroDescriptionProps {
 }
 
 export default function HeroDescription({ isVisible }: HeroDescriptionProps) {
-  if (!isVisible) return null;
-
   return (
     <motion.div
-      initial={{ opacity: 0, y: 10 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: 10 }}
+      initial={false}
+      animate={{ opacity: isVisible ? 1 : 0, y: isVisible ? 0 : 10 }}
       transition={{
-        duration: ANIMATION_TIMINGS.authenticated.heroDescription.duration,
-        delay: ANIMATION_TIMINGS.authenticated.heroDescription.delay,
+        duration: isVisible ? ANIMATION_TIMINGS.authenticated.heroDescription.duration : 0,
+        delay: isVisible ? ANIMATION_TIMINGS.authenticated.heroDescription.delay : 0,
         ease: EASING,
       }}
       className="w-full px-4"
+      style={{ visibility: isVisible ? 'visible' : 'hidden' }}
     >
       <div className="w-full max-w-5xl mx-auto font-dm-sans text-center">
         <span className="lg:text-lg font-normal leading-6" style={{ color: 'var(--white-turtle)' }}>
