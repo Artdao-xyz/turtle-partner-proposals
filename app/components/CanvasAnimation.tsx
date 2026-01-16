@@ -22,6 +22,7 @@ const PERPENDICULAR_OFFSET = 60;
 const SIZE_THRESHOLD = 2;
 const ORBIT_STROKE_COLOR = 'rgba(255, 255, 255, 0.3)';
 const GLOW_COLOR = 'rgba(115, 243, 108, 0.75)';
+const GLOW_COLOR_DISABLED = 'rgba(128, 128, 128, 0.3)'; // Gray glow when not authenticated
 const GLOW_BLUR = 50;
 
 // Helper function to load an image
@@ -50,6 +51,8 @@ export default function CanvasAnimation() {
   const [textOpacity, setTextOpacity] = useState(0);
   const grayscaleRef = useRef(100);
   const [grayscale, setGrayscale] = useState(100);
+  const glowColorProgressRef = useRef(0);
+  const [glowColorProgress, setGlowColorProgress] = useState(0);
   const fadeAnimationRef = useRef<number | null>(null);
 
   // Draw function - always draws everything
@@ -99,8 +102,18 @@ export default function CanvasAnimation() {
       // Apply grayscale filter
       ctx.filter = `grayscale(${grayscaleRef.current}%)`;
       
+      // Interpolate glow color between disabled (gray) and enabled (green) based on authentication
+      const progress = glowColorProgressRef.current;
+      // Interpolate RGB values: gray (128, 128, 128) to green (115, 243, 108)
+      const r = Math.round(128 + (115 - 128) * progress);
+      const g = Math.round(128 + (243 - 128) * progress);
+      const b = Math.round(128 + (108 - 128) * progress);
+      // Interpolate opacity: 0.3 to 0.75
+      const opacity = 0.3 + (0.75 - 0.3) * progress;
+      const glowColor = `rgba(${r}, ${g}, ${b}, ${opacity})`;
+      
       ctx.shadowBlur = GLOW_BLUR;
-      ctx.shadowColor = GLOW_COLOR;
+      ctx.shadowColor = glowColor;
       ctx.shadowOffsetX = 0;
       ctx.shadowOffsetY = 0;
 
@@ -215,8 +228,10 @@ export default function CanvasAnimation() {
 
     const targetOpacity = isAuthenticated ? 1 : 0;
     const targetGrayscale = isAuthenticated ? 0 : 100;
+    const targetGlowColorProgress = isAuthenticated ? 1 : 0;
     const startOpacity = textOpacityRef.current;
     const startGrayscale = grayscaleRef.current;
+    const startGlowColorProgress = glowColorProgressRef.current;
     const startTime = performance.now();
 
     const animate = (currentTime: number) => {
@@ -230,11 +245,14 @@ export default function CanvasAnimation() {
 
       const currentOpacity = startOpacity + (targetOpacity - startOpacity) * eased;
       const currentGrayscale = startGrayscale + (targetGrayscale - startGrayscale) * eased;
+      const currentGlowColorProgress = startGlowColorProgress + (targetGlowColorProgress - startGlowColorProgress) * eased;
       
       textOpacityRef.current = currentOpacity;
       grayscaleRef.current = currentGrayscale;
+      glowColorProgressRef.current = currentGlowColorProgress;
       setTextOpacity(currentOpacity);
       setGrayscale(currentGrayscale);
+      setGlowColorProgress(currentGlowColorProgress);
 
       // Redraw canvas with new values
       draw();
@@ -244,8 +262,10 @@ export default function CanvasAnimation() {
       } else {
         textOpacityRef.current = targetOpacity;
         grayscaleRef.current = targetGrayscale;
+        glowColorProgressRef.current = targetGlowColorProgress;
         setTextOpacity(targetOpacity);
         setGrayscale(targetGrayscale);
+        setGlowColorProgress(targetGlowColorProgress);
         fadeAnimationRef.current = null;
         draw(); // Final draw to ensure correct values
       }
