@@ -6,12 +6,12 @@ import { ANIMATION_TIMINGS, getTextOpacityDelay } from '../config/animationTimin
 
 // Constants
 const IMAGE_DATA = [
-  { path: '/media/hero-image/icons/1_Discovery.svg', text: 'Discovery & Due Diligence' },
-  { path: '/media/hero-image/icons/2_Organisation.svg', text: 'Organisation Onboarding' },
-  { path: '/media/hero-image/icons/3_Incentive.svg', text: 'Incentive Structuring' },
-  { path: '/media/hero-image/icons/4_Launch.svg', text: 'Launch' },
-  { path: '/media/hero-image/icons/5_Additional.svg', text: 'Additional Distribution' },
-  { path: '/media/hero-image/icons/6_PostListing.svg', text: 'Post Listing Management' },
+  { path: '/media/hero-image/icons/1_Discovery.png', text: 'Discovery & Due Diligence' },
+  { path: '/media/hero-image/icons/2_Organisation.png', text: 'Organisation Onboarding' },
+  { path: '/media/hero-image/icons/3_Incentive.png', text: 'Incentive Structuring' },
+  { path: '/media/hero-image/icons/4_Launch.png', text: 'Launch' },
+  { path: '/media/hero-image/icons/5_Additional.png', text: 'Additional Distribution' },
+  { path: '/media/hero-image/icons/6_PostListing.png', text: 'Post Listing Management' },
 ] as const;
 
 const HERO_IMAGE_PATH = '/media/hero-image/hero-image.png';
