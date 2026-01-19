@@ -179,15 +179,16 @@ export default function CanvasAnimation() {
     // Detect layout: vertical (mobile) if width < 1024px (lg breakpoint), horizontal (desktop) otherwise
     const isVertical = width < 1024;
     
-    // Calculate base scale factor based on canvas dimensions to prevent elements from going outside
-    // Use the minimum of width and height ratios, but prioritize height to prevent vertical overflow
-    // Base reference: 1100px width / 550px height for desktop, 350px width / 450px height for mobile
+    // Calculate base scale factor based on canvas dimensions
+    // Mobile: scale relative to width
+    // Desktop: scale relative to height
+    // Base reference: 1100px width / 550px height for desktop, 350px width / 400px height for mobile
     const baseWidth = isVertical ? 350 : 1100;
     const baseHeight = isVertical ? 400 : 550;
     const widthScale = width / baseWidth;
     const heightScale = height / baseHeight;
-    // Use the minimum to ensure everything fits, but height is the primary constraint
-    const baseScaleFactor = Math.max(0.5, Math.min(2, Math.min(widthScale, heightScale))); // Clamp between 0.5x and 2x
+    // Mobile: use width scale, Desktop: use height scale
+    const baseScaleFactor = Math.max(0.5, Math.min(2, isVertical ? widthScale : heightScale)); // Clamp between 0.5x and 2x
     
     // Apply authentication scale factor (larger when not authenticated)
     const authScaleFactor = scaleFactorRef.current;

@@ -14,18 +14,18 @@ export default function HeroSection() {
   const { isAuthenticated } = useAuth();
 
   return (
-    <section className="relative w-full h-dvh lg:h-screen max-h-screen flex flex-col overflow-hidden gap-6 md:gap-0">
+    <section className="relative w-full lg:h-screen lg:max-h-screen flex flex-col overflow-hidden">
       
       {/* Top section with Logo, Partnership, and Title - Dynamic height */}
       <motion.div 
-        className="shrink-0 relative"
+        className="shrink-0 relative space-y-8 lg:space-y-0"
         layout
         transition={{
           duration: 0.4,
           ease: EASING,
         }}
       >
-          <div className="h-20 flex flex-col md:flex-row justify-between items-center px-10 py-4">
+          <div className="h-20 flex flex-col md:flex-row justify-between items-center px-10 py-4 space-y-6 lg:space-y-0">
             {/* Logo - aparece siempre */}
             <motion.div
               initial={{ opacity: 0, y: -20 }}
@@ -60,12 +60,12 @@ export default function HeroSection() {
       </motion.div>
 
       {/* Canvas - Dynamic height, grows/shrinks based on available space */}
-      <div className="relative w-full flex-1 min-h-0 overflow-hidden">
+      <div className="relative w-full flex-1 min-h-[350px] lg:min-h-0 overflow-hidden">
         <CanvasAnimation />
       </div>
 
       {/* Bottom section with Text - Natural size, no shrinking */}
-      <div className="shrink-0 flex flex-col justify-center items-center pb-8">
+      <div className="shrink-0 flex flex-col justify-center items-center lg:pb-8">
         {/* Descripción - siempre presente, invisible cuando no está autenticado */}
         <HeroDescription isVisible={isAuthenticated} />
       </div>
