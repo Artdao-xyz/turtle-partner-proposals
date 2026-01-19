@@ -49,7 +49,7 @@ export default function HeroSection() {
                 ease: EASING,
               }}
             >
-              <div className="text-green-turtle text-lg font-normal font-dm-sans whitespace-nowrap">
+              <div className="text-white-turtle text-lg font-normal font-dm-sans whitespace-nowrap">
                 Partnership Proposal
               </div>
             </motion.div>
