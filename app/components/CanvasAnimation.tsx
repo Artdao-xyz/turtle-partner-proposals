@@ -179,10 +179,15 @@ export default function CanvasAnimation() {
     // Detect layout: vertical (mobile) if width < 1024px (lg breakpoint), horizontal (desktop) otherwise
     const isVertical = width < 1024;
     
-    // Calculate base scale factor based on canvas width
-    // Base reference width: 1200px for desktop, 375px for mobile
-    const baseWidth = isVertical ? 375 : 1200;
-    const baseScaleFactor = Math.max(0.5, Math.min(2, width / baseWidth)); // Clamp between 0.5x and 2x
+    // Calculate base scale factor based on canvas dimensions to prevent elements from going outside
+    // Use the minimum of width and height ratios, but prioritize height to prevent vertical overflow
+    // Base reference: 1100px width / 550px height for desktop, 350px width / 450px height for mobile
+    const baseWidth = isVertical ? 350 : 1100;
+    const baseHeight = isVertical ? 450 : 550;
+    const widthScale = width / baseWidth;
+    const heightScale = height / baseHeight;
+    // Use the minimum to ensure everything fits, but height is the primary constraint
+    const baseScaleFactor = Math.max(0.5, Math.min(2, Math.min(widthScale, heightScale))); // Clamp between 0.5x and 2x
     
     // Apply authentication scale factor (larger when not authenticated)
     const authScaleFactor = scaleFactorRef.current;
@@ -266,7 +271,7 @@ export default function CanvasAnimation() {
         const textY = iconCenterY + textYOffset;
 
         // Set text style (scaled proportionally)
-        ctx.fillStyle = '#ffffff';
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.7)'; // White at 70% opacity
         const fontSize = 14 * finalScaleFactor;
         ctx.font = `${fontSize}px sans-serif`;
         ctx.textBaseline = 'middle';
@@ -284,8 +289,8 @@ export default function CanvasAnimation() {
         ctx.save();
         ctx.globalAlpha = textOpacityRefs.current[index];
         
-        // Split long texts (indices 1, 2, 4, 5) into multiple lines
-        const needsLineBreak = index === 1 || index === 2 || index === 4 || index === 5;
+        // Split long texts (indices 1, 2, 4, 5) into multiple lines - only on mobile
+        const needsLineBreak = isVertical && (index === 1 || index === 2 || index === 4 || index === 5);
         if (needsLineBreak) {
           // Split text at spaces and draw on multiple lines
           const words = item.text.split(' ');
