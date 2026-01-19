@@ -289,8 +289,8 @@ export default function CanvasAnimation() {
         ctx.save();
         ctx.globalAlpha = textOpacityRefs.current[index];
         
-        // Split long texts (indices 1, 2, 4, 5) into multiple lines
-        const needsLineBreak = index === 1 || index === 2 || index === 4 || index === 5;
+        // Split long texts (indices 1, 2, 4, 5) into multiple lines - only on mobile
+        const needsLineBreak = isVertical && (index === 1 || index === 2 || index === 4 || index === 5);
         if (needsLineBreak) {
           // Split text at spaces and draw on multiple lines
           const words = item.text.split(' ');
