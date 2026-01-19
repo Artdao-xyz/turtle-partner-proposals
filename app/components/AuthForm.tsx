@@ -27,102 +27,13 @@ export default function AuthForm({ isVisible }: AuthFormProps) {
   const scrollPositionRef = useRef<number>(0);
   const preventScrollHandlerRef = useRef<((e: Event) => void) | null>(null);
 
-  // Prevent scroll when keyboard appears - only for Safari
-  useEffect(() => {
-    // Only apply on Safari
-    const isSafari = typeof window !== 'undefined' && /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
-    if (!isSafari) return;
-
-    const handleFocus = () => {
-      // Store current scroll position
-      const scrollPosition = window.scrollY || window.pageYOffset;
-      scrollPositionRef.current = scrollPosition;
-      
-      // Prevent scroll by fixing body position
-      document.body.style.position = 'fixed';
-      document.body.style.top = `-${scrollPosition}px`;
-      document.body.style.width = '100%';
-    };
-
-    const handleBlur = () => {
-      // Restore scroll position
-      const scrollY = document.body.style.top;
-      document.body.style.position = '';
-      document.body.style.top = '';
-      document.body.style.width = '';
-      
-      if (scrollY) {
-        requestAnimationFrame(() => {
-          window.scrollTo(0, parseInt(scrollY || '0') * -1);
-        });
-      }
-    };
-
-    const emailInput = emailInputRef.current;
-    const passwordInput = passwordInputRef.current;
-
-    if (emailInput) {
-      emailInput.addEventListener('focus', handleFocus);
-      emailInput.addEventListener('blur', handleBlur);
-    }
-    if (passwordInput) {
-      passwordInput.addEventListener('focus', handleFocus);
-      passwordInput.addEventListener('blur', handleBlur);
-    }
-
-    return () => {
-      if (emailInput) {
-        emailInput.removeEventListener('focus', handleFocus);
-        emailInput.removeEventListener('blur', handleBlur);
-      }
-      if (passwordInput) {
-        passwordInput.removeEventListener('focus', handleFocus);
-        passwordInput.removeEventListener('blur', handleBlur);
-      }
-      // Cleanup styles if component unmounts while input is focused
-      document.body.style.position = '';
-      document.body.style.top = '';
-      document.body.style.width = '';
-    };
-  }, [isVisible]); // Re-run when form visibility changes to ensure refs are available
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setError('');
-
-    // Prevent scroll jump on form submit (Safari only)
-    const scrollPosition = window.scrollY || window.pageYOffset;
-    scrollPositionRef.current = scrollPosition;
-    const isSafari = typeof window !== 'undefined' && /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
-    
-    // Prevent automatic scroll to form/button (Safari specific)
-    const preventScroll = (e: Event) => {
-      if (scrollPreventedRef.current) {
-        e.preventDefault();
-        e.stopPropagation();
-        return false;
-      }
-    };
-    preventScrollHandlerRef.current = preventScroll;
-    
-    if (isSafari) {
-      // Lock scroll position during submit
-      scrollPreventedRef.current = true;
-      window.addEventListener('scroll', preventScroll, { passive: false });
-      window.addEventListener('touchmove', preventScroll, { passive: false });
-      // Force scroll position
-      window.scrollTo(0, scrollPosition);
-    }
 
     // Validación básica del cliente
     if (!email.trim() || !password.trim()) {
       setError('Please fill in all fields');
-      // Restore scroll position (Safari only)
-      if (isSafari) {
-        requestAnimationFrame(() => {
-          window.scrollTo(0, scrollPosition);
-        });
-      }
       return;
     }
 
@@ -130,12 +41,6 @@ export default function AuthForm({ isVisible }: AuthFormProps) {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email.trim())) {
       setError('Please enter a valid email address');
-      // Restore scroll position (Safari only)
-      if (isSafari) {
-        requestAnimationFrame(() => {
-          window.scrollTo(0, scrollPosition);
-        });
-      }
       return;
     }
 
@@ -161,55 +66,14 @@ export default function AuthForm({ isVisible }: AuthFormProps) {
       setEmail('');
       setPassword('');
       
-      // Restore scroll position before authentication state changes (Safari only)
-      if (isSafari) {
-        // Remove scroll prevention
-        scrollPreventedRef.current = false;
-        const handler = preventScrollHandlerRef.current;
-        if (handler) {
-          window.removeEventListener('scroll', handler);
-          window.removeEventListener('touchmove', handler);
-        }
-        // Restore scroll position
-        requestAnimationFrame(() => {
-          window.scrollTo(0, scrollPositionRef.current);
-          // Double check after a brief delay
-          setTimeout(() => {
-            window.scrollTo(0, scrollPositionRef.current);
-          }, 50);
-        });
-      }
       
       setIsAuthenticated(true);
     } catch (err) {
       setError('Network error. Please check your connection and try again.');
       console.error('Auth error:', err);
-      // Restore scroll position on error (Safari only)
-      if (isSafari) {
-        scrollPreventedRef.current = false;
-        const handler = preventScrollHandlerRef.current;
-        if (handler) {
-          window.removeEventListener('scroll', handler);
-          window.removeEventListener('touchmove', handler);
-        }
-        requestAnimationFrame(() => {
-          window.scrollTo(0, scrollPositionRef.current);
-        });
-      }
     } finally {
       setIsLoading(false);
-      // Cleanup scroll prevention if still active (Safari only)
-      if (isSafari && scrollPreventedRef.current) {
-        scrollPreventedRef.current = false;
-        const handler = preventScrollHandlerRef.current;
-        if (handler) {
-          window.removeEventListener('scroll', handler);
-          window.removeEventListener('touchmove', handler);
-        }
-        requestAnimationFrame(() => {
-          window.scrollTo(0, scrollPositionRef.current);
-        });
-      }
+
     }
   };
 
@@ -225,7 +89,7 @@ export default function AuthForm({ isVisible }: AuthFormProps) {
             delay: ANIMATION_TIMINGS.unauthenticated.authForm.delay,
             ease: EASING,
           }}
-          className="absolute bottom-8 md:bottom-[10%] left-1/2 -translate-x-1/2 z-10 w-full px-4"
+          className="fixed bottom-8 md:bottom-[10%] left-1/2 -translate-x-1/2 z-10 w-full px-4"
         >
           <form
             onSubmit={handleSubmit}
