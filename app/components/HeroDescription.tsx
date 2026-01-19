@@ -20,7 +20,7 @@ export default function HeroDescription({ isVisible }: HeroDescriptionProps) {
       className="w-full px-4"
       style={{ visibility: isVisible ? 'visible' : 'hidden' }}
     >
-      <div className="w-full max-w-5xl mx-auto font-dm-sans text-center">
+      <div className="w-full max-w-3xl mx-auto font-dm-sans text-center">
         <span className="lg:text-lg font-normal leading-6" style={{ color: 'var(--white-turtle)' }}>
         We sit in front of an active base of LPs with on-chain, ready-to-deploy capital and provide a suite of tools for partners to run liquidity and incentive programs end to end.<br/><br/>
 
