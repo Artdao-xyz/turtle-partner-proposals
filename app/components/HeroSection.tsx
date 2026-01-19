@@ -66,7 +66,6 @@ export default function HeroSection() {
 
       {/* Bottom section with Text - Natural size, no shrinking */}
       <div className="shrink-0 flex flex-col justify-center items-center lg:pb-8">
-        {/* Descripción - siempre presente, invisible cuando no está autenticado */}
         <HeroDescription isVisible={isAuthenticated} />
       </div>
 

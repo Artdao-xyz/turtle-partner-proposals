@@ -6,7 +6,7 @@ import AuthenticatedContent from './components/AuthenticatedContent';
 
 export default function Home() {
   return (
-    <main className="w-full h-screen">
+    <main className="w-full h-svh lg:h-screen">
       <HeroSection />
       <AuthenticatedContent>
         <ScrollSection />
