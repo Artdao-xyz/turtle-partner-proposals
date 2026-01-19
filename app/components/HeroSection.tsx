@@ -14,7 +14,7 @@ export default function HeroSection() {
   const { isAuthenticated } = useAuth();
 
   return (
-    <section className="relative w-full h-dvh lg:h-screen max-h-screen flex flex-col overflow-hidden gap-3 md:gap-0">
+    <section className="relative w-full h-dvh lg:h-screen max-h-screen flex flex-col overflow-hidden gap-6 md:gap-0">
       
       {/* Top section with Logo, Partnership, and Title - Dynamic height */}
       <motion.div 
@@ -25,7 +25,7 @@ export default function HeroSection() {
           ease: EASING,
         }}
       >
-          <div className="h-20 flex flex-col md:flex-row justify-between items-center px-10">
+          <div className="h-20 flex flex-col md:flex-row justify-between items-center px-10 py-2">
             {/* Logo - aparece siempre */}
             <motion.div
               initial={{ opacity: 0, y: -20 }}

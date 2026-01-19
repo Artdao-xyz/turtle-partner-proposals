@@ -135,7 +135,7 @@ export default function CanvasAnimation() {
   };
   const scaleFactorRef = useRef(getInitialScaleFactor());
   const [scaleFactor, setScaleFactor] = useState(getInitialScaleFactor());
-  const verticalOffsetRef = useRef(-30); // Start higher when not authenticated (negative = up)
+  const verticalOffsetRef = useRef(-20); // Start higher when not authenticated (negative = up)
   const [verticalOffset, setVerticalOffset] = useState(-30);
   const fadeAnimationRef = useRef<number | null>(null);
   const devicePixelRatioRef = useRef<number>(1);
@@ -183,7 +183,7 @@ export default function CanvasAnimation() {
     // Use the minimum of width and height ratios, but prioritize height to prevent vertical overflow
     // Base reference: 1100px width / 550px height for desktop, 350px width / 450px height for mobile
     const baseWidth = isVertical ? 350 : 1100;
-    const baseHeight = isVertical ? 450 : 550;
+    const baseHeight = isVertical ? 400 : 550;
     const widthScale = width / baseWidth;
     const heightScale = height / baseHeight;
     // Use the minimum to ensure everything fits, but height is the primary constraint
