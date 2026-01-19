@@ -12,7 +12,7 @@ export default function Line({ className }: LineProps) {
     <div className={`hidden md:block w-[400px] h-[10px] ${className}`}>
       {/* Línea base gris */}
       <div 
-        className="absolute top-1/2 left-0 w-full h-px] transform -translate-y-1/2"
+        className="absolute top-1/2 left-0 w-full h-px transform -translate-y-1/2"
         style={{
           background: 'linear-gradient(to right, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0.2) 80%, transparent 100%)'
         }}

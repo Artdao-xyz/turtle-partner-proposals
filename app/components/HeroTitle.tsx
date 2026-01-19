@@ -23,10 +23,10 @@ export default function HeroTitle({ isVisible }: HeroTitleProps) {
           ease: EASING,
         },
       }}
-      className="w-full px-4 relative"
+      className="w-full px-4 lg:px-0 relative"
       style={{ visibility: isVisible ? 'visible' : 'hidden' }}
     >
-      <div className="relative flex items-center justify-center w-full pt-4">
+      <div className="relative flex items-center justify-center w-full pt-4 lg:pt-0">
           <Line /> 
         
         {/* Text overlay */}

@@ -391,7 +391,7 @@ export default function CanvasAnimation() {
     const targetScaleFactor = isAuthenticated 
       ? 0.9 
       : (isMobile ? 1.35 : 1.12); // Mobile: 135% when not authenticated, Desktop: 112%
-    const targetVerticalOffset = isAuthenticated ? 20 : -30; // Lower when authenticated (positive = down), higher when not (negative = up)
+    const targetVerticalOffset = isAuthenticated ? 0 : -30; // Centered when authenticated, higher when not (negative = up)
     const targetTextOpacities = isAuthenticated 
       ? new Array(IMAGE_DATA.length).fill(1)
       : new Array(IMAGE_DATA.length).fill(0);
