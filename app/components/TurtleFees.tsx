@@ -9,16 +9,21 @@ interface FeeCardProps {
   description: string;
   price: string | string[];
   optional?: boolean | string;
-  maxHeight?: number;
+  maxHeight?: number | null;
 }
 
-function FeeCard({ title, description, price, optional, maxHeight = 256 }: FeeCardProps) {
+function FeeCard({ title, description, price, optional, maxHeight }: FeeCardProps) {
   const prices = Array.isArray(price) ? price : [price];
+  const resolvedMaxHeight = maxHeight === undefined ? 256 : maxHeight;
   
   return (
     <div 
       className="bg-black-highlight/2 rounded-5xl p-6 outline outline-black-highlight/10 h-full flex flex-col overflow-hidden"
-      style={{ maxHeight: `${maxHeight}px` }}
+      style={
+        typeof resolvedMaxHeight === 'number'
+          ? { maxHeight: `${resolvedMaxHeight}px` }
+          : undefined
+      }
     >
       <div className="mb-2 shrink-0">
         <div className="flex flex-col lg:flex-row lg:items-start gap-2">
@@ -84,7 +89,10 @@ function FeeSection({ title, subtitle, tag, cards, maxCardHeight = 256 }: Sectio
             transition={{ duration: 0.5, delay: idx * 0.1 }}
             className={`h-full w-full ${cards.length === 2 ? '' : 'max-w-[380px]'}`}
           >
-            <FeeCard {...card} maxHeight={maxCardHeight} />
+            <FeeCard
+              {...card}
+              maxHeight={card.maxHeight === undefined ? maxCardHeight : card.maxHeight}
+            />
           </motion.div>
         ))}
       </div>
@@ -137,6 +145,8 @@ export default function TurtleFees() {
       description: 'Baseline fee for turtle liquidity provisioning services',
       price: ['0.30% - 1% / First 30 Days', '0.50% - 1.5% / Annualized Thereafter'],
       optional: 'Variable Rates According to Asset Type',
+      // Let this one grow (mobile was clipping due to maxHeight + overflow-hidden)
+      maxHeight: null,
     },
     {
       title: 'Distribution Emissions Fee',
