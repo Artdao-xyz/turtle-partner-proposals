@@ -271,7 +271,7 @@ export default function CanvasAnimation() {
         const textY = iconCenterY + textYOffset;
 
         // Set text style (scaled proportionally)
-        ctx.fillStyle = '#ffffff';
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.7)'; // White at 70% opacity
         const fontSize = 14 * finalScaleFactor;
         ctx.font = `${fontSize}px sans-serif`;
         ctx.textBaseline = 'middle';
