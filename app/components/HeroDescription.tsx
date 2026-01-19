@@ -17,7 +17,7 @@ export default function HeroDescription({ isVisible }: HeroDescriptionProps) {
         delay: isVisible ? ANIMATION_TIMINGS.authenticated.heroDescription.delay : 0,
         ease: EASING,
       }}
-      className="w-full px-4"
+      className={`w-full px-4 ${isVisible ? 'block' : 'hidden'} lg:block`}
       style={{ visibility: isVisible ? 'visible' : 'hidden' }}
     >
       <div className="w-full max-w-3xl mx-auto font-dm-sans text-center">
