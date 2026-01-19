@@ -25,7 +25,7 @@ export default function HeroSection() {
           ease: EASING,
         }}
       >
-          <div className="h-20 flex flex-col md:flex-row justify-between items-center px-10 py-2">
+          <div className="h-20 flex flex-col md:flex-row justify-between items-center px-10 py-4">
             {/* Logo - aparece siempre */}
             <motion.div
               initial={{ opacity: 0, y: -20 }}
