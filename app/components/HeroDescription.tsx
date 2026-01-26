@@ -21,12 +21,7 @@ export default function HeroDescription({ isVisible }: HeroDescriptionProps) {
     >
       <div className="w-full max-w-3xl mx-auto font-dm-sans text-center">
         <span className="lg:text-lg font-normal leading-6" style={{ color: 'var(--white-turtle)' }}>
-        We sit in front of an active base of LPs with on-chain, ready-to-deploy capital and provide a suite of tools for partners to run liquidity and incentive programs end to end.<br/><br/>
-
-        If you want your program in front of the right participants, launched cleanly, and managed without bespoke builds or operational mess,{' '}
-        <span className="text-lg font-normal leading-6" style={{ color: 'var(--green-turtle)' }}>
-          this is the stack.
-        </span>
+          Turtle runs customizable incentive and liquidity programs end-to-end. Connecting protocols to an active LP network to optimize capital efficiency.
         </span>
       </div>
     </motion.div>
