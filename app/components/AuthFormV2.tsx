@@ -1,12 +1,14 @@
 'use client';
 
-import { useState, FormEvent } from 'react';
-import { motion } from 'framer-motion';
+import { useState, FormEvent, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronRight, ChevronLeft } from 'lucide-react';
 
 interface AuthFormV2Props {
   isVisible?: boolean;
 }
+
+type MessageType = 'success' | 'error' | null;
 
 export default function AuthFormV2({ isVisible = true }: AuthFormV2Props) {
   const [email, setEmail] = useState<string>('');
@@ -15,6 +17,7 @@ export default function AuthFormV2({ isVisible = true }: AuthFormV2Props) {
   const [targetTVL, setTargetTVL] = useState<number>(0);
   const [selectedProducts, setSelectedProducts] = useState<string[]>(['Custom Campaign', 'Targeted Incentives', 'LP Outreach']);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [message, setMessage] = useState<{ type: MessageType; text: string } | null>(null);
 
   const products = [
     'Custom Campaign',
@@ -31,6 +34,16 @@ export default function AuthFormV2({ isVisible = true }: AuthFormV2Props) {
         : [...prev, product]
     );
   };
+
+  // Auto-hide message after 5 seconds
+  useEffect(() => {
+    if (message) {
+      const timer = setTimeout(() => {
+        setMessage(null);
+      }, 5000);
+      return () => clearTimeout(timer);
+    }
+  }, [message]);
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -55,8 +68,11 @@ export default function AuthFormV2({ isVisible = true }: AuthFormV2Props) {
 
       if (!response.ok) {
         console.error('Form submission error:', data.error);
-        // Aquí puedes agregar manejo de errores visual
-        alert(data.error || 'Failed to submit form. Please try again.');
+        setMessage({
+          type: 'error',
+          text: data.error || 'Failed to submit form. Please try again.',
+        });
+        setIsLoading(false);
         return;
       }
 
@@ -67,11 +83,16 @@ export default function AuthFormV2({ isVisible = true }: AuthFormV2Props) {
       setTargetTVL(0);
       setSelectedProducts(['Custom Campaign', 'Targeted Incentives', 'LP Outreach']);
       
-      // Aquí puedes agregar mensaje de éxito visual
-      alert('Form submitted successfully! A member of the Turtle team will be in touch.');
+      setMessage({
+        type: 'success',
+        text: 'Form submitted successfully! A member of the Turtle team will be in touch.',
+      });
     } catch (err) {
       console.error('Network error:', err);
-      alert('Network error. Please check your connection and try again.');
+      setMessage({
+        type: 'error',
+        text: 'Network error. Please check your connection and try again.',
+      });
     } finally {
       setIsLoading(false);
     }
@@ -90,7 +111,7 @@ export default function AuthFormV2({ isVisible = true }: AuthFormV2Props) {
         initial={{ y: 100, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.4, ease: [0.25, 0.1, 0.25, 1] }}
-        className="w-full max-w-5xl pointer-events-auto"
+        className="relative w-full max-w-5xl pointer-events-auto"
       >
         <form
           onSubmit={handleSubmit}
@@ -215,6 +236,27 @@ export default function AuthFormV2({ isVisible = true }: AuthFormV2Props) {
                   );
                 })}
               </div>
+            </div>
+
+            {/* Message Notification - Fixed height container to avoid layout jumps */}
+            <div className="w-fit mx-auto min-h-[48px] flex items-center justify-center">
+              <AnimatePresence>
+                {message && (
+                  <motion.div
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                    transition={{ duration: 0.3 }}
+                    className={`w-full px-4 py-3 rounded-full text-xs font-medium font-dm-sans text-center ${
+                      message.type === 'success'
+                        ? 'bg-green-turtle/5 text-green-turtle'
+                        : 'bg-red-400/10 text-red-400'
+                    }`}
+                  >
+                    {message.text}
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </div>
 
             {/* Submit Button */}
