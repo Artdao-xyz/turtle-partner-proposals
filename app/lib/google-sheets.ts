@@ -1,6 +1,83 @@
 import { google } from 'googleapis';
 
 /**
+ * Guarda los datos del formulario AuthFormV2 en Google Sheets
+ * @param formData - Datos del formulario
+ * @returns Promise<boolean> - true si se guardó exitosamente, false en caso contrario
+ */
+export async function saveFormDataToSheets(formData: {
+  email: string;
+  telegramHandle: string;
+  organisation: string;
+  targetTVL: number;
+  selectedProducts: string[];
+}): Promise<boolean> {
+  try {
+    // Obtener credenciales desde variables de entorno
+    const credentialsJson = process.env.GOOGLE_SERVICE_ACCOUNT_CREDENTIALS;
+    const spreadsheetId = process.env.GOOGLE_SHEET_ID;
+    const sheetName = (process.env.GOOGLE_SHEET_NAME || 'Sheet1').trim();
+
+    if (!credentialsJson || !spreadsheetId) {
+      console.error('Google Sheets credentials not configured');
+      return false;
+    }
+
+    // Parsear las credenciales JSON
+    let credentials;
+    try {
+      const cleanedJson = credentialsJson.trim().replace(/\n\s+/g, ' ').replace(/\s+/g, ' ');
+      credentials = JSON.parse(cleanedJson);
+    } catch (err) {
+      console.error('Invalid GOOGLE_SERVICE_ACCOUNT_CREDENTIALS JSON format:', err);
+      return false;
+    }
+
+    // Autenticar con Service Account
+    const auth = new google.auth.GoogleAuth({
+      credentials,
+      scopes: ['https://www.googleapis.com/auth/spreadsheets'],
+    });
+
+    const sheets = google.sheets({ version: 'v4', auth });
+
+    // Escapar el nombre de la hoja si tiene espacios o caracteres especiales
+    const escapedSheetName = sheetName.includes(' ') || sheetName.includes("'") 
+      ? `'${sheetName.replace(/'/g, "''")}'`
+      : sheetName;
+
+    // Preparar los datos a insertar
+    const dateOnly = new Date().toISOString().split('T')[0]; // Formato: YYYY-MM-DD
+    const productsString = formData.selectedProducts.join(', ');
+    const values = [[
+      formData.email,
+      formData.telegramHandle,
+      formData.organisation,
+      formData.targetTVL.toString(),
+      productsString,
+      dateOnly
+    ]];
+
+    // Append los datos a la hoja
+    // Columnas: A=Email, B=Telegram Handle, C=Organisation, D=Target TVL, E=Selected Products, F=Date
+    await sheets.spreadsheets.values.append({
+      spreadsheetId,
+      range: `${escapedSheetName}!A:F`,
+      valueInputOption: 'USER_ENTERED',
+      insertDataOption: 'INSERT_ROWS',
+      requestBody: {
+        values,
+      },
+    });
+
+    return true;
+  } catch (error) {
+    console.error('Error saving form data to Google Sheets:', error);
+    return false;
+  }
+}
+
+/**
  * Guarda un email en Google Sheets
  * @param email - Email a guardar
  * @returns Promise<boolean> - true si se guardó exitosamente, false en caso contrario

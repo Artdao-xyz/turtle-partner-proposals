@@ -36,21 +36,45 @@ export default function AuthFormV2({ isVisible = true }: AuthFormV2Props) {
     e.preventDefault();
     setIsLoading(true);
 
-    // Aquí puedes agregar la lógica de envío del formulario
-    // Por ejemplo, enviar a una API o Google Sheets
-    console.log({
-      email,
-      telegramHandle,
-      organisation,
-      targetTVL,
-      selectedProducts,
-    });
+    try {
+      const response = await fetch('/api/form', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email: email.trim(),
+          telegramHandle: telegramHandle.trim(),
+          organisation: organisation.trim(),
+          targetTVL,
+          selectedProducts,
+        }),
+      });
 
-    // Simular envío
-    setTimeout(() => {
+      const data = await response.json();
+
+      if (!response.ok) {
+        console.error('Form submission error:', data.error);
+        // Aquí puedes agregar manejo de errores visual
+        alert(data.error || 'Failed to submit form. Please try again.');
+        return;
+      }
+
+      // Éxito - limpiar formulario
+      setEmail('');
+      setTelegramHandle('');
+      setOrganisation('');
+      setTargetTVL(0);
+      setSelectedProducts(['Custom Campaign', 'Targeted Incentives', 'LP Outreach']);
+      
+      // Aquí puedes agregar mensaje de éxito visual
+      alert('Form submitted successfully! A member of the Turtle team will be in touch.');
+    } catch (err) {
+      console.error('Network error:', err);
+      alert('Network error. Please check your connection and try again.');
+    } finally {
       setIsLoading(false);
-      // Aquí puedes agregar lógica de éxito/error
-    }, 1000);
+    }
   };
 
   if (!isVisible) return null;
@@ -136,7 +160,10 @@ export default function AuthFormV2({ isVisible = true }: AuthFormV2Props) {
                         max="100"
                         value={targetTVL}
                         onChange={(e) => setTargetTVL(Number(e.target.value))}
-                        className="w-full h-1 bg-white/5 rounded-full appearance-none cursor-pointer slider"
+                        className="w-full h-1 rounded-full appearance-none cursor-pointer slider"
+                        style={{
+                          background: `linear-gradient(to right, var(--green-turtle) 0%, var(--green-turtle) ${targetTVL}%, rgba(249, 249, 249, 0.2) ${targetTVL}%, rgba(249, 249, 249, 0.2) 100%)`,
+                        }}
                       />
                     </div>
                     <span className="text-xs font-medium font-dm-sans text-white/50 text-center min-w-[41px] shrink-0">
@@ -160,7 +187,7 @@ export default function AuthFormV2({ isVisible = true }: AuthFormV2Props) {
                       key={product}
                       type="button"
                       onClick={() => toggleProduct(product)}
-                      className={`flex items-center gap-1.5 px-2.5 py-2.5 rounded-full transition-colors ${
+                      className={`cursor-pointer flex items-center gap-1.5 px-2.5 py-2.5 rounded-full transition-colors ${
                         isSelected
                           ? 'bg-white/5'
                           : 'bg-transparent hover:bg-white/2'
