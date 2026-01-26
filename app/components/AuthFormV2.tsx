@@ -112,7 +112,7 @@ export default function AuthFormV2({ isVisible = true }: AuthFormV2Props) {
         initial={{ y: 100, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.4, ease: [0.25, 0.1, 0.25, 1] }}
-        className="relative w-full max-w-5xl pointer-events-auto"
+        className="relative w-full max-w-4xl pointer-events-auto"
       >
         <form
           onSubmit={handleSubmit}
@@ -287,7 +287,7 @@ export default function AuthFormV2({ isVisible = true }: AuthFormV2Props) {
         </p>
 
         {/* Turtle Logo */}
-        <div className="mt-4 flex justify-center">
+        <div className="mt-16 flex justify-center">
           <Image
             src="/media/turtle-big.svg"
             alt="Turtle Logo"
