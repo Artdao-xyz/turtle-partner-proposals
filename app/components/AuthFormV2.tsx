@@ -3,6 +3,7 @@
 import { useState, FormEvent, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronRight, ChevronLeft } from 'lucide-react';
+import Image from 'next/image';
 
 interface AuthFormV2Props {
   isVisible?: boolean;
@@ -105,7 +106,7 @@ export default function AuthFormV2({ isVisible = true }: AuthFormV2Props) {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.3 }}
-      className="relative flex items-end justify-center p-4 lg:p-8 pointer-events-none"
+      className="relative flex items-end justify-center pt-4 lg:pt-8 pointer-events-none"
     >
       <motion.div
         initial={{ y: 100, opacity: 0 }}
@@ -279,6 +280,23 @@ export default function AuthFormV2({ isVisible = true }: AuthFormV2Props) {
             </div>
           </div>
         </form>
+
+        {/* Pricing Information */}
+        <p className="mt-4 text-sm font-normal font-dm-sans text-white/50 text-center leading-[1.4] px-8">
+          Baseline access starts from $10,000 per month rebated against TVL fees, with TVL fees starting at 0.3% for the first 30days and a 1.5% streams distribution fee
+        </p>
+
+        {/* Turtle Logo */}
+        <div className="mt-4 flex justify-center">
+          <Image
+            src="/media/turtle-big.svg"
+            alt="Turtle Logo"
+            width={200}
+            height={200}
+            className="w-auto h-auto"
+            unoptimized
+          />
+        </div>
       </motion.div>
     </motion.div>
   );
