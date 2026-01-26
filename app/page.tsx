@@ -2,6 +2,7 @@ import HeroSection from './components/HeroSection';
 import ScrollSection from './components/ScrollSection';
 import TurtleFees from './components/TurtleFees';
 import VideoPlayer from './components/VideoPlayer';
+import AuthFormV2 from './components/AuthFormV2';
 
 export default function Home() {
   return (
@@ -16,6 +17,7 @@ export default function Home() {
           description="CTO Nick Thoma gives a full overview of the turtle product suite and how we are building the future of onchain liquidity provisioning"
         />
       </section>
+      <AuthFormV2 />
     </main>
   );
 }

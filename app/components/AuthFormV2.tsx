@@ -1,0 +1,214 @@
+'use client';
+
+import { useState, FormEvent } from 'react';
+import { motion } from 'framer-motion';
+import { ChevronRight, ChevronLeft } from 'lucide-react';
+
+interface AuthFormV2Props {
+  isVisible?: boolean;
+}
+
+export default function AuthFormV2({ isVisible = true }: AuthFormV2Props) {
+  const [email, setEmail] = useState<string>('');
+  const [telegramHandle, setTelegramHandle] = useState<string>('');
+  const [organisation, setOrganisation] = useState<string>('');
+  const [targetTVL, setTargetTVL] = useState<number>(0);
+  const [selectedProducts, setSelectedProducts] = useState<string[]>(['Custom Campaign', 'Targeted Incentives', 'LP Outreach']);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+
+  const products = [
+    'Custom Campaign',
+    'Targeted Incentives',
+    'LP Outreach',
+    'Leaderboard',
+    'Advisory Support',
+  ];
+
+  const toggleProduct = (product: string) => {
+    setSelectedProducts((prev) =>
+      prev.includes(product)
+        ? prev.filter((p) => p !== product)
+        : [...prev, product]
+    );
+  };
+
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setIsLoading(true);
+
+    // Aquí puedes agregar la lógica de envío del formulario
+    // Por ejemplo, enviar a una API o Google Sheets
+    console.log({
+      email,
+      telegramHandle,
+      organisation,
+      targetTVL,
+      selectedProducts,
+    });
+
+    // Simular envío
+    setTimeout(() => {
+      setIsLoading(false);
+      // Aquí puedes agregar lógica de éxito/error
+    }, 1000);
+  };
+
+  if (!isVisible) return null;
+
+  return (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.3 }}
+      className="relative flex items-end justify-center p-4 lg:p-8 pointer-events-none"
+    >
+      <motion.div
+        initial={{ y: 100, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ duration: 0.4, ease: [0.25, 0.1, 0.25, 1] }}
+        className="w-full max-w-5xl pointer-events-auto"
+      >
+        <form
+          onSubmit={handleSubmit}
+          className="bg-[#141514] border border-white/10 rounded-[30px] shadow-[0px_4px_4px_0px_rgba(0,0,0,0.25)] p-9 flex flex-col gap-6"
+        >
+          {/* Title Section */}
+          <div className="flex flex-col gap-1">
+            <h2 className="text-[30px] font-normal font-dm-sans text-white-turtle leading-[1.2] tracking-[-0.15px]">
+              Launch Your Next Incentive Campaign
+            </h2>
+            <p className="text-lg font-normal font-dm-sans text-white/50 leading-[1.4] tracking-[-0.216px]">
+              Please fill out the information below and a member of the Turtle team will be in touch
+            </p>
+          </div>
+
+          {/* Form Fields */}
+          <div className="flex flex-col gap-5">
+            {/* First Row: Email and Telegram Handle */}
+            <div className="flex gap-2.5">
+              <div className="flex-1">
+                <input
+                  type="email"
+                  id="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="Email"
+                  className="w-full h-[47px] px-6 bg-white/2 rounded-full text-white placeholder-white/50 text-xs font-medium font-dm-sans focus:outline-none focus:ring-2 focus:ring-green-turtle/50"
+                  required
+                />
+              </div>
+              <div className="flex-1">
+                <input
+                  type="text"
+                  id="telegram"
+                  value={telegramHandle}
+                  onChange={(e) => setTelegramHandle(e.target.value)}
+                  placeholder="Telegram Handle"
+                  className="w-full h-[47px] px-6 bg-white/2 rounded-full text-white placeholder-white/50 text-xs font-medium font-dm-sans focus:outline-none focus:ring-2 focus:ring-green-turtle/50"
+                  required
+                />
+              </div>
+            </div>
+
+            {/* Second Row: Organisation and Target TVL */}
+            <div className="flex gap-2.5">
+              <div className="flex-1">
+                <input
+                  type="text"
+                  id="organisation"
+                  value={organisation}
+                  onChange={(e) => setOrganisation(e.target.value)}
+                  placeholder="Organisation"
+                  className="w-full h-[47px] px-6 bg-white/2 rounded-full text-white placeholder-white/50 text-xs font-medium font-dm-sans focus:outline-none focus:ring-2 focus:ring-green-turtle/50"
+                  required
+                />
+              </div>
+              <div className="flex-1">
+                <div className="h-[47px] px-6 bg-white/2 rounded-full flex items-center gap-5">
+                  <span className="text-xs font-medium font-dm-sans text-white/50 shrink-0 whitespace-nowrap">
+                    Target TVL
+                  </span>
+                  <div className="flex-1 flex items-center gap-2">
+                    <div className="flex-1 relative">
+                      <input
+                        type="range"
+                        min="0"
+                        max="100"
+                        value={targetTVL}
+                        onChange={(e) => setTargetTVL(Number(e.target.value))}
+                        className="w-full h-1 bg-white/5 rounded-full appearance-none cursor-pointer slider"
+                      />
+                    </div>
+                    <span className="text-xs font-medium font-dm-sans text-white/50 text-center min-w-[41px] shrink-0">
+                      ${targetTVL}M
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Products Section */}
+            <div className="flex flex-col gap-2.5">
+              <p className="text-base font-normal font-dm-sans text-white/50 leading-[1.2]">
+                What products are you interested in?
+              </p>
+              <div className="flex flex-wrap gap-2.5">
+                {products.map((product) => {
+                  const isSelected = selectedProducts.includes(product);
+                  return (
+                    <button
+                      key={product}
+                      type="button"
+                      onClick={() => toggleProduct(product)}
+                      className={`flex items-center gap-1.5 px-2.5 py-2.5 rounded-full transition-colors ${
+                        isSelected
+                          ? 'bg-white/5'
+                          : 'bg-transparent hover:bg-white/2'
+                      }`}
+                    >
+                      <div
+                        className={`w-2.5 h-2.5 rounded-full border transition-colors flex items-center justify-center ${
+                          isSelected
+                            ? 'border-green-turtle bg-transparent'
+                            : 'border-white/50'
+                        }`}
+                      >
+                        {isSelected && (
+                          <div className="w-1.5 h-1.5 rounded-full bg-green-turtle" />
+                        )}
+                      </div>
+                      <span
+                        className={`text-xs font-medium font-dm-sans leading-[1.2] ${
+                          isSelected ? 'text-[#eff8ed]' : 'text-white/80'
+                        }`}
+                      >
+                        {product}
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Submit Button */}
+            <div className="w-full max-w-md mx-auto">
+              <button
+                type="submit"
+                disabled={isLoading}
+                className="w-full h-[47px] px-6 bg-white/2 border border-white/10 rounded-full flex items-center justify-center gap-5 hover:bg-white/5 transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+              >
+                <span
+                  className="text-xs font-medium font-dm-sans text-green-turtle"
+                  style={{ color: 'var(--green-turtle)' }}
+                >
+                  {isLoading ? 'Submitting...' : 'Submit'}
+                </span>
+                {/* <ChevronRight className="w-3 h-3 text-green-turtle" /> */}
+              </button>
+            </div>
+          </div>
+        </form>
+      </motion.div>
+    </motion.div>
+  );
+}
