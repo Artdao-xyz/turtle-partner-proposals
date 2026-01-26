@@ -124,7 +124,7 @@ const SECTION_DATA: {
         ],
       },
       row2: {
-        title: 'Value add',
+        title: 'Value Add',
         items: [
           'Broader reach',
           'Coordinated launch timing',
