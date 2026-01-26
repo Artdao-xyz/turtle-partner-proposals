@@ -30,8 +30,8 @@ export default function HeroTitle({ isVisible }: HeroTitleProps) {
         
         {/* Text overlay */}
         <h1 className="relative z-10 lg:px-20 font-dm-sans text-center" style={{ backgroundColor: 'var(--black-turtle)' }}>
-          <span className="text-3xl lg:text-5xl font-normal leading-9 lg:leading-[48px] lg:whitespace-nowrap" style={{ color: 'var(--white-turtle)' }}>
-            The Central Coordination Layer for Liquidity
+          <span className="text-3xl lg:text-5xl font-normal leading-9 lg:leading-[48px]" style={{ color: 'var(--white-turtle)' }}>
+            The Coordination Layer for Liquidity Incentives
           </span>
         </h1>
 
