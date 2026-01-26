@@ -1,7 +1,6 @@
 'use client';
 
 import { useRef, useEffect, useCallback, useState } from 'react';
-import { useAuth } from '../contexts/AuthContext';
 import { ANIMATION_TIMINGS, getTextOpacityDelay } from '../config/animationTimings';
 
 // Constants
@@ -116,7 +115,8 @@ const applyGrayscale = (
 };
 
 export default function CanvasAnimation() {
-  const { isAuthenticated } = useAuth();
+  // Always in authenticated state (no grayscale, with glow, etc.) but with on-load animations
+  const isAuthenticated = true;
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const imagesRef = useRef<HTMLImageElement[]>([]);
   const heroImageRef = useRef<HTMLImageElement | null>(null);

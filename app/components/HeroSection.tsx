@@ -1,18 +1,13 @@
 'use client';
 
-import { AnimatePresence, motion } from 'framer-motion';
-import AuthForm from './AuthForm';
+import { motion } from 'framer-motion';
 import HeroTitle from './HeroTitle';
 import HeroDescription from './HeroDescription';
-import CircleText from '../elements/CircleText';
 import TurtleLogo from '../elements/TurtleLogo';
-import { useAuth } from '../contexts/AuthContext';
 import CanvasAnimation from './CanvasAnimation';
 import { ANIMATION_TIMINGS, EASING } from '../config/animationTimings';
 
 export default function HeroSection() {
-  const { isAuthenticated } = useAuth();
-
   return (
     <section className="relative w-full lg:h-screen lg:max-h-screen flex flex-col overflow-hidden">
       
@@ -32,7 +27,7 @@ export default function HeroSection() {
               animate={{ opacity: 1, y: 0 }}
               transition={{
                 duration: ANIMATION_TIMINGS.unauthenticated.header.duration,
-                delay: isAuthenticated ? 0.6 : ANIMATION_TIMINGS.unauthenticated.header.delay,
+                delay: ANIMATION_TIMINGS.unauthenticated.header.delay,
                 ease: EASING,
               }}
             >
@@ -45,7 +40,7 @@ export default function HeroSection() {
               animate={{ opacity: 1, y: 0 }}
               transition={{
                 duration: ANIMATION_TIMINGS.unauthenticated.header.duration,
-                delay: isAuthenticated ? 0.7 : ANIMATION_TIMINGS.unauthenticated.header.delay,
+                delay: ANIMATION_TIMINGS.unauthenticated.header.delay,
                 ease: EASING,
               }}
             >
@@ -55,8 +50,8 @@ export default function HeroSection() {
             </motion.div>
           </div>
 
-          {/* Título - siempre presente, invisible cuando no está autenticado */}
-          <HeroTitle isVisible={isAuthenticated} />
+          {/* Título - siempre visible con animación on load */}
+          <HeroTitle isVisible={true} />
       </motion.div>
 
       {/* Canvas - Dynamic height, grows/shrinks based on available space */}
@@ -66,12 +61,9 @@ export default function HeroSection() {
 
       {/* Bottom section with Text - Natural size, no shrinking */}
       <div className="shrink-0 flex flex-col justify-center items-center lg:pb-8">
-        {/* Descripción - siempre presente, invisible cuando no está autenticado */}
-        <HeroDescription isVisible={isAuthenticated} />
+        {/* Descripción - siempre visible con animación on load */}
+        <HeroDescription isVisible={true} />
       </div>
-
-      {/* Formulario de autenticación */}
-      {!isAuthenticated && <AuthForm isVisible={!isAuthenticated} />}
     </section>
   );
 }
