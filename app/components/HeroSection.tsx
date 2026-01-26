@@ -20,7 +20,7 @@ export default function HeroSection() {
           ease: EASING,
         }}
       >
-          <div className="h-20 flex flex-col md:flex-row justify-between items-center px-10 py-4 space-y-6 lg:space-y-0">
+          <div className="h-20 flex items-center px-10 py-4">
             {/* Logo - aparece siempre */}
             <motion.div
               initial={{ opacity: 0, y: -20 }}
@@ -32,21 +32,6 @@ export default function HeroSection() {
               }}
             >
               <TurtleLogo />
-            </motion.div>
-
-            {/* Partnership Proposal text - aparece siempre */}
-            <motion.div
-              initial={{ opacity: 0, y: -10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{
-                duration: ANIMATION_TIMINGS.unauthenticated.header.duration,
-                delay: ANIMATION_TIMINGS.unauthenticated.header.delay,
-                ease: EASING,
-              }}
-            >
-              <div className="text-white-turtle text-lg font-normal font-dm-sans whitespace-nowrap">
-                Partnership Proposal
-              </div>
             </motion.div>
           </div>
 
