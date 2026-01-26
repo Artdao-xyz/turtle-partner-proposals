@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import Image from 'next/image';
 
 type MenuOption = 'Visibility' | 'Streams' | 'Leaderboard';
 
@@ -39,24 +38,11 @@ export default function Controller({ selectedMenu = 'Visibility', onMenuChange }
 
   return (
     <div 
-      className="lg:p-2.5 lg:bg-black-turtle lg:rounded-full lg:outline lg:outline-black-highlight/10 flex flex-col lg:flex-row justify-center items-center gap-5 lg:gap-5 lg:shadow h-[92px]"
+      className="lg:p-2.5 lg:bg-black-turtle lg:rounded-full lg:outline lg:outline-black-highlight/10 flex flex-col lg:flex-row justify-center items-center gap-5 lg:gap-5 lg:shadow"
       style={{
         boxShadow: isDesktop ? 'var(--shadow-black-turtle)' : undefined
       }}
     >
-        {/* Logo - no background */}
-        <div className="h-[70px] lg:h-full flex items-center">
-          <Image 
-            src="/media/partner-logo.png" 
-            alt="Controller Logo" 
-            width={276}
-            height={92}
-            className="h-full w-auto object-contain"
-            unoptimized
-          />
-        </div>
-        
-
       {/* Menu options with separate background on mobile */}
       <div className="p-2.5 bg-black-turtle rounded-full outline outline-black-highlight/10 shadow lg:p-0 lg:bg-transparent lg:rounded-none lg:outline-none lg:shadow-none flex justify-center items-center gap-10"
       >

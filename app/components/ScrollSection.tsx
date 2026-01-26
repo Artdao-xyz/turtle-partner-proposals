@@ -276,9 +276,16 @@ export default function ScrollSection() {
     >
       {/* Sticky container */}
       <div className="sticky top-0 h-screen w-full max-w-6xl mx-auto overflow-hidden">
-        {/* Controller - positioned absolutely at the top */}
-        <div className="absolute top-8 left-1/2 -translate-x-1/2 z-50">
-          <Controller selectedMenu={activeSection} onMenuChange={scrollToSection} />
+        {/* Controller with text - positioned absolutely at the top */}
+        <div className="absolute top-8 left-0 right-0 px-4 lg:px-8 z-50">
+          <div className="flex flex-col lg:flex-row justify-center lg:justify-between items-center gap-4 lg:gap-0">
+            {/* Text on the left */}
+            <p className="hidden lg:block text-2xl font-normal font-dm-sans text-white-turtle">
+              Everything you need to run a liquidity campaign
+            </p>
+            {/* Controller on the right */}
+            <Controller selectedMenu={activeSection} onMenuChange={scrollToSection} />
+          </div>
         </div>
         {/* Section 1 */}
         <ScrollSectionItem
