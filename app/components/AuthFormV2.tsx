@@ -238,11 +238,12 @@ export default function AuthFormV2({ isVisible = true }: AuthFormV2Props) {
               </div>
             </div>
 
-            {/* Message Notification - Fixed height container to avoid layout jumps */}
-            <div className="w-fit mx-auto min-h-[48px] flex items-center justify-center">
-              <AnimatePresence>
-                {message && (
+            {/* Message Notification or Submit Button - Same space, one or the other */}
+            <div className="w-fit min-w-md mx-auto min-h-[47px] flex items-center justify-center">
+              <AnimatePresence mode="wait">
+                {message ? (
                   <motion.div
+                    key="message"
                     initial={{ opacity: 0, y: -10 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: -10 }}
@@ -255,25 +256,26 @@ export default function AuthFormV2({ isVisible = true }: AuthFormV2Props) {
                   >
                     {message.text}
                   </motion.div>
+                ) : (
+                  <motion.button
+                    key="submit"
+                    type="submit"
+                    disabled={isLoading}
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                    transition={{ duration: 0.3 }}
+                    className="w-full h-[47px] px-6 bg-white/2 border border-white/10 rounded-full flex items-center justify-center gap-5 hover:bg-white/5 transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+                  >
+                    <span
+                      className="text-xs font-medium font-dm-sans text-green-turtle"
+                      style={{ color: 'var(--green-turtle)' }}
+                    >
+                      {isLoading ? 'Submitting...' : 'Submit'}
+                    </span>
+                  </motion.button>
                 )}
               </AnimatePresence>
-            </div>
-
-            {/* Submit Button */}
-            <div className="w-full max-w-md mx-auto">
-              <button
-                type="submit"
-                disabled={isLoading}
-                className="w-full h-[47px] px-6 bg-white/2 border border-white/10 rounded-full flex items-center justify-center gap-5 hover:bg-white/5 transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
-              >
-                <span
-                  className="text-xs font-medium font-dm-sans text-green-turtle"
-                  style={{ color: 'var(--green-turtle)' }}
-                >
-                  {isLoading ? 'Submitting...' : 'Submit'}
-                </span>
-                {/* <ChevronRight className="w-3 h-3 text-green-turtle" /> */}
-              </button>
             </div>
           </div>
         </form>
