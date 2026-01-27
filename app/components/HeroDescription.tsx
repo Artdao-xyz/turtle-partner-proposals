@@ -1,6 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
+import { useState, useEffect } from 'react';
 import { ANIMATION_TIMINGS, EASING } from '../config/animationTimings';
 
 interface HeroDescriptionProps {
@@ -8,12 +9,24 @@ interface HeroDescriptionProps {
 }
 
 export default function HeroDescription({ isVisible }: HeroDescriptionProps) {
+  const [isMobile, setIsMobile] = useState(false);
+  
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 1024);
+    };
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+  
   return (
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: isVisible ? 1 : 0 }}
       transition={{
-        duration: 0.3,
+        duration: 0.6,
+        delay: isMobile && isVisible ? 0.4 : 0,
         ease: EASING,
       }}
       className="w-full px-4 lg:block shrink-0 flex flex-col justify-center items-center lg:mt-20"

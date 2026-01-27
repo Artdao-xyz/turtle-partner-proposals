@@ -1,6 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
+import { useState, useEffect } from 'react';
 import Line from '../elements/Line';
 import { ANIMATION_TIMINGS, EASING } from '../config/animationTimings';
 
@@ -9,13 +10,29 @@ interface HeroTitleProps {
 }
 
 export default function HeroTitle({ isScrolled }: HeroTitleProps) {
+  const [isMobile, setIsMobile] = useState(false);
+  
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 1024);
+    };
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+  
+  // In mobile, always visible and full size, fade in on load
+  const shouldHide = isMobile ? false : isScrolled;
+  const shouldScale = isMobile ? false : isScrolled;
+  
   return (
     <motion.div
       initial={{ opacity: 0, scale: 1 }}
-      animate={{ opacity: isScrolled ? 0 : 1, scale: isScrolled ? 0.7 : 1 }}
+      animate={{ opacity: shouldHide ? 0 : 1, scale: shouldScale ? 0.7 : 1 }}
       layout
       transition={{
-        duration: 0.3,
+        duration: 0.6,
+        delay: isMobile ? 0.2 : 0,
         ease: EASING,
         layout: {
           duration: 0.3,
@@ -42,7 +59,8 @@ export default function HeroTitle({ isScrolled }: HeroTitleProps) {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{
-          duration: 0.3,
+          duration: 0.6,
+          delay: isMobile ? 0.3 : 0,
           ease: EASING,
         }}
         className="w-full max-w-2xl mx-auto mt-4 lg:mt-6"

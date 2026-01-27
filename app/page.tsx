@@ -12,11 +12,13 @@ export default function Home() {
   const isScrolled = useScrollThreshold(5);
 
   return (
-    <main className="w-full h-svh lg:h-screen">
+    <main className="w-full">
       <HeroSection isScrolled={isScrolled} />
 
       {/* Bottom section with Text - Natural size, no shrinking */}
-        <HeroDescription isVisible={isScrolled} />
+      <div className='hidden lg:block'>
+      <HeroDescription isVisible={isScrolled} />
+      </div>
       <ScrollSection />
       <LiquidityPrograms />
       <section className="w-full lg:min-h-screen flex justify-center items-center py-10 lg:py-0" style={{ backgroundColor: 'var(--black-turtle)' }}>
