@@ -21,7 +21,13 @@ export default function LiquidityPrograms() {
         {/* Sections */}
         <div className="flex flex-col gap-6 lg:gap-[40px]">
           {/* Section 1: Design */}
-          <div className="flex flex-col lg:flex-row items-center justify-between gap-6 lg:gap-10">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: '-100px' }}
+            transition={{ duration: 0.6, delay: 0 }}
+            className="flex flex-col lg:flex-row items-center justify-between gap-6 lg:gap-10"
+          >
             {/* Card - Left */}
             <div className="w-full lg:w-[580px] bg-white/2 border border-white/10 rounded-[20px] p-10 flex flex-col gap-5">
               <div className="flex gap-3 items-center">
@@ -50,10 +56,16 @@ export default function LiquidityPrograms() {
                 unoptimized
               />
             </div>
-          </div>
+          </motion.div>
 
           {/* Section 2: Launch and track */}
-          <div className="flex flex-col lg:flex-row items-center justify-between gap-6 lg:gap-10">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: '-100px' }}
+            transition={{ duration: 0.6, delay: 0.2 }}
+            className="flex flex-col lg:flex-row items-center justify-between gap-6 lg:gap-10"
+          >
             {/* Graph - Left (dashboard) */}
             <div 
               className="w-full lg:w-[500px] h-56 lg:h-80 rounded-[20px] relative overflow-hidden order-2 lg:order-1"
@@ -82,10 +94,16 @@ export default function LiquidityPrograms() {
                 Deploy via Turtle infrastructure with real-time visibility on LPs, TVL, and incentives.
               </p>
             </div>
-          </div>
+          </motion.div>
 
           {/* Section 3: Aligned economics */}
-          <div className="flex flex-col lg:flex-row items-center justify-between gap-6 lg:gap-10">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: '-100px' }}
+            transition={{ duration: 0.6, delay: 0.4 }}
+            className="flex flex-col lg:flex-row items-center justify-between gap-6 lg:gap-10"
+          >
             {/* Card - Left */}
             <div className="w-full lg:w-[580px] bg-white/2 border border-white/10 rounded-[20px] p-10 flex flex-col gap-5">
               <div className="flex gap-3 items-center">
@@ -114,7 +132,7 @@ export default function LiquidityPrograms() {
                 unoptimized
               />
             </div>
-          </div>
+          </motion.div>
         </div>
       </div>
     </section>
