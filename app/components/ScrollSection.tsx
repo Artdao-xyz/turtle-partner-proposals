@@ -281,7 +281,7 @@ export default function ScrollSection() {
           className="absolute top-8 left-0 right-0 px-4 lg:px-8 z-50"
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
-          viewport={{ once: true, margin: '-100px' }}
+          viewport={{ once: true, margin: '-150px' }}
           transition={{ duration: 0.8, ease: 'easeOut' }}
         >
           <div className="flex flex-col lg:flex-row justify-center lg:justify-between items-center gap-4 lg:gap-0">
