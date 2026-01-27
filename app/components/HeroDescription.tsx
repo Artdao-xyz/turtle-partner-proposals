@@ -16,7 +16,7 @@ export default function HeroDescription({ isVisible }: HeroDescriptionProps) {
         duration: 0.3,
         ease: EASING,
       }}
-      className="w-full px-4 lg:block"
+      className="w-full px-4 lg:block shrink-0 flex flex-col justify-center items-center lg:mt-20"
     >
       <div className="w-full max-w-3xl mx-auto font-dm-sans text-center">
         <span className="lg:text-lg font-normal leading-6" style={{ color: 'var(--white-turtle)' }}>

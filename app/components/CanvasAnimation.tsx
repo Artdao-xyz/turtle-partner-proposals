@@ -2,6 +2,7 @@
 
 import { useRef, useEffect, useCallback, useState } from 'react';
 import { ANIMATION_TIMINGS, getTextOpacityDelay } from '../config/animationTimings';
+import { useScrollThreshold } from '../hooks/useScrollThreshold';
 
 // Constants
 const IMAGE_DATA = [
@@ -116,9 +117,14 @@ const applyGrayscale = (
 
 export default function CanvasAnimation() {
   // State based on scroll position - starts "unauthenticated" (large, no text)
-  const [isScrolled, setIsScrolled] = useState(false);
+  const isScrolled = useScrollThreshold(5);
   const isScrolledRef = useRef(false);
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  
+  // Update ref when state changes (for draw function access)
+  useEffect(() => {
+    isScrolledRef.current = isScrolled;
+  }, [isScrolled]);
   const imagesRef = useRef<HTMLImageElement[]>([]);
   const heroImageRef = useRef<HTMLImageElement | null>(null);
   const lastSizeRef = useRef({ width: 0, height: 0 });
@@ -132,13 +138,13 @@ export default function CanvasAnimation() {
   // Initialize scale factor based on screen size (mobile vs desktop)
   // Initial state is 30% larger than final state
   const getInitialScaleFactor = () => {
-    if (typeof window === 'undefined') return 1.534; // 1.18 * 1.3
-    return window.innerWidth < 1024 ? 1.82 : 1.534; // Mobile: 182% (1.4 * 1.3), Desktop: 153.4% (1.18 * 1.3)
+    if (typeof window === 'undefined') return 1.43; // 1.1 * 1.3
+    return window.innerWidth < 1024 ? 1.69 : 1.43; // Mobile: 169% (1.3 * 1.3), Desktop: 143% (1.1 * 1.3)
   };
   const scaleFactorRef = useRef(getInitialScaleFactor());
   const [scaleFactor, setScaleFactor] = useState(getInitialScaleFactor());
-  const verticalOffsetRef = useRef(150); // Start offset down
-  const [verticalOffset, setVerticalOffset] = useState(150);
+  const verticalOffsetRef = useRef(120); // Start offset down (reduced from 150)
+  const [verticalOffset, setVerticalOffset] = useState(120);
   const fadeAnimationRef = useRef<number | null>(null);
   const devicePixelRatioRef = useRef<number>(1);
 
@@ -380,20 +386,6 @@ export default function CanvasAnimation() {
     };
   }, [draw]);
 
-  // Scroll listener to trigger animation at ~5% scroll (works both ways)
-  useEffect(() => {
-    const handleScroll = () => {
-      const scrollPercent = (window.scrollY / window.innerHeight) * 100;
-      const scrolled = scrollPercent >= 5;
-      setIsScrolled(scrolled);
-      isScrolledRef.current = scrolled; // Update ref for draw function
-    };
-
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    // Check initial state
-    handleScroll();
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
 
   // Animate text opacity and grayscale based on scroll state
   useEffect(() => {
@@ -409,11 +401,11 @@ export default function CanvasAnimation() {
     const targetGrayscale = 0;
     const targetGlowColorProgress = 1; // Always with glow
     // Scale factor: initial is 30% larger than final
-    // Final state: Mobile 140%, Desktop 118%
-    // Initial state: Mobile 182% (140% * 1.3), Desktop 153.4% (118% * 1.3)
-    const finalScaleFactor = isMobile ? 1.4 : 1.18;
+    // Final state: Mobile 130%, Desktop 110% (reduced)
+    // Initial state: Mobile 169% (130% * 1.3), Desktop 143% (110% * 1.3)
+    const finalScaleFactor = isMobile ? 1.3 : 1.1;
     const targetScaleFactor = isScrolled ? finalScaleFactor : finalScaleFactor * 1.3;
-    const targetVerticalOffset = isScrolled ? 0 : 150; // Offset down when not scrolled, centered when scrolled
+    const targetVerticalOffset = isScrolled ? 0 : 120; // Offset down when not scrolled, centered when scrolled
     const targetTextOpacities = isScrolled 
       ? new Array(IMAGE_DATA.length).fill(1)
       : new Array(IMAGE_DATA.length).fill(0);
