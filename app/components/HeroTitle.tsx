@@ -5,21 +5,20 @@ import Line from '../elements/Line';
 import { ANIMATION_TIMINGS, EASING } from '../config/animationTimings';
 
 interface HeroTitleProps {
-  isVisible: boolean;
+  isScrolled: boolean;
 }
 
-export default function HeroTitle({ isVisible }: HeroTitleProps) {
+export default function HeroTitle({ isScrolled }: HeroTitleProps) {
   return (
     <motion.div
-      initial={{ opacity: 0, y: -10 }}
-      animate={{ opacity: 1, y: 0 }}
+      initial={{ opacity: 0, scale: 1 }}
+      animate={{ opacity: isScrolled ? 0 : 1, scale: isScrolled ? 0.7 : 1 }}
       layout
       transition={{
-        duration: ANIMATION_TIMINGS.authenticated.title.duration,
-        delay: ANIMATION_TIMINGS.authenticated.title.delay,
+        duration: 0.3,
         ease: EASING,
         layout: {
-          duration: 0.4,
+          duration: 0.3,
           ease: EASING,
         },
       }}
@@ -30,7 +29,7 @@ export default function HeroTitle({ isVisible }: HeroTitleProps) {
         
         {/* Text overlay */}
         <h1 className="relative z-10 lg:px-20 font-dm-sans text-center" style={{ backgroundColor: 'var(--black-turtle)' }}>
-          <span className="text-3xl lg:text-5xl font-normal leading-9 lg:leading-[48px]" style={{ color: 'var(--white-turtle)' }}>
+          <span className="text-3xl lg:text-6xl font-normal leading-9 lg:leading-[70px]" style={{ color: 'var(--white-turtle)' }}>
             The Coordination Layer for Liquidity Incentives
           </span>
         </h1>
@@ -40,11 +39,10 @@ export default function HeroTitle({ isVisible }: HeroTitleProps) {
       
       {/* Subtitle */}
       <motion.div
-        initial={{ opacity: 0, y: -10 }}
-        animate={{ opacity: 1, y: 0 }}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
         transition={{
-          duration: ANIMATION_TIMINGS.authenticated.title.duration,
-          delay: ANIMATION_TIMINGS.authenticated.title.delay + 0.2,
+          duration: 0.3,
           ease: EASING,
         }}
         className="w-full max-w-2xl mx-auto mt-4 lg:mt-6"

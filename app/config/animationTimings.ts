@@ -36,9 +36,9 @@ export const ANIMATION_TIMINGS = {
     
     // Text opacity appears in sequence (text 1, then 2, then 3, etc.)
     textOpacity: {
-      baseDelay: 0.6, // Starts after image color/glow begins
-      staggerDelay: 0.15, // Delay between each text item
-      duration: 0.6,
+      baseDelay: 0.1, // Starts quickly after scroll
+      staggerDelay: 0.05, // Faster delay between each text item
+      duration: 0.3,
       totalItems: 6, // Number of text items in the canvas
     },
     

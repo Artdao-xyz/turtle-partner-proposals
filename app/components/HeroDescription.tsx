@@ -10,11 +10,10 @@ interface HeroDescriptionProps {
 export default function HeroDescription({ isVisible }: HeroDescriptionProps) {
   return (
     <motion.div
-      initial={{ opacity: 0, y: 10 }}
-      animate={{ opacity: 1, y: 0 }}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: isVisible ? 1 : 0 }}
       transition={{
-        duration: ANIMATION_TIMINGS.authenticated.heroDescription.duration,
-        delay: ANIMATION_TIMINGS.authenticated.heroDescription.delay,
+        duration: 0.3,
         ease: EASING,
       }}
       className="w-full px-4 lg:block"

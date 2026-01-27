@@ -19,15 +19,15 @@ const HERO_IMAGE_PATH = '/media/hero-image/hero-image.png';
 const DESKTOP_ORBIT_RADIUS = 175;
 const DESKTOP_HERO_SIZE = 200;
 const DESKTOP_IMAGE_SIZE = 56;
-const DESKTOP_TEXT_OFFSET = 40;
-const DESKTOP_PERPENDICULAR_OFFSET = 60;
+const DESKTOP_TEXT_OFFSET = 20; // Reduced from 40
+const DESKTOP_PERPENDICULAR_OFFSET = 50; // Increased from 40
 
 // Layout constants - Mobile (vertical)
 const MOBILE_ORBIT_RADIUS = 80;
 const MOBILE_HERO_SIZE = 100;
 const MOBILE_IMAGE_SIZE = 28;
-const MOBILE_TEXT_OFFSET = 20;
-const MOBILE_PERPENDICULAR_OFFSET = 25;
+const MOBILE_TEXT_OFFSET = 10; // Reduced from 20
+const MOBILE_PERPENDICULAR_OFFSET = 22; // Increased from 18
 
 const SIZE_THRESHOLD = 2;
 const ORBIT_STROKE_COLOR = 'rgba(255, 255, 255, 0.3)';
@@ -115,8 +115,9 @@ const applyGrayscale = (
 };
 
 export default function CanvasAnimation() {
-  // Always in authenticated state (no grayscale, with glow, etc.) but with on-load animations
-  const isAuthenticated = true;
+  // State based on scroll position - starts "unauthenticated" (large, no text)
+  const [isScrolled, setIsScrolled] = useState(false);
+  const isScrolledRef = useRef(false);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const imagesRef = useRef<HTMLImageElement[]>([]);
   const heroImageRef = useRef<HTMLImageElement | null>(null);
@@ -124,19 +125,20 @@ export default function CanvasAnimation() {
   const rafIdRef = useRef<number | null>(null);
   const textOpacityRefs = useRef<number[]>(new Array(IMAGE_DATA.length).fill(0));
   const [textOpacities, setTextOpacities] = useState<number[]>(new Array(IMAGE_DATA.length).fill(0));
-  const grayscaleRef = useRef(100);
-  const [grayscale, setGrayscale] = useState(100);
-  const glowColorProgressRef = useRef(0);
-  const [glowColorProgress, setGlowColorProgress] = useState(0);
+  const grayscaleRef = useRef(0); // Always in color (no grayscale)
+  const [grayscale, setGrayscale] = useState(0);
+  const glowColorProgressRef = useRef(1); // Always with glow
+  const [glowColorProgress, setGlowColorProgress] = useState(1);
   // Initialize scale factor based on screen size (mobile vs desktop)
+  // Initial state is 30% larger than final state
   const getInitialScaleFactor = () => {
-    if (typeof window === 'undefined') return 1.12;
-    return window.innerWidth < 1024 ? 1.35 : 1.12; // Mobile: 135%, Desktop: 112%
+    if (typeof window === 'undefined') return 1.534; // 1.18 * 1.3
+    return window.innerWidth < 1024 ? 1.82 : 1.534; // Mobile: 182% (1.4 * 1.3), Desktop: 153.4% (1.18 * 1.3)
   };
   const scaleFactorRef = useRef(getInitialScaleFactor());
   const [scaleFactor, setScaleFactor] = useState(getInitialScaleFactor());
-  const verticalOffsetRef = useRef(-20); // Start higher when not authenticated (negative = up)
-  const [verticalOffset, setVerticalOffset] = useState(-30);
+  const verticalOffsetRef = useRef(150); // Start offset down
+  const [verticalOffset, setVerticalOffset] = useState(150);
   const fadeAnimationRef = useRef<number | null>(null);
   const devicePixelRatioRef = useRef<number>(1);
 
@@ -272,7 +274,9 @@ export default function CanvasAnimation() {
         const textY = iconCenterY + textYOffset;
 
         // Set text style (scaled proportionally)
-        ctx.fillStyle = 'rgba(255, 255, 255, 0.7)'; // White at 70% opacity
+        // When scrolled, text is at 50% opacity; otherwise at 70%
+        const textOpacity = isScrolledRef.current ? 0.5 : 0.7;
+        ctx.fillStyle = `rgba(255, 255, 255, ${textOpacity})`;
         const fontSize = 14 * finalScaleFactor;
         ctx.font = `${fontSize}px sans-serif`;
         ctx.textBaseline = 'middle';
@@ -376,7 +380,22 @@ export default function CanvasAnimation() {
     };
   }, [draw]);
 
-  // Animate text opacity and grayscale based on authentication state
+  // Scroll listener to trigger animation at ~5% scroll (works both ways)
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrollPercent = (window.scrollY / window.innerHeight) * 100;
+      const scrolled = scrollPercent >= 5;
+      setIsScrolled(scrolled);
+      isScrolledRef.current = scrolled; // Update ref for draw function
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    // Check initial state
+    handleScroll();
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  // Animate text opacity and grayscale based on scroll state
   useEffect(() => {
     // Cancel any ongoing animation
     if (fadeAnimationRef.current !== null) {
@@ -386,14 +405,16 @@ export default function CanvasAnimation() {
     // Detect if mobile (same breakpoint as canvas: 1024px)
     const isMobile = typeof window !== 'undefined' && window.innerWidth < 1024;
 
-    const targetGrayscale = isAuthenticated ? 0 : 100;
-    const targetGlowColorProgress = isAuthenticated ? 1 : 0;
-    // Different scale factors for mobile vs desktop when not authenticated
-    const targetScaleFactor = isAuthenticated 
-      ? 0.9 
-      : (isMobile ? 1.35 : 1.12); // Mobile: 135% when not authenticated, Desktop: 112%
-    const targetVerticalOffset = isAuthenticated ? 0 : -30; // Centered when authenticated, higher when not (negative = up)
-    const targetTextOpacities = isAuthenticated 
+    // Always in color (no grayscale) and always with glow
+    const targetGrayscale = 0;
+    const targetGlowColorProgress = 1; // Always with glow
+    // Scale factor: initial is 30% larger than final
+    // Final state: Mobile 140%, Desktop 118%
+    // Initial state: Mobile 182% (140% * 1.3), Desktop 153.4% (118% * 1.3)
+    const finalScaleFactor = isMobile ? 1.4 : 1.18;
+    const targetScaleFactor = isScrolled ? finalScaleFactor : finalScaleFactor * 1.3;
+    const targetVerticalOffset = isScrolled ? 0 : 150; // Offset down when not scrolled, centered when scrolled
+    const targetTextOpacities = isScrolled 
       ? new Array(IMAGE_DATA.length).fill(1)
       : new Array(IMAGE_DATA.length).fill(0);
     
@@ -404,16 +425,11 @@ export default function CanvasAnimation() {
     const startTextOpacities = [...textOpacityRefs.current];
     const startTime = performance.now();
 
-    // Calculate delays in milliseconds based on authentication state
-    const imageColorDelay = isAuthenticated 
-      ? toMs(ANIMATION_TIMINGS.authenticated.imageColorAndGlow.delay)
-      : toMs(ANIMATION_TIMINGS.unauthenticated.canvas.delay);
-    const imageColorDuration = isAuthenticated
-      ? toMs(ANIMATION_TIMINGS.authenticated.imageColorAndGlow.duration)
-      : toMs(ANIMATION_TIMINGS.unauthenticated.canvas.duration);
-    const textDuration = isAuthenticated
-      ? toMs(ANIMATION_TIMINGS.authenticated.textOpacity.duration)
-      : toMs(ANIMATION_TIMINGS.unauthenticated.canvas.duration);
+    // All animations use the same duration: 300ms (0.3s) - very fast and slick
+    const ANIMATION_DURATION = 300; // milliseconds
+    const imageColorDelay = 0; // No delay, all animations start together
+    const imageColorDuration = ANIMATION_DURATION;
+    const textDuration = ANIMATION_DURATION;
 
     const animate = (currentTime: number) => {
       const elapsed = currentTime - startTime;
@@ -450,12 +466,12 @@ export default function CanvasAnimation() {
       setScaleFactor(currentScaleFactor);
       setVerticalOffset(currentVerticalOffset);
 
-      // Animate each text opacity with its own delay
+      // Animate each text opacity with cascade effect (individual delays)
       const newTextOpacities = textOpacityRefs.current.map((startOpacity, index) => {
-        // When not authenticated, all texts appear at the same time
-        const textDelay = isAuthenticated 
+        // When scrolled, use cascade delays; when not scrolled, no delay (texts hidden)
+        const textDelay = isScrolled 
           ? toMs(getTextOpacityDelay(index))
-          : toMs(ANIMATION_TIMINGS.unauthenticated.canvas.delay);
+          : 0;
         
         if (elapsed < textDelay) {
           return startOpacity;
@@ -483,9 +499,9 @@ export default function CanvasAnimation() {
         grayscaleProgress >= 1 &&
         glowProgress >= 1 &&
         newTextOpacities.every((opacity, index) => {
-          const textDelay = isAuthenticated
+          const textDelay = isScrolled 
             ? toMs(getTextOpacityDelay(index))
-            : toMs(ANIMATION_TIMINGS.unauthenticated.canvas.delay);
+            : 0;
           return elapsed >= textDelay + textDuration;
         });
 
@@ -515,7 +531,7 @@ export default function CanvasAnimation() {
         cancelAnimationFrame(fadeAnimationRef.current);
       }
     };
-  }, [isAuthenticated, draw]);
+  }, [isScrolled, draw]);
 
   return <canvas ref={canvasRef} className="w-full h-full relative" />;
 }
