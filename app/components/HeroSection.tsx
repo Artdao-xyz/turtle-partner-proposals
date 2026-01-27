@@ -15,7 +15,7 @@ interface HeroSectionProps {
 export default function HeroSection({ isScrolled }: HeroSectionProps) {
 
   return (
-    <section className="relative w-full h-svh lg:h-full flex flex-col overflow-hidden">
+    <section className="relative w-full h-svh lg:h-full flex flex-col justify-evenly lg:justify-center overflow-hidden">
       
       {/* Top section with Logo, Partnership, and Title - Dynamic height */}
       <motion.div 
@@ -45,7 +45,7 @@ export default function HeroSection({ isScrolled }: HeroSectionProps) {
       </motion.div>
 
       {/* Canvas - Fixed height at 50vh */}
-      <div className="relative w-full h-[50vh] lg:h-[75vh] overflow-hidden">
+      <div className="relative w-full h-[40vh] lg:h-[75vh] overflow-hidden">
         <CanvasAnimation />
       </div>
 
