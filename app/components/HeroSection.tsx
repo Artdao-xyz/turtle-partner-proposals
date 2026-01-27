@@ -45,7 +45,7 @@ export default function HeroSection({ isScrolled }: HeroSectionProps) {
       </motion.div>
 
       {/* Canvas - Fixed height at 50vh */}
-      <div className="relative w-full h-[75vh] overflow-hidden">
+      <div className="relative w-full h-[50vh] lg:h-[75vh] overflow-hidden">
         <CanvasAnimation />
       </div>
 
