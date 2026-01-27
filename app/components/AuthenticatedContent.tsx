@@ -1,6 +1,5 @@
 'use client';
 
-import { useAuth } from '../contexts/AuthContext';
 import { ReactNode, Fragment } from 'react';
 
 interface AuthenticatedContentProps {
@@ -8,15 +7,9 @@ interface AuthenticatedContentProps {
 }
 
 /**
- * Componente que renderiza su contenido solo si el usuario está autenticado.
- * Retorna null si el usuario no está autenticado.
+ * Componente que renderiza su contenido siempre.
+ * Se mantiene el nombre por compatibilidad pero ya no hay gatekeeping.
  */
 export default function AuthenticatedContent({ children }: AuthenticatedContentProps) {
-  const { isAuthenticated } = useAuth();
-
-  if (!isAuthenticated) {
-    return null;
-  }
-
   return <Fragment>{children}</Fragment>;
 }

@@ -46,3 +46,35 @@ svg {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
+
+/* Slider styles */
+input[type="range"].slider {
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+input[type="range"].slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--green-turtle);
+  cursor: pointer;
+  border: none;
+}
+
+input[type="range"].slider::-moz-range-thumb {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--white-turtle);
+  cursor: pointer;
+  border: none;
+}
+
+/* Liquidity Programs Card Gradient */
+.liquidity-card-gradient {
+  background: #022b02;
+  background: linear-gradient(-30deg, rgba(0, 255, 0, 0.05) 0%,  rgba(0, 0, 0, 0.0) 40%, rgba(0, 0, 0, 0.0) 80%, rgb(255, 255, 255, 0.1) 100%);
+}

@@ -1,8 +1,8 @@
 'use client';
 
 import { useRef, useEffect, useCallback, useState } from 'react';
-import { useAuth } from '../contexts/AuthContext';
 import { ANIMATION_TIMINGS, getTextOpacityDelay } from '../config/animationTimings';
+import { useScrollThreshold } from '../hooks/useScrollThreshold';
 
 // Constants
 const IMAGE_DATA = [
@@ -20,15 +20,15 @@ const HERO_IMAGE_PATH = '/media/hero-image/hero-image.png';
 const DESKTOP_ORBIT_RADIUS = 175;
 const DESKTOP_HERO_SIZE = 200;
 const DESKTOP_IMAGE_SIZE = 56;
-const DESKTOP_TEXT_OFFSET = 40;
-const DESKTOP_PERPENDICULAR_OFFSET = 60;
+const DESKTOP_TEXT_OFFSET = 20; // Reduced from 40
+const DESKTOP_PERPENDICULAR_OFFSET = 50; // Increased from 40
 
 // Layout constants - Mobile (vertical)
 const MOBILE_ORBIT_RADIUS = 80;
 const MOBILE_HERO_SIZE = 100;
 const MOBILE_IMAGE_SIZE = 28;
-const MOBILE_TEXT_OFFSET = 20;
-const MOBILE_PERPENDICULAR_OFFSET = 25;
+const MOBILE_TEXT_OFFSET = 10; // Reduced from 20
+const MOBILE_PERPENDICULAR_OFFSET = 22; // Increased from 18
 
 const SIZE_THRESHOLD = 2;
 const ORBIT_STROKE_COLOR = 'rgba(255, 255, 255, 0.3)';
@@ -116,28 +116,48 @@ const applyGrayscale = (
 };
 
 export default function CanvasAnimation() {
-  const { isAuthenticated } = useAuth();
+  // State based on scroll position - starts "unauthenticated" (large, no text)
+  const isScrolled = useScrollThreshold(5);
+  const isScrolledRef = useRef(false);
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  
+  // Update ref when state changes (for draw function access)
+  useEffect(() => {
+    isScrolledRef.current = isScrolled;
+  }, [isScrolled]);
   const imagesRef = useRef<HTMLImageElement[]>([]);
   const heroImageRef = useRef<HTMLImageElement | null>(null);
   const lastSizeRef = useRef({ width: 0, height: 0 });
   const rafIdRef = useRef<number | null>(null);
-  const textOpacityRefs = useRef<number[]>(new Array(IMAGE_DATA.length).fill(0));
-  const [textOpacities, setTextOpacities] = useState<number[]>(new Array(IMAGE_DATA.length).fill(0));
-  const grayscaleRef = useRef(100);
-  const [grayscale, setGrayscale] = useState(100);
-  const glowColorProgressRef = useRef(0);
-  const [glowColorProgress, setGlowColorProgress] = useState(0);
+  // Mobile: texts start hidden and fade in on load; Desktop: texts start hidden
+  const getInitialTextOpacities = () => {
+    // Always start at 0, will animate in based on mobile/desktop logic
+    return new Array(IMAGE_DATA.length).fill(0);
+  };
+  const textOpacityRefs = useRef<number[]>(getInitialTextOpacities());
+  const [textOpacities, setTextOpacities] = useState<number[]>(getInitialTextOpacities());
+  const [hasAnimatedIn, setHasAnimatedIn] = useState(false);
+  const grayscaleRef = useRef(0); // Always in color (no grayscale)
+  const [grayscale, setGrayscale] = useState(0);
+  const glowColorProgressRef = useRef(1); // Always with glow
+  const [glowColorProgress, setGlowColorProgress] = useState(1);
   // Initialize scale factor based on screen size (mobile vs desktop)
+  // Mobile: always at final size (0.91), Desktop: initial is 10% larger than before
   const getInitialScaleFactor = () => {
-    if (typeof window === 'undefined') return 1.12;
-    return window.innerWidth < 1024 ? 1.35 : 1.12; // Mobile: 135%, Desktop: 112%
+    if (typeof window === 'undefined') return 1.16; // 10% larger than 1.05 (1.05 * 1.1)
+    return window.innerWidth < 1024 ? 0.91 : 1.16; // Mobile: always 91%, Desktop: 116% (10% larger)
   };
   const scaleFactorRef = useRef(getInitialScaleFactor());
   const [scaleFactor, setScaleFactor] = useState(getInitialScaleFactor());
-  const verticalOffsetRef = useRef(-20); // Start higher when not authenticated (negative = up)
-  const [verticalOffset, setVerticalOffset] = useState(-30);
+  // Mobile: always centered (0), Desktop: starts offset down (30, moved up more)
+  const getInitialVerticalOffset = () => {
+    if (typeof window === 'undefined') return 30;
+    return window.innerWidth < 1024 ? 0 : 30;
+  };
+  const verticalOffsetRef = useRef(getInitialVerticalOffset());
+  const [verticalOffset, setVerticalOffset] = useState(getInitialVerticalOffset());
   const fadeAnimationRef = useRef<number | null>(null);
+  const mobileFadeInRef = useRef<number | null>(null); // Separate ref for mobile initial fade in
   const devicePixelRatioRef = useRef<number>(1);
 
   // Draw function - always draws everything
@@ -192,7 +212,8 @@ export default function CanvasAnimation() {
     
     // Apply authentication scale factor (larger when not authenticated)
     const authScaleFactor = scaleFactorRef.current;
-    const finalScaleFactor = baseScaleFactor * authScaleFactor;
+    // Size is 20% larger than base (0.80 * 1.2 = 0.96)
+    const finalScaleFactor = baseScaleFactor * authScaleFactor * 0.94;
     
     // Use appropriate sizes based on layout and scale proportionally
     const ORBIT_RADIUS = (isVertical ? MOBILE_ORBIT_RADIUS : DESKTOP_ORBIT_RADIUS) * finalScaleFactor;
@@ -272,7 +293,9 @@ export default function CanvasAnimation() {
         const textY = iconCenterY + textYOffset;
 
         // Set text style (scaled proportionally)
-        ctx.fillStyle = 'rgba(255, 255, 255, 0.7)'; // White at 70% opacity
+        // When scrolled, text is at 50% opacity; otherwise at 70%
+        const textOpacity = isScrolledRef.current ? 0.5 : 0.7;
+        ctx.fillStyle = `rgba(255, 255, 255, ${textOpacity})`;
         const fontSize = 14 * finalScaleFactor;
         ctx.font = `${fontSize}px sans-serif`;
         ctx.textBaseline = 'middle';
@@ -376,26 +399,87 @@ export default function CanvasAnimation() {
     };
   }, [draw]);
 
-  // Animate text opacity and grayscale based on authentication state
+  // Initial fade in animation for mobile texts on load
   useEffect(() => {
+    const isMobile = typeof window !== 'undefined' && window.innerWidth < 1024;
+    if (!isMobile) return;
+
+    // Start fade in animation after a short delay
+    const startTime = performance.now();
+    const ANIMATION_DURATION = 600; // 0.6s
+    const DELAY = 500; // 0.5s delay for texts
+
+    const animate = (currentTime: number) => {
+      const elapsed = currentTime - startTime;
+      
+      if (elapsed < DELAY) {
+        mobileFadeInRef.current = requestAnimationFrame(animate);
+        return;
+      }
+
+      const textElapsed = elapsed - DELAY;
+      const progress = Math.min(textElapsed / ANIMATION_DURATION, 1);
+      
+      // Easing function (ease-in-out)
+      const eased = progress < 0.5
+        ? 2 * progress * progress
+        : 1 - Math.pow(-2 * progress + 2, 2) / 2;
+
+      // Set all texts to fade in
+      const newTextOpacities = new Array(IMAGE_DATA.length).fill(eased);
+      textOpacityRefs.current = newTextOpacities;
+      setTextOpacities([...newTextOpacities]);
+      draw();
+
+      if (progress < 1) {
+        mobileFadeInRef.current = requestAnimationFrame(animate);
+      } else {
+        // Ensure final values
+        textOpacityRefs.current = new Array(IMAGE_DATA.length).fill(1);
+        setTextOpacities([...new Array(IMAGE_DATA.length).fill(1)]);
+        setHasAnimatedIn(true);
+        mobileFadeInRef.current = null;
+        draw();
+      }
+    };
+
+    mobileFadeInRef.current = requestAnimationFrame(animate);
+
+    return () => {
+      if (mobileFadeInRef.current !== null) {
+        cancelAnimationFrame(mobileFadeInRef.current);
+      }
+    };
+  }, [draw]);
+
+  // Animate text opacity and grayscale based on scroll state (desktop only)
+  useEffect(() => {
+    const isMobile = typeof window !== 'undefined' && window.innerWidth < 1024;
+    // Skip scroll-based animation in mobile (texts are always visible after initial fade in)
+    if (isMobile) return;
     // Cancel any ongoing animation
     if (fadeAnimationRef.current !== null) {
       cancelAnimationFrame(fadeAnimationRef.current);
     }
 
-    // Detect if mobile (same breakpoint as canvas: 1024px)
-    const isMobile = typeof window !== 'undefined' && window.innerWidth < 1024;
-
-    const targetGrayscale = isAuthenticated ? 0 : 100;
-    const targetGlowColorProgress = isAuthenticated ? 1 : 0;
-    // Different scale factors for mobile vs desktop when not authenticated
-    const targetScaleFactor = isAuthenticated 
-      ? 0.9 
-      : (isMobile ? 1.35 : 1.12); // Mobile: 135% when not authenticated, Desktop: 112%
-    const targetVerticalOffset = isAuthenticated ? 0 : -30; // Centered when authenticated, higher when not (negative = up)
-    const targetTextOpacities = isAuthenticated 
-      ? new Array(IMAGE_DATA.length).fill(1)
-      : new Array(IMAGE_DATA.length).fill(0);
+    // Always in color (no grayscale) and always with glow
+    const targetGrayscale = 0;
+    const targetGlowColorProgress = 1; // Always with glow
+    // Scale factor: Mobile always at final size (0.91), Desktop initial is 10% larger
+    // Final state: Mobile 91% (always), Desktop 110%
+    // Initial state: Mobile 91% (always), Desktop 116% (10% larger than 105%)
+    const finalScaleFactor = isMobile ? 0.91 : 1.1;
+    const targetScaleFactor = isMobile 
+      ? 0.91 // Mobile: always at final size
+      : (isScrolled ? 1.1 : 1.16); // Desktop: 110% when scrolled, 116% when not (10% larger)
+    const targetVerticalOffset = isMobile 
+      ? 0 // Mobile: always centered
+      : (isScrolled ? 0 : 30); // Desktop: centered when scrolled, offset down when not (moved up more)
+    const targetTextOpacities = isMobile
+      ? new Array(IMAGE_DATA.length).fill(1) // Mobile: always visible
+      : (isScrolled 
+        ? new Array(IMAGE_DATA.length).fill(1)
+        : new Array(IMAGE_DATA.length).fill(0));
     
     const startGrayscale = grayscaleRef.current;
     const startGlowColorProgress = glowColorProgressRef.current;
@@ -404,16 +488,11 @@ export default function CanvasAnimation() {
     const startTextOpacities = [...textOpacityRefs.current];
     const startTime = performance.now();
 
-    // Calculate delays in milliseconds based on authentication state
-    const imageColorDelay = isAuthenticated 
-      ? toMs(ANIMATION_TIMINGS.authenticated.imageColorAndGlow.delay)
-      : toMs(ANIMATION_TIMINGS.unauthenticated.canvas.delay);
-    const imageColorDuration = isAuthenticated
-      ? toMs(ANIMATION_TIMINGS.authenticated.imageColorAndGlow.duration)
-      : toMs(ANIMATION_TIMINGS.unauthenticated.canvas.duration);
-    const textDuration = isAuthenticated
-      ? toMs(ANIMATION_TIMINGS.authenticated.textOpacity.duration)
-      : toMs(ANIMATION_TIMINGS.unauthenticated.canvas.duration);
+    // All animations use the same duration: 300ms (0.3s) - very fast and slick
+    const ANIMATION_DURATION = 300; // milliseconds
+    const imageColorDelay = 0; // No delay, all animations start together
+    const imageColorDuration = ANIMATION_DURATION;
+    const textDuration = ANIMATION_DURATION;
 
     const animate = (currentTime: number) => {
       const elapsed = currentTime - startTime;
@@ -450,12 +529,14 @@ export default function CanvasAnimation() {
       setScaleFactor(currentScaleFactor);
       setVerticalOffset(currentVerticalOffset);
 
-      // Animate each text opacity with its own delay
+      // Animate each text opacity with cascade effect (individual delays)
       const newTextOpacities = textOpacityRefs.current.map((startOpacity, index) => {
-        // When not authenticated, all texts appear at the same time
-        const textDelay = isAuthenticated 
-          ? toMs(getTextOpacityDelay(index))
-          : toMs(ANIMATION_TIMINGS.unauthenticated.canvas.delay);
+        // Mobile: always visible immediately; Desktop: cascade delays when scrolled
+        const textDelay = isMobile
+          ? 0 // Mobile: no delay, always visible
+          : (isScrolled 
+            ? toMs(getTextOpacityDelay(index))
+            : 0);
         
         if (elapsed < textDelay) {
           return startOpacity;
@@ -483,9 +564,11 @@ export default function CanvasAnimation() {
         grayscaleProgress >= 1 &&
         glowProgress >= 1 &&
         newTextOpacities.every((opacity, index) => {
-          const textDelay = isAuthenticated
-            ? toMs(getTextOpacityDelay(index))
-            : toMs(ANIMATION_TIMINGS.unauthenticated.canvas.delay);
+          const textDelay = isMobile
+            ? 0 // Mobile: no delay
+            : (isScrolled 
+              ? toMs(getTextOpacityDelay(index))
+              : 0);
           return elapsed >= textDelay + textDuration;
         });
 
@@ -515,7 +598,7 @@ export default function CanvasAnimation() {
         cancelAnimationFrame(fadeAnimationRef.current);
       }
     };
-  }, [isAuthenticated, draw]);
+  }, [isScrolled, draw]);
 
   return <canvas ref={canvasRef} className="w-full h-full relative" />;
 }
