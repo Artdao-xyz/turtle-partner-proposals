@@ -49,7 +49,7 @@ export default function HeroTitle({ isVisible }: HeroTitleProps) {
         }}
         className="w-full max-w-2xl mx-auto mt-4 lg:mt-6"
       >
-        <div className="text-center text-white/50 text-2xl font-normal font-dm-sans leading-7">
+        <div className="text-center text-white/50 lg:text-2xl font-normal font-dm-sans lg:leading-7">
           Design, launch, and distribute incentives <br/>to the right LPs, at scale.
         </div>
       </motion.div>

@@ -10,7 +10,7 @@ export default function Home() {
       <HeroSection />
       <ScrollSection />
       <LiquidityPrograms />
-      <section className="w-full lg:min-h-screen flex justify-center items-center py-10 lg:py-0 lg:mt-26" style={{ backgroundColor: 'var(--black-turtle)' }}>
+      <section className="w-full lg:min-h-screen flex justify-center items-center py-10 lg:py-0" style={{ backgroundColor: 'var(--black-turtle)' }}>
         <VideoPlayer
           loomId="https://www.loom.com/share/3a48bed3d1db4b888eaec015625d9f5e"
           title="Turtle Product Suite Overview"

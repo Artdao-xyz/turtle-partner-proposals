@@ -106,7 +106,7 @@ export default function AuthFormV2({ isVisible = true }: AuthFormV2Props) {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.3 }}
-      className="relative flex items-end justify-center pt-4 lg:pt-8 pointer-events-none"
+      className="relative flex items-end justify-center pt-4 lg:pt-8 pointer-events-none px-4 lg:px-0"
     >
       <motion.div
         initial={{ y: 100, opacity: 0 }}
@@ -116,22 +116,22 @@ export default function AuthFormV2({ isVisible = true }: AuthFormV2Props) {
       >
         <form
           onSubmit={handleSubmit}
-          className="bg-[#141514] border border-white/10 rounded-[30px] shadow-[0px_4px_4px_0px_rgba(0,0,0,0.25)] p-9 flex flex-col gap-6"
+          className="bg-[#141514] border border-white/10 rounded-[30px] shadow-[0px_4px_4px_0px_rgba(0,0,0,0.25)] p-6 lg:p-9 flex flex-col gap-3 lg:gap-6"
         >
           {/* Title Section */}
           <div className="flex flex-col gap-1">
-            <h2 className="text-[30px] font-normal font-dm-sans text-white-turtle leading-[1.2] tracking-[-0.15px]">
+            <h2 className="text-lg lg:text-[30px] font-normal font-dm-sans text-white-turtle leading-[1.2] tracking-[-0.15px]">
               Launch Your Next Incentive Campaign
             </h2>
-            <p className="text-lg font-normal font-dm-sans text-white/50 leading-[1.4] tracking-[-0.216px]">
+            <p className="lg:text-lg font-normal font-dm-sans text-white/50 leading-[1.4] tracking-[-0.216px]">
               Please fill out the information below and a member of the Turtle team will be in touch
             </p>
           </div>
 
           {/* Form Fields */}
-          <div className="flex flex-col gap-5">
+          <div className="flex flex-col gap-3 lg:gap-5">
             {/* First Row: Email and Telegram Handle */}
-            <div className="flex gap-2.5">
+            <div className="flex flex-col lg:flex-row gap-2.5">
               <div className="flex-1">
                 <input
                   type="email"
@@ -157,7 +157,7 @@ export default function AuthFormV2({ isVisible = true }: AuthFormV2Props) {
             </div>
 
             {/* Second Row: Organisation and Target TVL */}
-            <div className="flex gap-2.5">
+            <div className="flex flex-col lg:flex-row gap-2.5">
               <div className="flex-1">
                 <input
                   type="text"
@@ -240,7 +240,7 @@ export default function AuthFormV2({ isVisible = true }: AuthFormV2Props) {
             </div>
 
             {/* Message Notification or Submit Button - Same space, one or the other */}
-            <div className="w-fit min-w-md mx-auto min-h-[47px] flex items-center justify-center">
+            <div className="w-full lg:w-fit lg:min-w-md mx-auto lg:min-h-[47px] min-h-[40px] flex items-center justify-center">
               <AnimatePresence mode="wait">
                 {message ? (
                   <motion.div
@@ -282,7 +282,7 @@ export default function AuthFormV2({ isVisible = true }: AuthFormV2Props) {
         </form>
 
         {/* Pricing Information */}
-        <p className="mt-4 text-sm font-normal font-dm-sans text-white/50 text-center leading-[1.4] px-8">
+        <p className="mt-4 text-sm font-normal font-dm-sans text-white/50 text-center leading-[1.4] px-4 lg:px-8">
           Baseline access starts from $10,000 per month rebated against TVL fees, with TVL fees starting at 0.3% for the first 30days and a 1.5% streams distribution fee
         </p>
 
