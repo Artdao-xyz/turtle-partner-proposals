@@ -275,15 +275,15 @@ export default function ScrollSection() {
       style={{ backgroundColor: 'var(--black-turtle)' }}
     >
       {/* Sticky container */}
-      <div className="sticky top-0 h-screen w-full max-w-6xl mx-auto overflow-hidden">
+      <motion.div 
+        className="sticky top-0 h-screen w-full max-w-6xl mx-auto overflow-hidden"
+        initial={{ opacity: 0 }}
+        whileInView={{ opacity: 1 }}
+        viewport={{ once: true, margin: '-150px' }}
+        transition={{ duration: 0.8, ease: 'easeOut' }}
+      >
         {/* Controller with text - positioned absolutely at the top */}
-        <motion.div 
-          className="absolute top-8 left-0 right-0 px-4 lg:px-8 z-50"
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true, margin: '-150px' }}
-          transition={{ duration: 0.8, ease: 'easeOut' }}
-        >
+        <div className="absolute top-8 left-0 right-0 px-4 lg:px-8 z-50">
           <div className="flex flex-col lg:flex-row justify-center lg:justify-between items-center gap-4 lg:gap-0">
             {/* Text on the left */}
             <p className="hidden lg:block text-3xl font-normal font-dm-sans text-white-turtle">
@@ -292,7 +292,7 @@ export default function ScrollSection() {
             {/* Controller on the right */}
             <Controller selectedMenu={activeSection} onMenuChange={scrollToSection} />
           </div>
-        </motion.div>
+        </div>
         {/* Section 1 */}
         <ScrollSectionItem
           image={SECTION_DATA.section1.image}
@@ -316,7 +316,7 @@ export default function ScrollSection() {
           opacity={opacity3}
           zIndex={1}
         />
-      </div>
+      </motion.div>
     </section>
   );
 }
