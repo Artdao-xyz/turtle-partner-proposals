@@ -32,8 +32,8 @@ export default function HeroDescription({ isVisible }: HeroDescriptionProps) {
       className="w-full px-4 lg:block shrink-0 flex flex-col justify-center items-center lg:mt-20"
     >
       <div className="w-full max-w-3xl mx-auto font-dm-sans text-center">
-        <span className="lg:text-lg font-normal leading-6" style={{ color: 'var(--white-turtle)' }}>
-          Turtle runs customizable incentive and liquidity programs end-to-end. Connecting protocols to an active LP network to optimize capital efficiency.
+        <span className="lg:text-xl font-normal leading-6" style={{ color: 'var(--white-turtle)' }}>
+          Turtle runs customizable incentive and liquidity programs end-to-end.<br />Connecting protocols to an active LP network to optimize capital efficiency.
         </span>
       </div>
     </motion.div>
