@@ -142,17 +142,17 @@ export default function CanvasAnimation() {
   const glowColorProgressRef = useRef(1); // Always with glow
   const [glowColorProgress, setGlowColorProgress] = useState(1);
   // Initialize scale factor based on screen size (mobile vs desktop)
-  // Mobile: always at final size (0.91), Desktop: initial is 30% larger than final
+  // Mobile: always at final size (0.91), Desktop: initial is 10% larger than before
   const getInitialScaleFactor = () => {
-    if (typeof window === 'undefined') return 1.43; // 1.1 * 1.3
-    return window.innerWidth < 1024 ? 0.91 : 1.43; // Mobile: always 91%, Desktop: 143% (1.1 * 1.3)
+    if (typeof window === 'undefined') return 1.16; // 10% larger than 1.05 (1.05 * 1.1)
+    return window.innerWidth < 1024 ? 0.91 : 1.16; // Mobile: always 91%, Desktop: 116% (10% larger)
   };
   const scaleFactorRef = useRef(getInitialScaleFactor());
   const [scaleFactor, setScaleFactor] = useState(getInitialScaleFactor());
-  // Mobile: always centered (0), Desktop: starts offset down (120)
+  // Mobile: always centered (0), Desktop: starts offset down (30, moved up more)
   const getInitialVerticalOffset = () => {
-    if (typeof window === 'undefined') return 120;
-    return window.innerWidth < 1024 ? 0 : 120;
+    if (typeof window === 'undefined') return 30;
+    return window.innerWidth < 1024 ? 0 : 30;
   };
   const verticalOffsetRef = useRef(getInitialVerticalOffset());
   const [verticalOffset, setVerticalOffset] = useState(getInitialVerticalOffset());
@@ -212,7 +212,8 @@ export default function CanvasAnimation() {
     
     // Apply authentication scale factor (larger when not authenticated)
     const authScaleFactor = scaleFactorRef.current;
-    const finalScaleFactor = baseScaleFactor * authScaleFactor;
+    // Size is 20% larger than base (0.80 * 1.2 = 0.96)
+    const finalScaleFactor = baseScaleFactor * authScaleFactor * 0.94;
     
     // Use appropriate sizes based on layout and scale proportionally
     const ORBIT_RADIUS = (isVertical ? MOBILE_ORBIT_RADIUS : DESKTOP_ORBIT_RADIUS) * finalScaleFactor;
@@ -464,16 +465,16 @@ export default function CanvasAnimation() {
     // Always in color (no grayscale) and always with glow
     const targetGrayscale = 0;
     const targetGlowColorProgress = 1; // Always with glow
-    // Scale factor: Mobile always at final size (0.91), Desktop initial is 30% larger than final
+    // Scale factor: Mobile always at final size (0.91), Desktop initial is 10% larger
     // Final state: Mobile 91% (always), Desktop 110%
-    // Initial state: Mobile 91% (always), Desktop 143% (110% * 1.3)
+    // Initial state: Mobile 91% (always), Desktop 116% (10% larger than 105%)
     const finalScaleFactor = isMobile ? 0.91 : 1.1;
     const targetScaleFactor = isMobile 
       ? 0.91 // Mobile: always at final size
-      : (isScrolled ? 1.1 : 1.43); // Desktop: 110% when scrolled, 143% when not
+      : (isScrolled ? 1.1 : 1.16); // Desktop: 110% when scrolled, 116% when not (10% larger)
     const targetVerticalOffset = isMobile 
       ? 0 // Mobile: always centered
-      : (isScrolled ? 0 : 120); // Desktop: centered when scrolled, offset down when not
+      : (isScrolled ? 0 : 30); // Desktop: centered when scrolled, offset down when not (moved up more)
     const targetTextOpacities = isMobile
       ? new Array(IMAGE_DATA.length).fill(1) // Mobile: always visible
       : (isScrolled 

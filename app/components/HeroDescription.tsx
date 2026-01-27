@@ -29,7 +29,7 @@ export default function HeroDescription({ isVisible }: HeroDescriptionProps) {
         delay: isMobile && isVisible ? 0.4 : 0,
         ease: EASING,
       }}
-      className="w-full px-4 lg:block shrink-0 flex flex-col justify-center items-center lg:mt-20"
+      className="w-full px-4 lg:block shrink-0 flex flex-col justify-center items-center lg:mt-6"
     >
       <div className="w-full max-w-3xl mx-auto font-dm-sans text-center">
         <span className="lg:text-xl font-normal leading-6" style={{ color: 'var(--white-turtle)' }}>
