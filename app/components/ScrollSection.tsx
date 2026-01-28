@@ -279,8 +279,8 @@ export default function ScrollSection() {
         className="sticky top-0 h-screen w-full max-w-6xl mx-auto overflow-hidden"
         initial={{ opacity: 0 }}
         whileInView={{ opacity: 1 }}
-        viewport={{ once: true, margin: '-150px' }}
-        transition={{ duration: 0.8, ease: 'easeOut' }}
+        viewport={{ once: true, margin: '-250px' }}
+        transition={{ duration: 0.8, delay: 0.4, ease: 'easeOut' }}
       >
         {/* Controller with text - positioned absolutely at the top */}
         <div className="absolute top-8 left-0 right-0 px-4 lg:px-8 z-50">
