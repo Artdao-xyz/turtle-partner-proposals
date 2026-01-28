@@ -287,7 +287,7 @@ export default function AuthFormV2({ isVisible = true }: AuthFormV2Props) {
         </p>
 
         {/* Turtle Logo */}
-        <div className="mt-16 lg:mt-24 flex justify-center">
+        <div className="mt-16 2xl:mt-24 flex justify-center">
           <Image
             src="/media/turtle-big.svg"
             alt="Turtle Logo"
