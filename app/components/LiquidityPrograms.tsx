@@ -6,7 +6,7 @@ import Image from 'next/image';
 
 export default function LiquidityPrograms() {
   return (
-    <section className="w-full py-10 lg:py-[60px]" style={{ backgroundColor: 'var(--black-turtle)' }}>
+    <section className="w-full py-10 lg:py-[60px] border-2 border-blue-500/50" style={{ backgroundColor: 'var(--black-turtle)' }}>
       <div className="w-full max-w-[1180px] mx-auto px-4 lg:px-20">
         {/* Title Section */}
         <div className="flex flex-col lg:flex-row gap-2.5 items-center justify-between mb-15 lg:mb-[60px]">

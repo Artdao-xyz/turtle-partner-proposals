@@ -65,8 +65,8 @@ function ScrollSectionItem({ image, info, opacity, zIndex = 1 }: ScrollSectionIt
       style={{ opacity, zIndex }}
       className={`absolute inset-0 w-full h-full flex items-center justify-center ${isVisible ? 'pointer-events-auto' : 'pointer-events-none'}`}
     >
-      <div className="w-full h-full max-w-6xl mx-auto px-4 pointer-events-none">
-        <div className="flex flex-col justify-end pb-10 lg:grid lg:grid-cols-5 items-center lg:gap-6 h-full">
+      <div className="w-full max-w-6xl mx-auto px-4 pointer-events-none">
+        <div className="flex flex-col justify-center lg:grid lg:grid-cols-5 items-center lg:gap-6">
           {/* Image - First on mobile, Right on desktop */}
           <div className="w-full lg:col-span-3 lg:col-start-3 order-1 lg:order-2 flex items-center justify-center h-[40vh] lg:h-[600px]">
             <Image
@@ -276,14 +276,14 @@ export default function ScrollSection() {
     >
       {/* Sticky container */}
       <motion.div 
-        className="sticky top-0 h-screen w-full max-w-6xl mx-auto overflow-hidden"
+        className="sticky top-0 h-screen w-full max-w-6xl mx-auto overflow-hidden flex flex-col"
         initial={{ opacity: 0 }}
         whileInView={{ opacity: 1 }}
         viewport={{ once: true, margin: '-250px' }}
         transition={{ duration: 0.8, delay: 0.4, ease: 'easeOut' }}
       >
-        {/* Controller with text - positioned absolutely at the top */}
-        <div className="absolute top-8 left-0 right-0 px-4 lg:px-8 z-50">
+        {/* Controller with text - positioned at the top */}
+        <div className="shrink-0 pt-8 pb-4 px-4 lg:px-8 lg:py-14 z-50">
           <div className="flex flex-col lg:flex-row justify-center lg:justify-between items-center gap-4 lg:gap-0">
             {/* Text on the left */}
             <p className="hidden lg:block text-3xl font-normal font-dm-sans text-white-turtle">
@@ -293,29 +293,33 @@ export default function ScrollSection() {
             <Controller selectedMenu={activeSection} onMenuChange={scrollToSection} />
           </div>
         </div>
-        {/* Section 1 */}
-        <ScrollSectionItem
-          image={SECTION_DATA.section1.image}
-          info={SECTION_DATA.section1.info}
-          opacity={opacity1}
-          zIndex={3}
-        />
+        
+        {/* Content container - centered vertically */}
+        <div className="flex-1 flex items-center justify-center relative">
+          {/* Section 1 */}
+          <ScrollSectionItem
+            image={SECTION_DATA.section1.image}
+            info={SECTION_DATA.section1.info}
+            opacity={opacity1}
+            zIndex={3}
+          />
 
-        {/* Section 2 */}
-        <ScrollSectionItem
-          image={SECTION_DATA.section2.image}
-          info={SECTION_DATA.section2.info}
-          opacity={opacity2}
-          zIndex={2}
-        />
+          {/* Section 2 */}
+          <ScrollSectionItem
+            image={SECTION_DATA.section2.image}
+            info={SECTION_DATA.section2.info}
+            opacity={opacity2}
+            zIndex={2}
+          />
 
-        {/* Section 3 */}
-        <ScrollSectionItem
-          image={SECTION_DATA.section3.image}
-          info={SECTION_DATA.section3.info}
-          opacity={opacity3}
-          zIndex={1}
-        />
+          {/* Section 3 */}
+          <ScrollSectionItem
+            image={SECTION_DATA.section3.image}
+            info={SECTION_DATA.section3.info}
+            opacity={opacity3}
+            zIndex={1}
+          />
+        </div>
       </motion.div>
     </section>
   );
