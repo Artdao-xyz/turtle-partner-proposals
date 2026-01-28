@@ -286,7 +286,7 @@ export default function ScrollSection() {
     >
       {/* Sticky container */}
       <motion.div 
-        className="sticky inset-0  h-screen w-full max-w-6xl mx-auto overflow-hidden flex flex-col lg:py-32"
+        className="sticky inset-0  h-screen w-full max-w-6xl mx-auto overflow-hidden flex flex-col lg:py-20 2xl:py-32"
         initial={{ opacity: isMobile ? 1 : 0 }}
         whileInView={{ opacity: 1 }}
         viewport={{ once: true, margin: isMobile ? '0px' : '-250px' }}
