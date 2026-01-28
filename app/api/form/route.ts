@@ -90,8 +90,8 @@ export async function POST(req: NextRequest) {
       return badRequest('Organisation is required');
     }
 
-    if (typeof targetTVL !== 'number' || targetTVL < 0 || targetTVL > 100) {
-      return badRequest('Target TVL must be a number between 0 and 100');
+    if (typeof targetTVL !== 'number' || targetTVL < 0 || targetTVL > 1000) {
+      return badRequest('Target TVL must be a number between 0 and 1000');
     }
 
     if (!Array.isArray(selectedProducts) || selectedProducts.length === 0) {
