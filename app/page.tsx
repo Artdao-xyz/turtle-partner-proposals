@@ -9,7 +9,7 @@ import AuthFormV2 from './components/AuthFormV2';
 import { useScrollThreshold } from './hooks/useScrollThreshold';
 
 export default function Home() {
-  const isScrolled = useScrollThreshold(30);
+  const isScrolled = useScrollThreshold(15);
 
   return (
     <main className="w-full">

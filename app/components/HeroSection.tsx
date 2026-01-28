@@ -1,6 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
+import { useState, useEffect } from 'react';
 import HeroTitle from './HeroTitle';
 import TurtleLogo from '../elements/TurtleLogo';
 import CanvasAnimation from './CanvasAnimation';
@@ -13,20 +14,30 @@ interface HeroSectionProps {
 }
 
 export default function HeroSection({ isScrolled }: HeroSectionProps) {
+  const [isDesktop, setIsDesktop] = useState(false);
+
+  useEffect(() => {
+    const checkDesktop = () => {
+      setIsDesktop(window.innerWidth >= 1024);
+    };
+    checkDesktop();
+    window.addEventListener('resize', checkDesktop);
+    return () => window.removeEventListener('resize', checkDesktop);
+  }, []);
 
   return (
-    <section className="relative w-full h-svh lg:h-full flex flex-col justify-evenly lg:justify-center overflow-hidden">
+    <section className="relative w-full h-svh lg:h-full flex flex-col overflow-hidden">
       
       {/* Top section with Logo, Partnership, and Title - Dynamic height */}
       <motion.div 
-        className="shrink-0 relative lg:space-y-26"
+        className="shrink-0 relative flex flex-col justify-between lg:justify-evenly items-center lg:h-[50vh]"
         layout
         transition={{
           duration: 0.4,
           ease: EASING,
         }}
       >
-          <div className="h-20 flex items-center justify-center lg:justify-start px-10 py-4">
+          <div className="lg:absolute lg:left-10 lg:top-4 lg:self-start">
             {/* Logo - aparece siempre */}
             <motion.div
               initial={{ opacity: 0 }}
@@ -44,10 +55,24 @@ export default function HeroSection({ isScrolled }: HeroSectionProps) {
           <HeroTitle isScrolled={isScrolled} />
       </motion.div>
 
-      {/* Canvas - Fixed height at 50vh */}
-      <div className="relative w-full h-[40vh] lg:h-[75vh] overflow-hidden">
+      {/* Canvas - Changes height based on scroll state, grows downward */}
+      <motion.div 
+        className="relative w-full overflow-hidden"
+        initial={false}
+        animate={{ 
+          height: isDesktop ? (isScrolled ? '70vh' : 'calc(100vh - 50vh)') : '50vh'
+        }}
+        transition={{
+          duration: 0.3,
+          ease: EASING,
+        }}
+        style={{
+          flexShrink: 0,
+          marginTop: 'auto'
+        }}
+      >
         <CanvasAnimation />
-      </div>
+      </motion.div>
 
       <div className='lg:hidden'>
         <HeroDescription isVisible={true} />
