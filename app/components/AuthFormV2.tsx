@@ -16,7 +16,7 @@ export default function AuthFormV2({ isVisible = true }: AuthFormV2Props) {
   const [telegramHandle, setTelegramHandle] = useState<string>('');
   const [organisation, setOrganisation] = useState<string>('');
   const [targetTVL, setTargetTVL] = useState<number>(0);
-  const [selectedProducts, setSelectedProducts] = useState<string[]>(['Custom Campaign', 'Targeted Incentives', 'LP Outreach']);
+  const [selectedProducts, setSelectedProducts] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [message, setMessage] = useState<{ type: MessageType; text: string } | null>(null);
 
@@ -82,7 +82,7 @@ export default function AuthFormV2({ isVisible = true }: AuthFormV2Props) {
       setTelegramHandle('');
       setOrganisation('');
       setTargetTVL(0);
-      setSelectedProducts(['Custom Campaign', 'Targeted Incentives', 'LP Outreach']);
+      setSelectedProducts([]);
       
       setMessage({
         type: 'success',
@@ -106,7 +106,7 @@ export default function AuthFormV2({ isVisible = true }: AuthFormV2Props) {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.3 }}
-      className="relative flex items-end justify-center pt-4 lg:pt-8 pointer-events-none px-4 lg:px-0"
+      className="relative flex items-end justify-center lg:justify-evenly pt-4 lg:pt-8 pointer-events-none px-4 lg:px-0 lg:min-h-screen"
     >
       <motion.div
         initial={{ y: 100, opacity: 0 }}
@@ -116,7 +116,7 @@ export default function AuthFormV2({ isVisible = true }: AuthFormV2Props) {
       >
         <form
           onSubmit={handleSubmit}
-          className="bg-[#141514] border border-white/10 rounded-[30px] shadow-[0px_4px_4px_0px_rgba(0,0,0,0.25)] p-6 lg:p-9 flex flex-col gap-3 lg:gap-6"
+          className="bg-[#141514] border border-white/10 rounded-[20px] lg:rounded-[20px] shadow-[0px_4px_4px_0px_rgba(0,0,0,0.25)] p-6 lg:p-9 flex flex-col gap-3 lg:gap-6"
         >
           {/* Title Section */}
           <div className="flex flex-col gap-1">
@@ -179,17 +179,19 @@ export default function AuthFormV2({ isVisible = true }: AuthFormV2Props) {
                       <input
                         type="range"
                         min="0"
-                        max="100"
+                        max="1000"
                         value={targetTVL}
                         onChange={(e) => setTargetTVL(Number(e.target.value))}
-                        className="w-full h-1 rounded-full appearance-none cursor-pointer slider"
+                        className={`w-full h-1 rounded-full appearance-none cursor-pointer slider ${targetTVL === 0 ? 'slider-empty' : ''}`}
                         style={{
-                          background: `linear-gradient(to right, var(--green-turtle) 0%, var(--green-turtle) ${targetTVL}%, rgba(249, 249, 249, 0.2) ${targetTVL}%, rgba(249, 249, 249, 0.2) 100%)`,
+                          background: targetTVL === 0
+                            ? `rgba(249, 249, 249, 0.2)`
+                            : `linear-gradient(to right, var(--green-turtle) 0%, var(--green-turtle) ${targetTVL / 10}%, rgba(249, 249, 249, 0.2) ${targetTVL / 10}%, rgba(249, 249, 249, 0.2) 100%)`,
                         }}
                       />
                     </div>
                     <span className="text-xs font-medium font-dm-sans text-white/50 text-center min-w-[41px] shrink-0">
-                      ${targetTVL}M
+                      {targetTVL >= 1000 ? `$${(targetTVL / 1000).toFixed(1)}B` : `$${targetTVL}M`}
                     </span>
                   </div>
                 </div>
@@ -287,7 +289,7 @@ export default function AuthFormV2({ isVisible = true }: AuthFormV2Props) {
         </p>
 
         {/* Turtle Logo */}
-        <div className="mt-16 flex justify-center">
+        <div className="mt-16 2xl:mt-24 flex justify-center">
           <Image
             src="/media/turtle-big.svg"
             alt="Turtle Logo"

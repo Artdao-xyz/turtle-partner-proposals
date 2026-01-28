@@ -9,19 +9,36 @@ import AuthFormV2 from './components/AuthFormV2';
 import { useScrollThreshold } from './hooks/useScrollThreshold';
 
 export default function Home() {
-  const isScrolled = useScrollThreshold(5);
+  const isScrolled = useScrollThreshold(15);
 
   return (
     <main className="w-full">
       <HeroSection isScrolled={isScrolled} />
 
       {/* Bottom section with Text - Natural size, no shrinking */}
-      <div className='hidden lg:block'>
-      <HeroDescription isVisible={isScrolled} />
+      <div 
+        className='hidden lg:block'
+        style={{
+          scrollBehavior: 'smooth',
+          ...(isScrolled ? {
+            scrollSnapAlign: 'end',
+            scrollMarginBottom: '10vh',
+            scrollSnapStop: 'normal'
+          } : {})
+        }}
+      >
+        <HeroDescription isVisible={isScrolled} />
       </div>
       <ScrollSection />
       <LiquidityPrograms />
-      <section className="w-full lg:min-h-screen flex justify-center items-center py-10 lg:py-0" style={{ backgroundColor: 'var(--black-turtle)' }}>
+      <section 
+        className="w-full lg:min-h-screen flex justify-center items-center py-10 lg:py-0 my-[150px] lg:my-0" 
+        style={{ 
+          backgroundColor: 'var(--black-turtle)',
+          scrollSnapAlign: 'center',
+          scrollMarginTop: 'top top'
+        }}
+      >
         <VideoPlayer
           loomId="https://www.loom.com/share/3a48bed3d1db4b888eaec015625d9f5e"
           title="Turtle Product Suite Overview"

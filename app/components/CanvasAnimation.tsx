@@ -117,7 +117,7 @@ const applyGrayscale = (
 
 export default function CanvasAnimation() {
   // State based on scroll position - starts "unauthenticated" (large, no text)
-  const isScrolled = useScrollThreshold(5);
+  const isScrolled = useScrollThreshold(15);
   const isScrolledRef = useRef(false);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   
@@ -137,22 +137,25 @@ export default function CanvasAnimation() {
   const textOpacityRefs = useRef<number[]>(getInitialTextOpacities());
   const [textOpacities, setTextOpacities] = useState<number[]>(getInitialTextOpacities());
   const [hasAnimatedIn, setHasAnimatedIn] = useState(false);
+  const imagesLoadedOpacityRef = useRef(0); // Opacity for fade in when images load
+  const [imagesLoadedOpacity, setImagesLoadedOpacity] = useState(0); // State for triggering re-renders
   const grayscaleRef = useRef(0); // Always in color (no grayscale)
   const [grayscale, setGrayscale] = useState(0);
   const glowColorProgressRef = useRef(1); // Always with glow
   const [glowColorProgress, setGlowColorProgress] = useState(1);
   // Initialize scale factor based on screen size (mobile vs desktop)
-  // Mobile: always at final size (0.91), Desktop: initial is 10% larger than before
+  // Mobile: always at final size (0.91), Desktop: initial is larger
   const getInitialScaleFactor = () => {
-    if (typeof window === 'undefined') return 1.16; // 10% larger than 1.05 (1.05 * 1.1)
-    return window.innerWidth < 1024 ? 0.91 : 1.16; // Mobile: always 91%, Desktop: 116% (10% larger)
+    if (typeof window === 'undefined') return 1.35; // 135% - larger but smaller than before
+    return window.innerWidth < 1024 ? 0.91 : 1.35; // Mobile: always 91%, Desktop: 135% (reduced from 150%)
   };
   const scaleFactorRef = useRef(getInitialScaleFactor());
   const [scaleFactor, setScaleFactor] = useState(getInitialScaleFactor());
-  // Mobile: always centered (0), Desktop: starts offset down (30, moved up more)
+  // Mobile: always centered (0), Desktop: composition 30% outside bottom when not scrolled
+  // Offset represents how much of composition is outside bottom (0.0 = centered, negative = above center)
   const getInitialVerticalOffset = () => {
-    if (typeof window === 'undefined') return 30;
-    return window.innerWidth < 1024 ? 0 : 30;
+    if (typeof window === 'undefined') return -0.03;
+    return window.innerWidth < 1024 ? 0 : -0.03; // Mobile: 0% (centered), Desktop: 3% above center
   };
   const verticalOffsetRef = useRef(getInitialVerticalOffset());
   const [verticalOffset, setVerticalOffset] = useState(getInitialVerticalOffset());
@@ -223,18 +226,46 @@ export default function CanvasAnimation() {
     const PERPENDICULAR_OFFSET = (isVertical ? MOBILE_PERPENDICULAR_OFFSET : DESKTOP_PERPENDICULAR_OFFSET) * finalScaleFactor;
 
     const centerX = width / 2;
-    const centerY = height / 2 + verticalOffsetRef.current; // Apply vertical offset
+    // Calculate vertical position so that when not scrolled, 30% of composition is outside bottom
+    // When scrolled, composition is centered
+    // Mobile: always centered
+    // Offset is adjusted based on scale factor to maintain relative position
+    const isMobile = width < 1024;
+    let centerY: number;
+    if (isMobile) {
+      // Mobile: always centered
+      centerY = height / 2;
+    } else {
+      // Desktop: calculate offset so composition is 3% above center when not scrolled
+      // The composition height is approximately ORBIT_RADIUS * 2 + some padding
+      // Adjust offset based on scale factor to maintain relative position when composition size changes
+      const compositionHeight = ORBIT_RADIUS * 2 + HERO_SIZE; // Approximate total height
+      // Normalize offset by scale factor: when scale is larger, reduce offset to maintain same visual position
+      const scaleNormalizedOffset = verticalOffsetRef.current / authScaleFactor; // Adjust for scale
+      const offsetAmount = compositionHeight * -0.03 * scaleNormalizedOffset; // -3% (above center) when offset=-1, 0% when offset=0
+      centerY = height / 2 + offsetAmount;
+    }
 
-    // Draw orbit circle
-    ctx.strokeStyle = ORBIT_STROKE_COLOR;
-    ctx.lineWidth = 2 * Math.min(finalScaleFactor, 1.5); // Scale line width but cap at 1.5x to avoid too thick lines
-    ctx.beginPath();
-    ctx.arc(centerX, centerY, ORBIT_RADIUS, 0, Math.PI * 2);
-    ctx.stroke();
-
-    // Draw hero image with glow effect
+    // Check if all images are loaded before drawing orbit
     const heroImg = heroImageRef.current;
-    if (heroImg?.complete && heroImg.naturalWidth > 0) {
+    const allImagesLoaded = heroImg?.complete && heroImg.naturalWidth > 0 && 
+                            imagesRef.current.length === IMAGE_DATA.length &&
+                            imagesRef.current.every(img => img?.complete && img.naturalWidth > 0);
+
+    // Draw orbit circle only after images are loaded, with fade in
+    if (allImagesLoaded && imagesLoadedOpacityRef.current > 0) {
+      ctx.save();
+      ctx.globalAlpha = imagesLoadedOpacityRef.current;
+      ctx.strokeStyle = ORBIT_STROKE_COLOR;
+      ctx.lineWidth = 2 * Math.min(finalScaleFactor, 1.5); // Scale line width but cap at 1.5x to avoid too thick lines
+      ctx.beginPath();
+      ctx.arc(centerX, centerY, ORBIT_RADIUS, 0, Math.PI * 2);
+      ctx.stroke();
+      ctx.restore();
+    }
+
+    // Draw hero image with glow effect, with fade in
+    if (heroImg?.complete && heroImg.naturalWidth > 0 && imagesLoadedOpacityRef.current > 0) {
       const heroX = centerX - HERO_SIZE / 2;
       const heroY = centerY - HERO_SIZE / 2;
 
@@ -246,14 +277,19 @@ export default function CanvasAnimation() {
       const r = Math.round(128 + (115 - 128) * progress);
       const g = Math.round(128 + (243 - 128) * progress);
       const b = Math.round(128 + (108 - 128) * progress);
-      // Interpolate opacity: 0.3 to 0.75
-      const opacity = 0.3 + (0.75 - 0.3) * progress;
-      const glowColor = `rgba(${r}, ${g}, ${b}, ${opacity})`;
+      // Interpolate opacity: 0.3 to 0.75, also affected by fade in
+      const baseOpacity = 0.3 + (0.75 - 0.3) * progress;
+      const finalOpacity = baseOpacity * imagesLoadedOpacityRef.current;
+      const glowColor = `rgba(${r}, ${g}, ${b}, ${finalOpacity})`;
       
+      // Apply blur and glow effect (blur is always applied, opacity controls visibility)
       ctx.shadowBlur = GLOW_BLUR * finalScaleFactor;
       ctx.shadowColor = glowColor;
       ctx.shadowOffsetX = 0;
       ctx.shadowOffsetY = 0;
+      
+      // Apply global alpha for fade in
+      ctx.globalAlpha = imagesLoadedOpacityRef.current;
 
       // Apply grayscale filter manually (Safari compatible)
       applyGrayscale(ctx, heroImg, heroX, heroY, HERO_SIZE, HERO_SIZE, grayscaleRef.current, dpr);
@@ -261,8 +297,8 @@ export default function CanvasAnimation() {
       ctx.restore();
     }
 
-    // Draw icons and text
-    if (imagesRef.current.length === IMAGE_DATA.length) {
+    // Draw icons and text, with fade in
+    if (imagesRef.current.length === IMAGE_DATA.length && imagesLoadedOpacityRef.current > 0) {
       const angleStep = (Math.PI * 2) / IMAGE_DATA.length;
       const textRadius = ORBIT_RADIUS + IMAGE_SIZE / 2 + TEXT_OFFSET;
 
@@ -274,8 +310,9 @@ export default function CanvasAnimation() {
         const iconX = centerX + Math.cos(angle) * ORBIT_RADIUS - IMAGE_SIZE / 2;
         const iconY = centerY + Math.sin(angle) * ORBIT_RADIUS - IMAGE_SIZE / 2;
 
-        // Draw icon with grayscale filter (Safari compatible)
+        // Draw icon with grayscale filter (Safari compatible), with fade in
         ctx.save();
+        ctx.globalAlpha = imagesLoadedOpacityRef.current;
         applyGrayscale(ctx, img, iconX, iconY, IMAGE_SIZE, IMAGE_SIZE, grayscaleRef.current, dpr);
         ctx.restore();
 
@@ -349,15 +386,37 @@ export default function CanvasAnimation() {
         heroImageRef.current = heroImg;
         imagesRef.current = iconImages;
         
+        // Animate fade in for images and orbit
+        const startTime = performance.now();
+        const FADE_DURATION = 600; // 0.6 seconds
+        
+        const animateFadeIn = (currentTime: number) => {
+          const elapsed = currentTime - startTime;
+          const progress = Math.min(elapsed / FADE_DURATION, 1);
+          
+          // Easing function (ease-in-out)
+          const eased = progress < 0.5
+            ? 2 * progress * progress
+            : 1 - Math.pow(-2 * progress + 2, 2) / 2;
+          
+          imagesLoadedOpacityRef.current = eased;
+          setImagesLoadedOpacity(eased); // Update state to trigger re-render
+          draw();
+          
+          if (progress < 1) {
+            requestAnimationFrame(animateFadeIn);
+          } else {
+            imagesLoadedOpacityRef.current = 1;
+            setImagesLoadedOpacity(1);
+            draw();
+          }
+        };
+        
         // Force a redraw after all images are loaded
         // Use double RAF to ensure DOM is ready and canvas is properly sized
         requestAnimationFrame(() => {
           requestAnimationFrame(() => {
-            draw();
-            // Also trigger one more draw after a tiny delay to catch any edge cases
-            setTimeout(() => {
-              draw();
-            }, 50);
+            requestAnimationFrame(animateFadeIn);
           });
         });
       } catch (error) {
@@ -465,16 +524,19 @@ export default function CanvasAnimation() {
     // Always in color (no grayscale) and always with glow
     const targetGrayscale = 0;
     const targetGlowColorProgress = 1; // Always with glow
-    // Scale factor: Mobile always at final size (0.91), Desktop initial is 10% larger
+    // Scale factor: Mobile always at final size (0.91), Desktop initial is larger
     // Final state: Mobile 91% (always), Desktop 110%
-    // Initial state: Mobile 91% (always), Desktop 116% (10% larger than 105%)
+    // Initial state: Mobile 91% (always), Desktop 135% (reduced from 150%)
     const finalScaleFactor = isMobile ? 0.91 : 1.1;
     const targetScaleFactor = isMobile 
       ? 0.91 // Mobile: always at final size
-      : (isScrolled ? 1.1 : 1.16); // Desktop: 110% when scrolled, 116% when not (10% larger)
+      : (isScrolled ? 1.1 : 1.35); // Desktop: 110% when scrolled, 135% when not (reduced from 150%)
+    // Offset represents vertical position (0.0 = centered, negative = above center)
+    // Desktop: 3% above center when not scrolled, centered when scrolled
+    // Mobile: always centered (0)
     const targetVerticalOffset = isMobile 
       ? 0 // Mobile: always centered
-      : (isScrolled ? 0 : 30); // Desktop: centered when scrolled, offset down when not (moved up more)
+      : (isScrolled ? 0 : -1.0); // Desktop: centered when scrolled, 3% above center when not scrolled
     const targetTextOpacities = isMobile
       ? new Array(IMAGE_DATA.length).fill(1) // Mobile: always visible
       : (isScrolled 

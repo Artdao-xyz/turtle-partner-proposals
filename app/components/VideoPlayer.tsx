@@ -73,10 +73,13 @@ export default function VideoPlayer({
   }, []);
 
   return (
-    <div ref={containerRef} className={`w-full max-w-4xl rounded-2xl mx-auto px-4 lg:px-0 ${className} shadow-black-turtle`}>
-      <div className="relative rounded-2xl overflow-hidden outline outline-black-highlight/10 bg-black-highlight/2 p-2 lg:p-3">
+    <div ref={containerRef} className={`w-full max-w-4xl rounded-[20px] lg:rounded-2xl mx-auto px-4 lg:px-0 ${className} shadow-black-turtle`}>
+      <div className="relative rounded-[20px] lg:rounded-2xl overflow-hidden outline outline-black-highlight/10 bg-black-highlight/2 p-2 lg:p-3">
         {/* Video Container */}
-        <div className="relative w-full bg-black rounded-xl" style={{ paddingBottom: '56.25%', height: 0 }}>
+        <div 
+          className="relative w-full bg-black rounded-[20px] lg:rounded-xl pb-[100%] lg:pb-[56.25%]" 
+          style={{ height: 0 }}
+        >
             {isInView && (
               <iframe
                 id="loom-embed"
