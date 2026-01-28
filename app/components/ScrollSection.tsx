@@ -186,6 +186,16 @@ export default function ScrollSection() {
   });
 
   const [activeSection, setActiveSection] = useState<'Visibility' | 'Streams' | 'Leaderboard'>('Visibility');
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 1024);
+    };
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   // Detectar qué sección está activa basado en el scroll (ajustado a los nuevos thresholds)
   useMotionValueEvent(scrollYProgress, 'change', (latest) => {
@@ -277,9 +287,9 @@ export default function ScrollSection() {
       {/* Sticky container */}
       <motion.div 
         className="sticky top-0 h-screen w-full max-w-6xl mx-auto overflow-hidden flex flex-col"
-        initial={{ opacity: 0 }}
+        initial={{ opacity: isMobile ? 1 : 0 }}
         whileInView={{ opacity: 1 }}
-        viewport={{ once: true, margin: '-250px' }}
+        viewport={{ once: true, margin: isMobile ? '0px' : '-250px' }}
         transition={{ duration: 0.8, delay: 0.4, ease: 'easeOut' }}
       >
         {/* Controller with text - positioned at the top */}
@@ -294,8 +304,8 @@ export default function ScrollSection() {
           </div>
         </div>
         
-        {/* Content container - centered vertically */}
-        <div className="flex-1 flex items-center justify-center relative">
+        {/* Content container - centered vertically on desktop, normal flow on mobile */}
+        <div className="flex-1 relative min-h-[60vh] lg:min-h-0">
           {/* Section 1 */}
           <ScrollSectionItem
             image={SECTION_DATA.section1.image}
