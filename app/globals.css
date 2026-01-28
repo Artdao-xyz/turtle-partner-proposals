@@ -69,9 +69,18 @@ input[type="range"].slider::-moz-range-thumb {
   width: 10px;
   height: 10px;
   border-radius: 50%;
-  background: var(--white-turtle);
+  background: var(--green-turtle);
   cursor: pointer;
   border: none;
+}
+
+/* Slider empty state (when value is 0) */
+input[type="range"].slider-empty::-webkit-slider-thumb {
+  background: rgb(142, 142, 142);
+}
+
+input[type="range"].slider-empty::-moz-range-thumb {
+  background: rgb(144, 144, 144);
 }
 
 /* Liquidity Programs Card Gradient */

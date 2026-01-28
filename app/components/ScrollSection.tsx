@@ -281,19 +281,19 @@ export default function ScrollSection() {
   return (
     <section
       ref={containerRef}
-      className="relative h-[300vh] w-full mt-32"
+      className="relative h-[300vh] w-full mt-48"
       style={{ backgroundColor: 'var(--black-turtle)' }}
     >
       {/* Sticky container */}
       <motion.div 
-        className="sticky top-0 h-screen w-full max-w-6xl mx-auto overflow-hidden flex flex-col"
+        className="sticky inset-0  h-screen w-full max-w-6xl mx-auto overflow-hidden flex flex-col lg:py-32"
         initial={{ opacity: isMobile ? 1 : 0 }}
         whileInView={{ opacity: 1 }}
         viewport={{ once: true, margin: isMobile ? '0px' : '-250px' }}
         transition={{ duration: 0.8, delay: 0.4, ease: 'easeOut' }}
       >
         {/* Controller with text - positioned at the top */}
-        <div className="shrink-0 pt-8 pb-4 px-4 lg:px-8 lg:py-14 2xl:py-24 z-50">
+        <div className="shrink-0 pt-8 pb-4 px-4 lg:px-8 lg:p-0 z-50">
           <div className="flex flex-col lg:flex-row justify-center lg:justify-between items-center gap-4 lg:gap-0">
             {/* Text on the left */}
             <p className="hidden lg:block text-3xl font-normal font-dm-sans text-white-turtle">
@@ -305,7 +305,7 @@ export default function ScrollSection() {
         </div>
         
         {/* Content container - centered vertically on desktop, normal flow on mobile */}
-        <div className="flex-1 relative min-h-[60vh] lg:min-h-0">
+        <div className="flex-1 relative w-full max-w-6xl mx-auto min-h-[60vh] lg:min-h-0 lg:h-full">
           {/* Section 1 */}
           <ScrollSectionItem
             image={SECTION_DATA.section1.image}

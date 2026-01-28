@@ -16,7 +16,7 @@ export default function AuthFormV2({ isVisible = true }: AuthFormV2Props) {
   const [telegramHandle, setTelegramHandle] = useState<string>('');
   const [organisation, setOrganisation] = useState<string>('');
   const [targetTVL, setTargetTVL] = useState<number>(0);
-  const [selectedProducts, setSelectedProducts] = useState<string[]>(['Custom Campaign', 'Targeted Incentives', 'LP Outreach']);
+  const [selectedProducts, setSelectedProducts] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [message, setMessage] = useState<{ type: MessageType; text: string } | null>(null);
 
@@ -82,7 +82,7 @@ export default function AuthFormV2({ isVisible = true }: AuthFormV2Props) {
       setTelegramHandle('');
       setOrganisation('');
       setTargetTVL(0);
-      setSelectedProducts(['Custom Campaign', 'Targeted Incentives', 'LP Outreach']);
+      setSelectedProducts([]);
       
       setMessage({
         type: 'success',
@@ -179,17 +179,19 @@ export default function AuthFormV2({ isVisible = true }: AuthFormV2Props) {
                       <input
                         type="range"
                         min="0"
-                        max="100"
+                        max="1000"
                         value={targetTVL}
                         onChange={(e) => setTargetTVL(Number(e.target.value))}
-                        className="w-full h-1 rounded-full appearance-none cursor-pointer slider"
+                        className={`w-full h-1 rounded-full appearance-none cursor-pointer slider ${targetTVL === 0 ? 'slider-empty' : ''}`}
                         style={{
-                          background: `linear-gradient(to right, var(--green-turtle) 0%, var(--green-turtle) ${targetTVL}%, rgba(249, 249, 249, 0.2) ${targetTVL}%, rgba(249, 249, 249, 0.2) 100%)`,
+                          background: targetTVL === 0
+                            ? `rgba(249, 249, 249, 0.2)`
+                            : `linear-gradient(to right, var(--green-turtle) 0%, var(--green-turtle) ${targetTVL / 10}%, rgba(249, 249, 249, 0.2) ${targetTVL / 10}%, rgba(249, 249, 249, 0.2) 100%)`,
                         }}
                       />
                     </div>
                     <span className="text-xs font-medium font-dm-sans text-white/50 text-center min-w-[41px] shrink-0">
-                      ${targetTVL}M
+                      {targetTVL >= 1000 ? `$${(targetTVL / 1000).toFixed(1)}B` : `$${targetTVL}M`}
                     </span>
                   </div>
                 </div>
