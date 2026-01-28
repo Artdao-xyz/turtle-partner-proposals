@@ -24,6 +24,7 @@
 html {
   background-color: var(--black-turtle);
   scroll-snap-type: y proximity;
+  scroll-behavior: smooth;
 }
 
 body {

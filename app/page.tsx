@@ -16,8 +16,18 @@ export default function Home() {
       <HeroSection isScrolled={isScrolled} />
 
       {/* Bottom section with Text - Natural size, no shrinking */}
-      <div className='hidden lg:block'>
-      <HeroDescription isVisible={isScrolled} />
+      <div 
+        className='hidden lg:block'
+        style={{
+          scrollBehavior: 'smooth',
+          ...(isScrolled ? {
+            scrollSnapAlign: 'end',
+            scrollMarginBottom: '10vh',
+            scrollSnapStop: 'normal'
+          } : {})
+        }}
+      >
+        <HeroDescription isVisible={isScrolled} />
       </div>
       <ScrollSection />
       <LiquidityPrograms />
