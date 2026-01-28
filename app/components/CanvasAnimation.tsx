@@ -144,18 +144,18 @@ export default function CanvasAnimation() {
   const glowColorProgressRef = useRef(1); // Always with glow
   const [glowColorProgress, setGlowColorProgress] = useState(1);
   // Initialize scale factor based on screen size (mobile vs desktop)
-  // Mobile: always at final size (0.91), Desktop: initial is much larger
+  // Mobile: always at final size (0.91), Desktop: initial is larger
   const getInitialScaleFactor = () => {
-    if (typeof window === 'undefined') return 1.5; // 150% - much larger
-    return window.innerWidth < 1024 ? 0.91 : 1.5; // Mobile: always 91%, Desktop: 150% (much larger)
+    if (typeof window === 'undefined') return 1.35; // 135% - larger but smaller than before
+    return window.innerWidth < 1024 ? 0.91 : 1.35; // Mobile: always 91%, Desktop: 135% (reduced from 150%)
   };
   const scaleFactorRef = useRef(getInitialScaleFactor());
   const [scaleFactor, setScaleFactor] = useState(getInitialScaleFactor());
   // Mobile: always centered (0), Desktop: composition 30% outside bottom when not scrolled
-  // Offset represents how much of composition is outside bottom (0.0 = centered, 0.3 = 30% outside)
+  // Offset represents how much of composition is outside bottom (0.0 = centered, negative = above center)
   const getInitialVerticalOffset = () => {
-    if (typeof window === 'undefined') return 0.3;
-    return window.innerWidth < 1024 ? 0 : 0.3; // Mobile: 0% (centered), Desktop: 30% outside bottom
+    if (typeof window === 'undefined') return -0.03;
+    return window.innerWidth < 1024 ? 0 : -0.03; // Mobile: 0% (centered), Desktop: 3% above center
   };
   const verticalOffsetRef = useRef(getInitialVerticalOffset());
   const [verticalOffset, setVerticalOffset] = useState(getInitialVerticalOffset());
@@ -236,14 +236,13 @@ export default function CanvasAnimation() {
       // Mobile: always centered
       centerY = height / 2;
     } else {
-      // Desktop: calculate offset so 30% of composition is outside bottom when not scrolled
+      // Desktop: calculate offset so composition is 3% above center when not scrolled
       // The composition height is approximately ORBIT_RADIUS * 2 + some padding
       // Adjust offset based on scale factor to maintain relative position when composition size changes
       const compositionHeight = ORBIT_RADIUS * 2 + HERO_SIZE; // Approximate total height
-      // Normalize offset by scale factor: when scale is larger (1.5), reduce offset to maintain same visual position
-      // At scale 1.5, we need less offset percentage to achieve same visual result
-      const scaleNormalizedOffset = verticalOffsetRef.current / authScaleFactor; // Adjust for scale (1.5 -> 0.67x offset)
-      const offsetAmount = compositionHeight * 0.3 * scaleNormalizedOffset; // 30% when offset=1, 0% when offset=0
+      // Normalize offset by scale factor: when scale is larger, reduce offset to maintain same visual position
+      const scaleNormalizedOffset = verticalOffsetRef.current / authScaleFactor; // Adjust for scale
+      const offsetAmount = compositionHeight * -0.03 * scaleNormalizedOffset; // -3% (above center) when offset=-1, 0% when offset=0
       centerY = height / 2 + offsetAmount;
     }
 
@@ -525,19 +524,19 @@ export default function CanvasAnimation() {
     // Always in color (no grayscale) and always with glow
     const targetGrayscale = 0;
     const targetGlowColorProgress = 1; // Always with glow
-    // Scale factor: Mobile always at final size (0.91), Desktop initial is much larger
+    // Scale factor: Mobile always at final size (0.91), Desktop initial is larger
     // Final state: Mobile 91% (always), Desktop 110%
-    // Initial state: Mobile 91% (always), Desktop 150% (much larger)
+    // Initial state: Mobile 91% (always), Desktop 135% (reduced from 150%)
     const finalScaleFactor = isMobile ? 0.91 : 1.1;
     const targetScaleFactor = isMobile 
       ? 0.91 // Mobile: always at final size
-      : (isScrolled ? 1.1 : 1.5); // Desktop: 110% when scrolled, 150% when not (much larger)
-    // Offset represents how much of composition is outside bottom (0.0 = centered, 1.0 = 30% outside)
-    // Desktop: 30% outside bottom when not scrolled, centered when scrolled
+      : (isScrolled ? 1.1 : 1.35); // Desktop: 110% when scrolled, 135% when not (reduced from 150%)
+    // Offset represents vertical position (0.0 = centered, negative = above center)
+    // Desktop: 3% above center when not scrolled, centered when scrolled
     // Mobile: always centered (0)
     const targetVerticalOffset = isMobile 
       ? 0 // Mobile: always centered
-      : (isScrolled ? 0 : 1.0); // Desktop: centered when scrolled, 30% outside bottom when not scrolled
+      : (isScrolled ? 0 : -1.0); // Desktop: centered when scrolled, 3% above center when not scrolled
     const targetTextOpacities = isMobile
       ? new Array(IMAGE_DATA.length).fill(1) // Mobile: always visible
       : (isScrolled 

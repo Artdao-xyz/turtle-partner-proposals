@@ -57,10 +57,10 @@ export default function HeroSection({ isScrolled }: HeroSectionProps) {
 
       {/* Canvas - Changes height based on scroll state only on desktop */}
       <motion.div 
-        className="relative w-full h-[40vh] lg:h-[50vh] overflow-hidden"
+        className="relative w-full h-[40vh] lg:h-[30vh] overflow-hidden"
         initial={false}
         animate={isDesktop ? { 
-          height: isScrolled ? '70vh' : 'calc(100vh - 50vh)'
+          height: isScrolled ? '70vh' : 'calc(100vh - 30vh)'
         } : {}}
         transition={{
           duration: 0.3,
