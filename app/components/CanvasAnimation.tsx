@@ -117,7 +117,7 @@ const applyGrayscale = (
 
 export default function CanvasAnimation() {
   // State based on scroll position - starts "unauthenticated" (large, no text)
-  const isScrolled = useScrollThreshold(5);
+  const isScrolled = useScrollThreshold(30);
   const isScrolledRef = useRef(false);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   
