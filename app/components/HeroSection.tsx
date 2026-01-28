@@ -37,7 +37,7 @@ export default function HeroSection({ isScrolled }: HeroSectionProps) {
           ease: EASING,
         }}
       >
-          <div className="lg:absolute lg:left-10 lg:top-4 lg:self-start">
+          <div className="lg:self-start lg:px-10">
             {/* Logo - aparece siempre */}
             <motion.div
               initial={{ opacity: 0 }}

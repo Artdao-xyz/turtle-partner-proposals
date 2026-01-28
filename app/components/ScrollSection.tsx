@@ -14,7 +14,7 @@ interface InfoRowProps {
 function InfoRow({ title, items, isSecond = false }: InfoRowProps & { isSecond?: boolean }) {
   return (
     <div 
-      className={`w-xs h-full lg:h-auto lg:w-full rounded-[40px] lg:rounded-5xl p-6 outline outline-black-highlight/10 ${
+      className={`w-xs h-full lg:h-auto lg:w-full rounded-5xl p-6 outline outline-black-highlight/10 ${
         isSecond ? '' : 'bg-black-highlight/2'
       }`}
       style={isSecond ? {
@@ -283,7 +283,7 @@ export default function ScrollSection() {
         transition={{ duration: 0.8, delay: 0.4, ease: 'easeOut' }}
       >
         {/* Controller with text - positioned at the top */}
-        <div className="shrink-0 pt-8 pb-4 px-4 lg:px-8 lg:py-14 z-50">
+        <div className="shrink-0 pt-8 pb-4 px-4 lg:px-8 lg:py-14 2xl:py-24 z-50">
           <div className="flex flex-col lg:flex-row justify-center lg:justify-between items-center gap-4 lg:gap-0">
             {/* Text on the left */}
             <p className="hidden lg:block text-3xl font-normal font-dm-sans text-white-turtle">

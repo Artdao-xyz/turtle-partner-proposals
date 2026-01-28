@@ -106,7 +106,7 @@ export default function AuthFormV2({ isVisible = true }: AuthFormV2Props) {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.3 }}
-      className="relative flex items-end justify-center pt-4 lg:pt-8 pointer-events-none px-4 lg:px-0 lg:min-h-screen"
+      className="relative flex items-end justify-center lg:justify-evenly pt-4 lg:pt-8 pointer-events-none px-4 lg:px-0 lg:min-h-screen"
     >
       <motion.div
         initial={{ y: 100, opacity: 0 }}
@@ -287,7 +287,7 @@ export default function AuthFormV2({ isVisible = true }: AuthFormV2Props) {
         </p>
 
         {/* Turtle Logo */}
-        <div className="mt-16 flex justify-center">
+        <div className="mt-16 lg:mt-24 flex justify-center">
           <Image
             src="/media/turtle-big.svg"
             alt="Turtle Logo"
