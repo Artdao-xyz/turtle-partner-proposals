@@ -6,7 +6,7 @@ import Image from 'next/image';
 
 export default function LiquidityPrograms() {
   return (
-    <section className="w-full py-10 lg:py-[60px] mt-44" style={{ backgroundColor: 'var(--black-turtle)' }}>
+    <section className="w-full py-10 lg:py-[60px] mt-10 lg:mt-44" style={{ backgroundColor: 'var(--black-turtle)' }}>
       <div className="w-full max-w-6xl mx-auto px-4 lg:px-20">
         {/* Title Section */}
         <div className="flex flex-col lg:flex-row gap-2.5 items-center justify-between mb-15 lg:mb-[60px]">
@@ -29,7 +29,7 @@ export default function LiquidityPrograms() {
             className="flex flex-col lg:flex-row items-center justify-between gap-6 lg:gap-10"
           >
             {/* Card - Left */}
-            <div className="w-full lg:w-[580px] bg-white/2 border border-white/10 rounded-[20px] p-10 flex flex-col gap-5">
+            <div className="w-full lg:w-[580px] bg-white/2 border border-white/10 rounded-[40px] p-10 flex flex-col gap-5">
               <div className="flex gap-3 items-center">
                 <GreenDot className="w-[15px] h-[15px]" />
                 <h3 className="text-[28px] font-medium font-dm-sans text-white-turtle tracking-[-0.336px] leading-[1.2]">
@@ -43,7 +43,7 @@ export default function LiquidityPrograms() {
 
             {/* Graph - Right */}
             <div 
-              className="w-full lg:w-[500px] h-56 lg:h-80 rounded-[20px] relative overflow-hidden"
+              className="w-full lg:w-[500px] h-56 lg:h-80 rounded-2xl lg:rounded-[20px] relative overflow-hidden"
               style={{
                 background: 'linear-gradient(to bottom right, rgba(249, 249, 249, 0.1), rgba(115, 243, 108, 0.08))'
               }}
@@ -68,7 +68,7 @@ export default function LiquidityPrograms() {
           >
             {/* Graph - Left (dashboard) */}
             <div 
-              className="w-full lg:w-[500px] h-56 lg:h-80 rounded-[20px] relative overflow-hidden order-2 lg:order-1"
+              className="w-full lg:w-[500px] h-56 lg:h-80 rounded-2xl lg:rounded-[20px] relative overflow-hidden order-2 lg:order-1"
               style={{
                 background: 'linear-gradient(to bottom right, rgba(249, 249, 249, 0.1), rgba(115, 243, 108, 0.08))'
               }}
@@ -83,7 +83,7 @@ export default function LiquidityPrograms() {
             </div>
 
             {/* Card - Right */}
-            <div className="w-full lg:w-[580px] bg-white/2 border border-white/10 rounded-[20px] p-10 flex flex-col gap-5 order-1 lg:order-2">
+            <div className="w-full lg:w-[580px] bg-white/2 border border-white/10 rounded-[40px] p-10 flex flex-col gap-5 order-1 lg:order-2">
               <div className="flex gap-3 items-center">
                 <GreenDot className="w-[15px] h-[15px]" />
                 <h3 className="text-[28px] font-medium font-dm-sans text-white-turtle tracking-[-0.336px] leading-[1.2]">
@@ -105,7 +105,7 @@ export default function LiquidityPrograms() {
             className="flex flex-col lg:flex-row items-center justify-between gap-6 lg:gap-10"
           >
             {/* Card - Left */}
-            <div className="w-full lg:w-[580px] bg-white/2 border border-white/10 rounded-[20px] p-10 flex flex-col gap-5">
+            <div className="w-full lg:w-[580px] bg-white/2 border border-white/10 rounded-[40px] p-10 flex flex-col gap-5">
               <div className="flex gap-3 items-center">
                 <GreenDot className="w-[15px] h-[15px]" />
                 <h3 className="text-[28px] font-medium font-dm-sans text-white-turtle tracking-[-0.336px] leading-[1.2]">
@@ -119,7 +119,7 @@ export default function LiquidityPrograms() {
 
             {/* Graph - Right (Fee structure) */}
             <div 
-              className="w-full lg:w-[500px] h-56 lg:h-80 rounded-[20px] relative overflow-hidden"
+              className="w-full lg:w-[500px] h-56 lg:h-80 rounded-2xl lg:rounded-[20px] relative overflow-hidden"
               style={{
                 background: 'linear-gradient(to bottom right, rgba(249, 249, 249, 0.1), rgba(115, 243, 108, 0.08))'
               }}

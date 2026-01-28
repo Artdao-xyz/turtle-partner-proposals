@@ -14,7 +14,7 @@ interface InfoRowProps {
 function InfoRow({ title, items, isSecond = false }: InfoRowProps & { isSecond?: boolean }) {
   return (
     <div 
-      className={`w-xs h-full lg:h-auto lg:w-full rounded-5xl p-6 outline outline-black-highlight/10 ${
+      className={`w-xs h-full lg:h-auto lg:w-full rounded-[40px] lg:rounded-5xl p-6 outline outline-black-highlight/10 ${
         isSecond ? '' : 'bg-black-highlight/2'
       }`}
       style={isSecond ? {

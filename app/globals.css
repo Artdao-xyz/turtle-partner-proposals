@@ -23,6 +23,7 @@
 
 html {
   background-color: var(--black-turtle);
+  scroll-snap-type: y proximity;
 }
 
 body {

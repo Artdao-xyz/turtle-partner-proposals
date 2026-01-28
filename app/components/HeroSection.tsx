@@ -26,7 +26,7 @@ export default function HeroSection({ isScrolled }: HeroSectionProps) {
   }, []);
 
   return (
-    <section className="relative w-full h-svh lg:h-full flex flex-col overflow-hidden">
+    <section className="relative w-full h-svh lg:h-full flex flex-col justify-evenly lg:justify-center overflow-hidden">
       
       {/* Top section with Logo, Partnership, and Title - Dynamic height */}
       <motion.div 
@@ -55,20 +55,20 @@ export default function HeroSection({ isScrolled }: HeroSectionProps) {
           <HeroTitle isScrolled={isScrolled} />
       </motion.div>
 
-      {/* Canvas - Changes height based on scroll state, grows downward */}
+      {/* Canvas - Changes height based on scroll state only on desktop */}
       <motion.div 
-        className="relative w-full overflow-hidden"
+        className="relative w-full h-[40vh] lg:h-[50vh] overflow-hidden"
         initial={false}
-        animate={{ 
-          height: isDesktop ? (isScrolled ? '70vh' : 'calc(100vh - 50vh)') : '50vh'
-        }}
+        animate={isDesktop ? { 
+          height: isScrolled ? '70vh' : 'calc(100vh - 50vh)'
+        } : {}}
         transition={{
           duration: 0.3,
           ease: EASING,
         }}
         style={{
           flexShrink: 0,
-          marginTop: 'auto'
+          ...(isDesktop ? { marginTop: 'auto' } : {}) // Only apply marginTop on desktop
         }}
       >
         <CanvasAnimation />

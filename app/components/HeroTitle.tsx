@@ -46,8 +46,13 @@ export default function HeroTitle({ isScrolled }: HeroTitleProps) {
         
         {/* Text overlay */}
         <h1 className="relative z-10 lg:px-20 font-dm-sans text-center" style={{ backgroundColor: 'var(--black-turtle)' }}>
-          <span className="text-3xl lg:text-6xl 2xl:text-8xl font-normal leading-9 lg:leading-[60px] 2xl:leading-[90px] whitespace-nowrap" style={{ color: 'var(--white-turtle)' }}>
-            The Coordination Layer for<br />Liquidity Incentives
+          <span className="text-3xl lg:text-6xl 2xl:text-8xl font-normal leading-9 lg:leading-[60px] 2xl:leading-[90px]" style={{ color: 'var(--white-turtle)' }}>
+            <span className="lg:hidden whitespace-nowrap">
+              The Coordination Layer<br />for Liquidity Incentives
+            </span>
+            <span className="hidden lg:inline whitespace-nowrap">
+              The Coordination Layer for<br />Liquidity Incentives
+            </span>
           </span>
         </h1>
 

@@ -106,7 +106,7 @@ export default function AuthFormV2({ isVisible = true }: AuthFormV2Props) {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.3 }}
-      className="relative flex items-end justify-center pt-4 lg:pt-8 pointer-events-none px-4 lg:px-0"
+      className="relative flex items-end justify-center pt-4 lg:pt-8 pointer-events-none px-4 lg:px-0 lg:min-h-screen"
     >
       <motion.div
         initial={{ y: 100, opacity: 0 }}
@@ -116,7 +116,7 @@ export default function AuthFormV2({ isVisible = true }: AuthFormV2Props) {
       >
         <form
           onSubmit={handleSubmit}
-          className="bg-[#141514] border border-white/10 rounded-[30px] shadow-[0px_4px_4px_0px_rgba(0,0,0,0.25)] p-6 lg:p-9 flex flex-col gap-3 lg:gap-6"
+          className="bg-[#141514] border border-white/10 rounded-[20px] lg:rounded-[20px] shadow-[0px_4px_4px_0px_rgba(0,0,0,0.25)] p-6 lg:p-9 flex flex-col gap-3 lg:gap-6"
         >
           {/* Title Section */}
           <div className="flex flex-col gap-1">
