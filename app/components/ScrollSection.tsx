@@ -296,7 +296,7 @@ export default function ScrollSection() {
         <div className="shrink-0 pt-8 pb-4 px-4 lg:px-8 lg:p-0 z-50">
           <div className="flex flex-col lg:flex-row justify-center lg:justify-between items-center gap-4 lg:gap-0">
             {/* Text on the left */}
-            <p className="hidden lg:block text-3xl font-normal font-dm-sans text-white-turtle">
+            <p className="hidden lg:block text-3xl font-normal font-montserrat text-white-turtle">
               Everything you need to run a liquidity campaign
             </p>
             {/* Controller on the right */}

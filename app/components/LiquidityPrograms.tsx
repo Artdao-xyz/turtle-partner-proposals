@@ -10,7 +10,7 @@ export default function LiquidityPrograms() {
       <div className="w-full max-w-6xl mx-auto px-4 lg:px-20">
         {/* Title Section */}
         <div className="flex flex-col lg:flex-row gap-2.5 items-center justify-between mb-15 lg:mb-[60px]">
-          <h2 className="text-3xl lg:text-[30px] font-normal font-dm-sans text-white-turtle text-center tracking-[-0.15px] leading-[1.2]">
+          <h2 className="text-3xl lg:text-[30px] font-normal font-montserrat text-white-turtle text-center tracking-[-0.15px] leading-[1.2]">
             End-to-End Liquidity Programs
           </h2>
           <p className="text-lg lg:text-[18px] font-normal font-dm-sans text-white/50 text-center tracking-[-0.216px] leading-[1.2]">
