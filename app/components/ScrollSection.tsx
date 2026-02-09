@@ -286,14 +286,14 @@ export default function ScrollSection() {
     >
       {/* Sticky container */}
       <motion.div 
-        className="sticky inset-0  h-screen w-full max-w-6xl mx-auto overflow-hidden flex flex-col lg:py-20 2xl:py-32"
+        className="sticky inset-0 h-screen w-full max-w-6xl mx-auto overflow-hidden flex flex-col pt-20 lg:py-20 2xl:py-32"
         initial={{ opacity: isMobile ? 1 : 0 }}
         whileInView={{ opacity: 1 }}
         viewport={{ once: true, margin: isMobile ? '0px' : '-250px' }}
         transition={{ duration: 0.8, delay: 0.4, ease: 'easeOut' }}
       >
         {/* Controller with text - positioned at the top */}
-        <div className="shrink-0 pt-8 pb-4 px-4 lg:px-8 lg:p-0 z-50">
+        <div className="shrink-0 pt-8 pb-4 px-4 lg:px-8 lg:p-0">
           <div className="flex flex-col lg:flex-row justify-center lg:justify-between items-center gap-4 lg:gap-0">
             {/* Text on the left */}
             <p className="hidden lg:block text-3xl font-normal font-montserrat text-wise-white">
