@@ -7,6 +7,7 @@ import TurtleLogo from '../elements/TurtleLogo';
 import CanvasAnimation from './CanvasAnimation';
 import { ANIMATION_TIMINGS, EASING } from '../config/animationTimings';
 import HeroDescription from './HeroDescription';
+import Header from './Header';
 
 
 interface HeroSectionProps {
@@ -27,6 +28,8 @@ export default function HeroSection({ isScrolled }: HeroSectionProps) {
 
   return (
     <section className="relative w-full h-svh lg:h-full flex flex-col justify-evenly lg:justify-center overflow-hidden">
+
+      <Header />
       
       {/* Top section with Logo, Partnership, and Title - Dynamic height */}
       <motion.div 
@@ -37,8 +40,9 @@ export default function HeroSection({ isScrolled }: HeroSectionProps) {
           ease: EASING,
         }}
       >
-          <div className="lg:self-start lg:px-10">
-            {/* Logo - aparece siempre */}
+
+          
+          {/* <div className="lg:self-start lg:px-10">
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -49,7 +53,7 @@ export default function HeroSection({ isScrolled }: HeroSectionProps) {
             >
               <TurtleLogo />
             </motion.div>
-          </div>
+          </div> */}
 
           {/* Título - se achica cuando se hace scroll */}
           <HeroTitle isScrolled={isScrolled} />

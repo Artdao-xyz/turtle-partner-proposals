@@ -64,7 +64,7 @@ export default function Controller({ selectedMenu = 'Visibility', onMenuChange }
               >
                 <span
                   className={`text-xs font-medium font-dm-sans leading-5 ${
-                    isSelected ? 'text-green-turtle' : 'text-white-turtle/50'
+                    isSelected ? 'text-green-turtle' : 'text-wise-white/50'
                   }`}
                 >
                   {menu}

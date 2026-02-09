@@ -120,7 +120,7 @@ export default function AuthFormV2({ isVisible = true }: AuthFormV2Props) {
         >
           {/* Title Section */}
           <div className="flex flex-col gap-1">
-            <h2 className="text-lg lg:text-[30px] font-normal font-dm-sans text-white-turtle leading-[1.2] tracking-[-0.15px]">
+            <h2 className="text-lg lg:text-[30px] font-normal font-dm-sans text-wise-white leading-[1.2] tracking-[-0.15px]">
               Launch Your Next Incentive Campaign
             </h2>
             <p className="lg:text-lg font-normal font-dm-sans text-white/50 leading-[1.4] tracking-[-0.216px]">

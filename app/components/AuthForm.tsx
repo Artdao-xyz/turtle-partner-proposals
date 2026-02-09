@@ -97,7 +97,7 @@ export default function AuthForm({ isVisible }: AuthFormProps) {
             style={{ backgroundColor: 'var(--black-turtle)' }}
           >
             <div className="w-full flex flex-col gap-1">
-              <h2 className="text-2xl md:text-3xl font-normal text-white-turtle leading-7 md:leading-9 text-left">
+              <h2 className="text-2xl md:text-3xl font-normal text-wise-white leading-7 md:leading-9 text-left">
                 Unlock content to continue
               </h2>
               <p className="text-xs font-normal text-white leading-4 text-left">

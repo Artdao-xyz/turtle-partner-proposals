@@ -3,7 +3,8 @@
 :root {
   --green-turtle: #73f36c;
   --black-turtle: #141514;
-  --white-turtle: #f9f9f9;
+  --background: #141514;
+  --wise-white: #f9f9f9;
   --black-highlight: #F9F9F9;
   --shadow-green-turtle: 0px 0px 4px 0px rgba(115, 243, 108, 1.00);
   --shadow-black-turtle: 0px 0px 40px 0px rgba(0, 0, 0, 0.50);
@@ -12,7 +13,8 @@
 @theme inline {
   --color-green-turtle: var(--green-turtle);
   --color-black-turtle: var(--black-turtle);
-  --color-white-turtle: var(--white-turtle);
+  --color-background: var(--background);
+  --color-wise-white: var(--wise-white);
   --color-black-highlight: var(--black-highlight);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);

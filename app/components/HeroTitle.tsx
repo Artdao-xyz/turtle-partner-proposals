@@ -46,8 +46,8 @@ export default function HeroTitle({ isScrolled }: HeroTitleProps) {
         
         {/* Text overlay */}
         <h1 className="relative z-10 lg:px-20 font-montserrat text-center" style={{ backgroundColor: 'var(--black-turtle)' }}>
-          <span className="text-3xl lg:text-8xl 2xl:text-8xl font-normal leading-9 lg:leading-[86px]" style={{ color: 'var(--white-turtle)' }}>
-            Liquidity<br />incentive<br />toolkit
+          <span className="text-center font-montserrat text-5xl font-medium text-wise-white lg:text-7xl 2xl:text-8xl tracking-[-1.2%]">
+            Liquidity<br />Incentive<br />Toolkit
           </span>
         </h1>
 
@@ -65,7 +65,7 @@ export default function HeroTitle({ isScrolled }: HeroTitleProps) {
         }}
         className="w-full max-w-2xl mx-auto mt-4 lg:mt-6"
       >
-        <div className="text-center text-white/50 lg:text-4xl font-light font-montserrat lg:leading-9">
+        <div className="mt-4 text-center font-montserrat text-xl leading-tight text-white/50 lg:text-3xl">
           Design, launch, & distribute<br />incentives to the right<br />LPs, at scale.
         </div>
       </motion.div>

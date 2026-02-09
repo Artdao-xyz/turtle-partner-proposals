@@ -12,7 +12,7 @@ export default function Home() {
   const isScrolled = useScrollThreshold(15);
 
   return (
-    <main className="w-full">
+    <main className="w-full lg:pt-24">
       <HeroSection isScrolled={isScrolled} />
 
       {/* Bottom section with Text - Natural size, no shrinking */}
