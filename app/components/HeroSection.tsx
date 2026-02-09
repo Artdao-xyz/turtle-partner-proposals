@@ -16,7 +16,10 @@ export default function HeroSection({ isScrolled }: HeroSectionProps) {
   return (
     <section 
       className="relative w-full h-lvh lg:h-[140vh] overflow-hidden"
-      style={{ scrollSnapAlign: 'start' }}
+      style={{ 
+        scrollSnapAlign: 'end',
+        scrollMarginBottom: '25px',
+      }}
     >
       <Header />
       
@@ -52,7 +55,7 @@ export default function HeroSection({ isScrolled }: HeroSectionProps) {
 
         {/* Hero Description - Bottom of viewport, fades in when scrolled */}
         <motion.div
-          className="absolute bottom-14 left-1/2 transform -translate-x-1/2 z-10"
+          className="absolute bottom-0 left-1/2 transform -translate-x-1/2 z-10 px-4"
           initial={{ opacity: 0 }}
           animate={{ opacity: isScrolled ? 1 : 0 }}
           transition={{

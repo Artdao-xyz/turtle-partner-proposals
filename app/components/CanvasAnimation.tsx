@@ -465,13 +465,13 @@ export default function CanvasAnimation() {
     const finalScaleFactor = isMobile ? 0.91 : 0.75;
     const targetScaleFactor = isMobile 
       ? (isScrolled ? 0.91 : 1.5) // Mobile: shrinks from 120% to 91% when scrolled
-      : (isScrolled ? 0.75 : 0.65); // Desktop: shrinks from 80% to 75% when scrolled
+      : (isScrolled ? 0.7 : 0.65); // Desktop: shrinks from 80% to 75% when scrolled
     // Offset represents vertical position (0.0 = centered, positive = below center)
     // Desktop: 0.85 = positioned higher when not scrolled, 0.125 = slightly below center when scrolled
     // Mobile: always centered
     const targetVerticalOffset = isMobile 
       ? 0 // Mobile: always centered
-      : (isScrolled ? 0.35 : 0.9); // Desktop: 0.125 (below center) when scrolled, 0.85 = higher up when not scrolled
+      : (isScrolled ? 0.5 : 0.9); // Desktop: 0.125 (below center) when scrolled, 0.85 = higher up when not scrolled
     // Both mobile and desktop: texts start transparent (0) and appear when scrolled (1)
     const targetTextOpacities = isScrolled 
       ? new Array(IMAGE_DATA.length).fill(1)
