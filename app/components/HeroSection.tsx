@@ -27,7 +27,7 @@ export default function HeroSection({ isScrolled }: HeroSectionProps) {
   }, []);
 
   return (
-    <section className="relative w-full h-svh lg:h-full flex flex-col justify-evenly lg:justify-center overflow-hidden">
+    <section className="relative w-full h-svh lg:h-full flex flex-col justify-evenly lg:justify-center overflow-hidden pt-10 lg:pt-0">
 
       <Header />
       
@@ -60,7 +60,7 @@ export default function HeroSection({ isScrolled }: HeroSectionProps) {
 
       {/* Canvas - Changes height based on scroll state only on desktop */}
       <motion.div 
-        className="relative w-full h-[40vh] lg:h-[30vh] overflow-hidden"
+        className="relative w-full h-[50vh] lg:h-[30vh] overflow-hidden"
         initial={false}
         animate={isDesktop ? { 
           height: isScrolled ? '70vh' : 'calc(100vh - 30vh)'
@@ -77,9 +77,9 @@ export default function HeroSection({ isScrolled }: HeroSectionProps) {
         <CanvasAnimation />
       </motion.div>
 
-      <div className='lg:hidden'>
+      {/* <div className='lg:hidden'>
         <HeroDescription isVisible={true} />
-      </div>
+      </div> */}
     </section>
   );
 }

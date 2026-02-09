@@ -17,7 +17,7 @@ export default function Home() {
 
       {/* Bottom section with Text - Natural size, no shrinking */}
       <div 
-        className='hidden lg:block'
+        className=''
         style={{
           scrollBehavior: 'smooth',
           ...(isScrolled ? {

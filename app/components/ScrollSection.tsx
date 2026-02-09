@@ -281,7 +281,7 @@ export default function ScrollSection() {
   return (
     <section
       ref={containerRef}
-      className="relative h-[300vh] w-full mt-16 lg:mt-48"
+      className="relative h-[300vh] w-full lg:mt-48"
       style={{ backgroundColor: 'var(--black-turtle)' }}
     >
       {/* Sticky container */}

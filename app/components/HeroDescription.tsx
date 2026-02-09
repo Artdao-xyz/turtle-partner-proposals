@@ -29,7 +29,7 @@ export default function HeroDescription({ isVisible }: HeroDescriptionProps) {
         delay: isMobile && isVisible ? 0.4 : 0,
         ease: EASING,
       }}
-      className="w-full px-4 lg:block shrink-0 flex flex-col justify-center items-center lg:mt-6"
+      className="w-full px-4 lg:block shrink-0 flex flex-col justify-center items-center lg:mt-6 border-2 border-red-500"
     >
       <div className="w-full max-w-3xl mx-auto text-center" style={{ fontFamily: 'var(--font-montserrat)' }}>
         <span className="lg:text-xl font-normal leading-6" style={{ color: 'var(--wise-white)' }}>

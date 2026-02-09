@@ -144,10 +144,10 @@ export default function CanvasAnimation() {
   const glowColorProgressRef = useRef(1); // Always with glow
   const [glowColorProgress, setGlowColorProgress] = useState(1);
   // Initialize scale factor based on screen size (mobile vs desktop)
-  // Mobile: always at final size (0.91), Desktop: initial is larger
+  // Mobile: starts larger like desktop, Desktop: initial is larger
   const getInitialScaleFactor = () => {
-    if (typeof window === 'undefined') return 1.35; // 135% - larger but smaller than before
-    return window.innerWidth < 1024 ? 0.91 : 1.35; // Mobile: always 91%, Desktop: 135% (reduced from 150%)
+    if (typeof window === 'undefined') return 1.5; // 135% - larger but smaller than before
+    return 1.35; // Both mobile and desktop start at 135%
   };
   const scaleFactorRef = useRef(getInitialScaleFactor());
   const [scaleFactor, setScaleFactor] = useState(getInitialScaleFactor());
@@ -160,7 +160,6 @@ export default function CanvasAnimation() {
   const verticalOffsetRef = useRef(getInitialVerticalOffset());
   const [verticalOffset, setVerticalOffset] = useState(getInitialVerticalOffset());
   const fadeAnimationRef = useRef<number | null>(null);
-  const mobileFadeInRef = useRef<number | null>(null); // Separate ref for mobile initial fade in
   const devicePixelRatioRef = useRef<number>(1);
 
   // Draw function - always draws everything
@@ -333,7 +332,9 @@ export default function CanvasAnimation() {
         // When scrolled, text is at 50% opacity; otherwise at 70%
         const textOpacity = isScrolledRef.current ? 0.5 : 0.7;
         ctx.fillStyle = `rgba(255, 255, 255, ${textOpacity})`;
-        const fontSize = 14 * finalScaleFactor;
+        // Mobile: 8px font size when visible, Desktop: 14px scaled
+        const baseFontSize = isVertical ? 8 : 14;
+        const fontSize = baseFontSize * finalScaleFactor;
         ctx.font = `${fontSize}px sans-serif`;
         ctx.textBaseline = 'middle';
 
@@ -458,64 +459,11 @@ export default function CanvasAnimation() {
     };
   }, [draw]);
 
-  // Initial fade in animation for mobile texts on load
+  // Mobile texts no longer fade in automatically - they appear on scroll
+
+  // Animate text opacity and grayscale based on scroll state (both mobile and desktop)
   useEffect(() => {
     const isMobile = typeof window !== 'undefined' && window.innerWidth < 1024;
-    if (!isMobile) return;
-
-    // Start fade in animation after a short delay
-    const startTime = performance.now();
-    const ANIMATION_DURATION = 600; // 0.6s
-    const DELAY = 500; // 0.5s delay for texts
-
-    const animate = (currentTime: number) => {
-      const elapsed = currentTime - startTime;
-      
-      if (elapsed < DELAY) {
-        mobileFadeInRef.current = requestAnimationFrame(animate);
-        return;
-      }
-
-      const textElapsed = elapsed - DELAY;
-      const progress = Math.min(textElapsed / ANIMATION_DURATION, 1);
-      
-      // Easing function (ease-in-out)
-      const eased = progress < 0.5
-        ? 2 * progress * progress
-        : 1 - Math.pow(-2 * progress + 2, 2) / 2;
-
-      // Set all texts to fade in
-      const newTextOpacities = new Array(IMAGE_DATA.length).fill(eased);
-      textOpacityRefs.current = newTextOpacities;
-      setTextOpacities([...newTextOpacities]);
-      draw();
-
-      if (progress < 1) {
-        mobileFadeInRef.current = requestAnimationFrame(animate);
-      } else {
-        // Ensure final values
-        textOpacityRefs.current = new Array(IMAGE_DATA.length).fill(1);
-        setTextOpacities([...new Array(IMAGE_DATA.length).fill(1)]);
-        setHasAnimatedIn(true);
-        mobileFadeInRef.current = null;
-        draw();
-      }
-    };
-
-    mobileFadeInRef.current = requestAnimationFrame(animate);
-
-    return () => {
-      if (mobileFadeInRef.current !== null) {
-        cancelAnimationFrame(mobileFadeInRef.current);
-      }
-    };
-  }, [draw]);
-
-  // Animate text opacity and grayscale based on scroll state (desktop only)
-  useEffect(() => {
-    const isMobile = typeof window !== 'undefined' && window.innerWidth < 1024;
-    // Skip scroll-based animation in mobile (texts are always visible after initial fade in)
-    if (isMobile) return;
     // Cancel any ongoing animation
     if (fadeAnimationRef.current !== null) {
       cancelAnimationFrame(fadeAnimationRef.current);
@@ -524,24 +472,23 @@ export default function CanvasAnimation() {
     // Always in color (no grayscale) and always with glow
     const targetGrayscale = 0;
     const targetGlowColorProgress = 1; // Always with glow
-    // Scale factor: Mobile always at final size (0.91), Desktop initial is larger
-    // Final state: Mobile 91% (always), Desktop 110%
-    // Initial state: Mobile 91% (always), Desktop 135% (reduced from 150%)
-    const finalScaleFactor = isMobile ? 0.91 : 1.1;
-    const targetScaleFactor = isMobile 
-      ? 0.91 // Mobile: always at final size
-      : (isScrolled ? 1.1 : 1.35); // Desktop: 110% when scrolled, 135% when not (reduced from 150%)
+    // Scale factor: Both mobile and desktop start larger, grow when scrolled
+    // Scrolled state: Mobile 1.1, Desktop 1.4 (larger than initial)
+    // Initial state: Both 135%
+    const finalScaleFactor = isMobile ? 1.2 : 1.4;
+    const targetScaleFactor = isScrolled 
+      ? finalScaleFactor // Grow when scrolled
+      : 1.5; // Start larger (both mobile and desktop)
     // Offset represents vertical position (0.0 = centered, negative = above center)
     // Desktop: 3% above center when not scrolled, centered when scrolled
     // Mobile: always centered (0)
     const targetVerticalOffset = isMobile 
       ? 0 // Mobile: always centered
       : (isScrolled ? 0 : -1.0); // Desktop: centered when scrolled, 3% above center when not scrolled
-    const targetTextOpacities = isMobile
-      ? new Array(IMAGE_DATA.length).fill(1) // Mobile: always visible
-      : (isScrolled 
-        ? new Array(IMAGE_DATA.length).fill(1)
-        : new Array(IMAGE_DATA.length).fill(0));
+    // Text opacities: Both mobile and desktop start hidden, appear when scrolled
+    const targetTextOpacities = isScrolled 
+      ? new Array(IMAGE_DATA.length).fill(1) // Show text when scrolled
+      : new Array(IMAGE_DATA.length).fill(0); // Hide text initially
     
     const startGrayscale = grayscaleRef.current;
     const startGlowColorProgress = glowColorProgressRef.current;
@@ -593,12 +540,10 @@ export default function CanvasAnimation() {
 
       // Animate each text opacity with cascade effect (individual delays)
       const newTextOpacities = textOpacityRefs.current.map((startOpacity, index) => {
-        // Mobile: always visible immediately; Desktop: cascade delays when scrolled
-        const textDelay = isMobile
-          ? 0 // Mobile: no delay, always visible
-          : (isScrolled 
-            ? toMs(getTextOpacityDelay(index))
-            : 0);
+        // Both mobile and desktop: cascade delays when scrolled, no delay when hiding
+        const textDelay = isScrolled 
+          ? (isMobile ? 0 : toMs(getTextOpacityDelay(index))) // Mobile: no delay, Desktop: cascade delays
+          : 0; // No delay when hiding
         
         if (elapsed < textDelay) {
           return startOpacity;
@@ -626,11 +571,9 @@ export default function CanvasAnimation() {
         grayscaleProgress >= 1 &&
         glowProgress >= 1 &&
         newTextOpacities.every((opacity, index) => {
-          const textDelay = isMobile
-            ? 0 // Mobile: no delay
-            : (isScrolled 
-              ? toMs(getTextOpacityDelay(index))
-              : 0);
+          const textDelay = isScrolled 
+            ? (isMobile ? 0 : toMs(getTextOpacityDelay(index))) // Mobile: no delay, Desktop: cascade delays
+            : 0; // No delay when hiding
           return elapsed >= textDelay + textDuration;
         });
 
@@ -662,5 +605,5 @@ export default function CanvasAnimation() {
     };
   }, [isScrolled, draw]);
 
-  return <canvas ref={canvasRef} className="w-full h-full relative" />;
+  return <canvas ref={canvasRef} className="w-full h-full relative border-2 border-red-500" />;
 }
