@@ -473,9 +473,9 @@ export default function CanvasAnimation() {
     const targetGrayscale = 0;
     const targetGlowColorProgress = 1; // Always with glow
     // Scale factor: Both mobile and desktop start larger, grow when scrolled
-    // Scrolled state: Mobile 1.1, Desktop 1.26 (larger than initial, reduced 10%)
+    // Scrolled state: Mobile 1.2, Desktop 1.134 (reduced 10% from previous 1.26)
     // Initial state: Both 135%
-    const finalScaleFactor = isMobile ? 1.2 : 1.26;
+    const finalScaleFactor = isMobile ? 1.2 : 1.134;
     const targetScaleFactor = isScrolled 
       ? finalScaleFactor // Grow when scrolled
       : 1.5; // Start larger (both mobile and desktop)
