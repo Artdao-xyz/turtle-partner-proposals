@@ -9,7 +9,7 @@ interface LineProps {
 
 export default function Line({ className }: LineProps) {
   return (
-    <div className={`relative lg:w-full h-[10px] ${className}`}>
+    <div className={`relative lg:w-full lg:max-w-[400px] h-[10px] ${className}`}>
       {/* Línea base gris */}
       <div 
         className="absolute top-1/2 left-0 right-0 h-px transform -translate-y-1/2"

@@ -39,7 +39,7 @@ export default function HeroTitle({ isScrolled }: HeroTitleProps) {
       }}
       className="relative w-full lg:w-screen lg:px-0"
     >
-      <div className="lg:mt-10 relative flex flex-row items-center justify-between lg:gap-10 w-full pt-4 lg:pt-0">
+      <div className="lg:mt-10 relative flex flex-row items-center justify-between w-full pt-4 lg:pt-0">
         {/* Left Line */}
         <Line className="hidden lg:block" /> 
         
@@ -47,8 +47,8 @@ export default function HeroTitle({ isScrolled }: HeroTitleProps) {
         <div className="flex flex-col w-full items-center justify-center lg:min-w-[600px]">
           {/* Title */}
           <h1 className="relative z-10 font-montserrat text-center">
-            <span className="text-center font-montserrat font-medium text-5xl text-wise-white text-medium lg:text-7xl 2xl:text-8xl" style={{ lineHeight: '1.05', margin: 0, padding: 0 }}>
-              Liquidity<br />Incentive<br />Toolkit
+            <span className="text-center font-montserrat font-medium text-5xl text-wise-white lg:text-7xl 2xl:text-8xl" style={{ lineHeight: '1.05', margin: 0, padding: 0 }}>
+              Liquidity<br />Incentive Toolkit
             </span>
           </h1>
 
@@ -63,9 +63,9 @@ export default function HeroTitle({ isScrolled }: HeroTitleProps) {
             }}
             className="w-full mt-4 lg:mt-6"
           >
-            <div className="text-center font-montserrat text-xl leading-tight font-light text-white/50 lg:text-4xl">
+            <h2 className="text-center font-montserrat text-xl leading-tight text-white/50 lg:text-3xl">
               Design, launch, & distribute<br />incentives to the right LPs, at scale.
-            </div>
+            </h2>
           </motion.div>
         </div>
 
