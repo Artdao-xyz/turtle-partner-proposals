@@ -605,5 +605,5 @@ export default function CanvasAnimation() {
     };
   }, [isScrolled, draw]);
 
-  return <canvas ref={canvasRef} className="w-full h-full relative border-2 border-red-500" />;
+  return <canvas ref={canvasRef} className="w-full h-full relative" />;
 }

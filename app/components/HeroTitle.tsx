@@ -47,7 +47,7 @@ export default function HeroTitle({ isScrolled }: HeroTitleProps) {
         <div className="flex flex-col w-full items-center justify-center lg:min-w-[600px]">
           {/* Title */}
           <h1 className="relative z-10 font-montserrat text-center">
-            <span className="text-center font-montserrat font-medium text-5xl text-wise-white lg:text-7xl 2xl:text-8xl" style={{ lineHeight: '1.05', margin: 0, padding: 0 }}>
+            <span className="text-center font-montserrat font-medium text-[44px] whitespace-nowrap tracking-tight lg:tracking-normal text-wise-white lg:text-7xl 2xl:text-8xl" style={{ lineHeight: '1.05', margin: 0, padding: 0 }}>
               Liquidity<br />Incentive Toolkit
             </span>
           </h1>
