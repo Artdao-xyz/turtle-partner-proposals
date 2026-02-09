@@ -5,6 +5,7 @@ import ScrollSection from './components/ScrollSection';
 import LiquidityPrograms from './components/LiquidityPrograms';
 import VideoPlayer from './components/VideoPlayer';
 import AuthFormV2 from './components/AuthFormV2';
+import HeroDescription from './components/HeroDescription';
 import { useScrollThreshold } from './hooks/useScrollThreshold';
 
 export default function Home() {
@@ -13,6 +14,9 @@ export default function Home() {
   return (
     <main className="w-full">
       <HeroSection isScrolled={isScrolled} />
+      <div className="lg:hidden shrink-0 pb-2 px-4">
+          <HeroDescription isVisible={true} />
+        </div>
       <ScrollSection />
       <LiquidityPrograms />
       <section 
