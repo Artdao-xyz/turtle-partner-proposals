@@ -1,11 +1,9 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { useState, useEffect } from 'react';
 import HeroTitle from './HeroTitle';
-import TurtleLogo from '../elements/TurtleLogo';
 import CanvasAnimation from './CanvasAnimation';
-import { ANIMATION_TIMINGS, EASING } from '../config/animationTimings';
+import { EASING } from '../config/animationTimings';
 import HeroDescription from './HeroDescription';
 import Header from './Header';
 
@@ -15,70 +13,38 @@ interface HeroSectionProps {
 }
 
 export default function HeroSection({ isScrolled }: HeroSectionProps) {
-  const [isDesktop, setIsDesktop] = useState(false);
-
-  useEffect(() => {
-    const checkDesktop = () => {
-      setIsDesktop(window.innerWidth >= 1024);
-    };
-    checkDesktop();
-    window.addEventListener('resize', checkDesktop);
-    return () => window.removeEventListener('resize', checkDesktop);
-  }, []);
-
   return (
-    <section className="relative w-full h-svh lg:h-full flex flex-col justify-evenly lg:justify-center overflow-hidden">
-
+    <section 
+      className="relative w-full h-svh lg:h-[120vh] overflow-hidden"
+      style={{ scrollSnapAlign: 'start' }}
+    >
       <Header />
       
-      {/* Top section with Logo, Partnership, and Title - Dynamic height */}
-      <motion.div 
-        className="shrink-0 relative flex flex-col justify-between lg:justify-evenly items-center lg:h-[50vh]"
-        layout
+      {/* Canvas - Always absolute, full viewport size, background layer */}
+      <div className="absolute inset-0 w-full h-full z-0">
+        <CanvasAnimation />
+      </div>
+
+      {/* Hero Title - Centered absolutely in viewport (not in 120vh section), fades based on scroll */}
+      <div className="absolute top-[50vh] left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-10">
+        <HeroTitle isScrolled={isScrolled} />
+      </div>
+
+      {/* Hero Description - Bottom of viewport, fades in when scrolled (desktop only) */}
+      <motion.div
+        className="hidden lg:block absolute bottom-14 left-1/2 transform -translate-x-1/2 z-10"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: isScrolled ? 1 : 0 }}
         transition={{
           duration: 0.4,
           ease: EASING,
         }}
       >
-
-          
-          {/* <div className="lg:self-start lg:px-10">
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{
-                duration: 0.6,
-                ease: EASING,
-              }}
-            >
-              <TurtleLogo />
-            </motion.div>
-          </div> */}
-
-          {/* Título - se achica cuando se hace scroll */}
-          <HeroTitle isScrolled={isScrolled} />
+        <HeroDescription isVisible={isScrolled} />
       </motion.div>
 
-      {/* Canvas - Changes height based on scroll state only on desktop */}
-      <motion.div 
-        className="relative w-full h-[40vh] lg:h-[30vh] overflow-hidden"
-        initial={false}
-        animate={isDesktop ? { 
-          height: isScrolled ? '70vh' : 'calc(100vh - 30vh)'
-        } : {}}
-        transition={{
-          duration: 0.3,
-          ease: EASING,
-        }}
-        style={{
-          flexShrink: 0,
-          ...(isDesktop ? { marginTop: 'auto' } : {}) // Only apply marginTop on desktop
-        }}
-      >
-        <CanvasAnimation />
-      </motion.div>
-
-      <div className='lg:hidden'>
+      {/* Mobile Description - Always visible */}
+      <div className='lg:hidden absolute bottom-10 left-1/2 transform -translate-x-1/2 z-10'>
         <HeroDescription isVisible={true} />
       </div>
     </section>

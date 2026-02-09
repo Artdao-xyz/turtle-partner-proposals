@@ -1,7 +1,6 @@
 'use client';
 
 import HeroSection from './components/HeroSection';
-import HeroDescription from './components/HeroDescription';
 import ScrollSection from './components/ScrollSection';
 import LiquidityPrograms from './components/LiquidityPrograms';
 import VideoPlayer from './components/VideoPlayer';
@@ -9,26 +8,11 @@ import AuthFormV2 from './components/AuthFormV2';
 import { useScrollThreshold } from './hooks/useScrollThreshold';
 
 export default function Home() {
-  const isScrolled = useScrollThreshold(15);
+  const isScrolled = useScrollThreshold(10);
 
   return (
-    <main className="w-full lg:pt-24">
+    <main className="w-full">
       <HeroSection isScrolled={isScrolled} />
-
-      {/* Bottom section with Text - Natural size, no shrinking */}
-      <div 
-        className='hidden lg:block'
-        style={{
-          scrollBehavior: 'smooth',
-          ...(isScrolled ? {
-            scrollSnapAlign: 'end',
-            scrollMarginBottom: '10vh',
-            scrollSnapStop: 'normal'
-          } : {})
-        }}
-      >
-        <HeroDescription isVisible={isScrolled} />
-      </div>
       <ScrollSection />
       <LiquidityPrograms />
       <section 

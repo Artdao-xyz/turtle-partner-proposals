@@ -135,7 +135,7 @@ export default function Header() {
     >
     <div className="flex justify-between items-center w-full">
         <Link href="/">
-          <Image className="w-20 h-10" src="media/turtle-logo.svg" alt="Logo" width={127} height={50} />
+          <Image className="h-7" src="media/turtle-logo.svg" alt="Logo" width={127} height={50} />
         </Link>
 
         {/* Desktop menu - Centered with absolute positioning */}
