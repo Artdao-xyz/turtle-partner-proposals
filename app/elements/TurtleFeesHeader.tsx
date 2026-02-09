@@ -30,7 +30,7 @@ export default function TurtleFeesHeader() {
         <div
           className="px-4 py-2 rounded-full border border-green-turtle/50 bg-transparent flex items-center gap-2"
           style={{ 
-            color: 'var(--white-turtle)',
+            color: 'var(--wise-white)',
             boxShadow: 'var(--shadow-green-turtle), var(--shadow-black-turtle)'
           }}
         >

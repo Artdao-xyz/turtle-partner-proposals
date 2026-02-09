@@ -7,6 +7,7 @@ import TurtleLogo from '../elements/TurtleLogo';
 import CanvasAnimation from './CanvasAnimation';
 import { ANIMATION_TIMINGS, EASING } from '../config/animationTimings';
 import HeroDescription from './HeroDescription';
+import Header from './Header';
 
 
 interface HeroSectionProps {
@@ -26,18 +27,20 @@ export default function HeroSection({ isScrolled }: HeroSectionProps) {
   }, []);
 
   return (
-    <section className="relative w-full h-svh lg:h-full flex flex-col justify-evenly lg:justify-center overflow-hidden">
+    <section className="relative w-full h-svh lg:h-full flex flex-col justify-evenly lg:justify-center overflow-hidden pt-10 lg:pt-0">
+
+      <Header />
       
       {/* Top section with Logo, Partnership, and Title - Dynamic height */}
       <motion.div 
-        className="shrink-0 relative flex flex-col justify-between lg:justify-evenly items-center lg:h-[50vh]"
+        className="shrink-0 relative flex flex-col justify-between lg:justify-evenly items-center lg:h-[70vh]"
         layout
         transition={{
           duration: 0.4,
           ease: EASING,
         }}
       >
-          <div className="lg:self-start lg:px-10">
+          <div className="lg:self-start lg:px-10 invisible">
             {/* Logo - aparece siempre */}
             <motion.div
               initial={{ opacity: 0 }}
@@ -57,7 +60,7 @@ export default function HeroSection({ isScrolled }: HeroSectionProps) {
 
       {/* Canvas - Changes height based on scroll state only on desktop */}
       <motion.div 
-        className="relative w-full h-[40vh] lg:h-[30vh] overflow-hidden"
+        className="relative w-full h-[50vh] lg:h-[30vh] overflow-hidden"
         initial={false}
         animate={isDesktop ? { 
           height: isScrolled ? '70vh' : 'calc(100vh - 30vh)'
@@ -74,9 +77,9 @@ export default function HeroSection({ isScrolled }: HeroSectionProps) {
         <CanvasAnimation />
       </motion.div>
 
-      <div className='lg:hidden'>
+      {/* <div className='lg:hidden'>
         <HeroDescription isVisible={true} />
-      </div>
+      </div> */}
     </section>
   );
 }

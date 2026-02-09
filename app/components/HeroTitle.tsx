@@ -21,59 +21,55 @@ export default function HeroTitle({ isScrolled }: HeroTitleProps) {
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
   
-  // In mobile, always visible and full size, fade in on load
+  // In mobile, always visible, fade in on load
+  // In desktop, fade out when scrolled
   const shouldHide = isMobile ? false : isScrolled;
-  const shouldScale = isMobile ? false : isScrolled;
   
   return (
     <motion.div
       initial={{ opacity: 0, scale: 1 }}
-      animate={{ opacity: shouldHide ? 0 : 1, scale: shouldScale ? 0.7 : 1 }}
-      layout
+      animate={{ 
+        opacity: shouldHide ? 0 : 1,
+        scale: shouldHide ? 0.95 : 1
+      }}
       transition={{
-        duration: 0.6,
+        duration: 0.4,
         delay: isMobile ? 0.2 : 0,
         ease: EASING,
-        layout: {
-          duration: 0.3,
-          ease: EASING,
-        },
       }}
-      className="w-full px-4 lg:px-0 relative"
+      className="relative w-full lg:w-screen lg:px-0"
     >
-      <div className="relative flex flex-row items-center justify-center w-full pt-4 lg:pt-0">
-        <Line /> 
+      <div className="lg:mt-10 relative flex flex-row items-center justify-between w-full pt-4 lg:pt-0">
+        {/* Left Line */}
+        <Line className="hidden lg:block" /> 
         
-        {/* Text overlay */}
-        <h1 className="relative z-10 lg:px-20 font-dm-sans text-center" style={{ backgroundColor: 'var(--black-turtle)' }}>
-          <span className="text-3xl lg:text-6xl 2xl:text-8xl font-normal leading-9 lg:leading-[60px] 2xl:leading-[90px]" style={{ color: 'var(--white-turtle)' }}>
-            <span className="lg:hidden whitespace-nowrap">
-              The Coordination Layer<br />for Liquidity Incentives
-            </span>
-            <span className="hidden lg:inline whitespace-nowrap">
-              The Coordination Layer for<br />Liquidity Incentives
-            </span>
-          </span>
-        </h1>
+        {/* Center Content - Title + Subtitle in column */}
+        <div className="flex flex-col w-full items-center justify-center lg:min-w-[600px]">
+          {/* Title */}
+            <h1 className="relative z-10 text-center font-montserrat font-medium text-[44px] whitespace-nowrap tracking-tight lg:tracking-normal text-wise-white lg:text-7xl 2xl:text-8xl" style={{ lineHeight: '1.1', margin: 0, padding: 0 }}>
+              Liquidity<br />Incentive Toolkit
+            </h1>
 
-        <Line className='scale-x-[-1]'/>
-      </div>
-      
-      {/* Subtitle */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{
-          duration: 0.6,
-          delay: isMobile ? 0.3 : 0,
-          ease: EASING,
-        }}
-        className="w-full max-w-2xl mx-auto mt-4 lg:mt-6"
-      >
-        <div className="text-center text-white/50 lg:text-2xl font-normal font-dm-sans lg:leading-7">
-          Design, launch, and distribute incentives <br/>to the right LPs, at scale.
+          {/* Subtitle */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: shouldHide ? 0 : 1 }}
+            transition={{
+              duration: 0.4,
+              delay: isMobile ? 0.3 : 0,
+              ease: EASING,
+            }}
+            className="w-full mt-4 lg:mt-6"
+          >
+            <h2 className="text-center font-montserrat text-xl leading-tight text-white/50 lg:text-3xl">
+              Design, launch, & distribute<br />incentives to the right LPs, at scale.
+            </h2>
+          </motion.div>
         </div>
-      </motion.div>
+
+        {/* Right Line */}
+        <Line className='scale-x-[-1] hidden lg:block'/>
+      </div>
     </motion.div>
   );
 }

@@ -9,10 +9,10 @@ interface LineProps {
 
 export default function Line({ className }: LineProps) {
   return (
-    <div className={`hidden md:block w-[400px] h-[10px] ${className}`}>
+    <div className={`hidden md:block max-w-[400px] w-full h-[10px] ${className}`}>
       {/* Línea base gris */}
       <div 
-        className="absolute top-1/2 left-0 w-full h-px transform -translate-y-1/2"
+        className="absolute top-1/2 left-0 w-full max-w-[400px] h-px transform -translate-y-1/2"
         style={{
           background: 'linear-gradient(to right, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0.2) 80%, transparent 100%)'
         }}

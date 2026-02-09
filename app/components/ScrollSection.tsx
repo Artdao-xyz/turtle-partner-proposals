@@ -27,7 +27,7 @@ function InfoRow({ title, items, isSecond = false }: InfoRowProps & { isSecond?:
       </div>
       <ul className="space-y-2">
         {items.map((item, idx) => (
-          <li key={idx} className="text-white-turtle text-sm lg:text-base leading-6 lg:leading-relaxed">
+          <li key={idx} className="text-wise-white text-sm lg:text-base leading-6 lg:leading-relaxed">
             {item}
           </li>
         ))}
@@ -68,7 +68,7 @@ function ScrollSectionItem({ image, info, opacity, zIndex = 1 }: ScrollSectionIt
       <div className="w-full max-w-6xl mx-auto px-4 pointer-events-none">
         <div className="flex flex-col justify-center lg:grid lg:grid-cols-5 items-center lg:gap-6">
           {/* Image - First on mobile, Right on desktop */}
-          <div className="w-full lg:col-span-3 lg:col-start-3 order-1 lg:order-2 flex items-center justify-center h-[40vh] lg:h-[600px]">
+          <div className="w-full lg:col-span-3 lg:col-start-3 order-1 lg:order-2 flex items-center justify-center h-[30vh] lg:h-[600px]">
             <Image
               src={image}
               alt={info.row1.title}
@@ -281,22 +281,22 @@ export default function ScrollSection() {
   return (
     <section
       ref={containerRef}
-      className="relative h-[300vh] w-full mt-16 lg:mt-48"
+      className="relative h-[300vh] w-full lg:mt-48"
       style={{ backgroundColor: 'var(--black-turtle)' }}
     >
       {/* Sticky container */}
       <motion.div 
-        className="sticky inset-0  h-screen w-full max-w-6xl mx-auto overflow-hidden flex flex-col lg:py-20 2xl:py-32"
+        className="sticky inset-0 h-screen w-full max-w-6xl mx-auto overflow-hidden flex flex-col pt-20 lg:py-20 2xl:py-32"
         initial={{ opacity: isMobile ? 1 : 0 }}
         whileInView={{ opacity: 1 }}
         viewport={{ once: true, margin: isMobile ? '0px' : '-250px' }}
         transition={{ duration: 0.8, delay: 0.4, ease: 'easeOut' }}
       >
         {/* Controller with text - positioned at the top */}
-        <div className="shrink-0 pt-8 pb-4 px-4 lg:px-8 lg:p-0 z-50">
+        <div className="shrink-0 pt-8  px-4 lg:px-8 lg:p-0 z-50">
           <div className="flex flex-col lg:flex-row justify-center lg:justify-between items-center gap-4 lg:gap-0">
             {/* Text on the left */}
-            <p className="hidden lg:block text-3xl font-normal font-dm-sans text-white-turtle">
+            <p className="hidden lg:block text-3xl font-normal text-wise-white" style={{ fontFamily: 'var(--font-montserrat)' }}>
               Everything you need to run a liquidity campaign
             </p>
             {/* Controller on the right */}
@@ -305,7 +305,7 @@ export default function ScrollSection() {
         </div>
         
         {/* Content container - centered vertically on desktop, normal flow on mobile */}
-        <div className="flex-1 relative w-full max-w-6xl mx-auto min-h-[60vh] lg:min-h-0 lg:h-full">
+        <div className="flex-1 relative w-full max-w-6xl mx-auto min-h-[40vh] lg:min-h-0 lg:h-full">
           {/* Section 1 */}
           <ScrollSectionItem
             image={SECTION_DATA.section1.image}

@@ -10,7 +10,7 @@ export default function LiquidityPrograms() {
       <div className="w-full max-w-6xl mx-auto px-4 lg:px-20">
         {/* Title Section */}
         <div className="flex flex-col lg:flex-row gap-2.5 items-center justify-between mb-15 lg:mb-[60px]">
-          <h2 className="text-3xl lg:text-[30px] font-normal font-dm-sans text-white-turtle text-center tracking-[-0.15px] leading-[1.2]">
+          <h2 className="text-3xl lg:text-[30px] font-normal text-wise-white text-center tracking-[-0.15px] leading-[1.2]" style={{ fontFamily: 'var(--font-montserrat)' }}>
             End-to-End Liquidity Programs
           </h2>
           <p className="text-lg lg:text-[18px] font-normal font-dm-sans text-white/50 text-center tracking-[-0.216px] leading-[1.2]">
@@ -32,11 +32,11 @@ export default function LiquidityPrograms() {
             <div className="w-full lg:w-[580px] bg-white/2 border border-white/10 rounded-5xl p-10 flex flex-col gap-5">
               <div className="flex gap-3 items-center">
                 <GreenDot className="w-[15px] h-[15px]" />
-                <h3 className="text-[28px] font-medium font-dm-sans text-white-turtle tracking-[-0.336px] leading-[1.2]">
+                <h3 className="text-[28px] font-medium font-dm-sans text-wise-white tracking-[-0.336px] leading-[1.2]">
                   Design
                 </h3>
               </div>
-              <p className="text-lg font-normal font-dm-sans text-white-turtle leading-[1.4] tracking-[-0.216px]">
+              <p className="text-lg font-normal font-dm-sans text-wise-white leading-[1.4] tracking-[-0.216px]">
                 Define incentive mechanics, targeting, and optional leaderboard logic
               </p>
             </div>
@@ -86,11 +86,11 @@ export default function LiquidityPrograms() {
             <div className="w-full lg:w-[580px] bg-white/2 border border-white/10 rounded-5xl p-10 flex flex-col gap-5 order-1 lg:order-2">
               <div className="flex gap-3 items-center">
                 <GreenDot className="w-[15px] h-[15px]" />
-                <h3 className="text-[28px] font-medium font-dm-sans text-white-turtle tracking-[-0.336px] leading-[1.2]">
+                <h3 className="text-[28px] font-medium font-dm-sans text-wise-white tracking-[-0.336px] leading-[1.2]">
                   Launch and track
                 </h3>
               </div>
-              <p className="text-lg font-normal font-dm-sans text-white-turtle leading-[1.4] tracking-[-0.216px]">
+              <p className="text-lg font-normal font-dm-sans text-wise-white leading-[1.4] tracking-[-0.216px]">
                 Deploy via Turtle infrastructure with real-time visibility on LPs, TVL, and incentives.
               </p>
             </div>
@@ -108,11 +108,11 @@ export default function LiquidityPrograms() {
             <div className="w-full lg:w-[580px] bg-white/2 border border-white/10 rounded-5xl p-10 flex flex-col gap-5">
               <div className="flex gap-3 items-center">
                 <GreenDot className="w-[15px] h-[15px]" />
-                <h3 className="text-[28px] font-medium font-dm-sans text-white-turtle tracking-[-0.336px] leading-[1.2]">
+                <h3 className="text-[28px] font-medium font-dm-sans text-wise-white tracking-[-0.336px] leading-[1.2]">
                   Aligned economics
                 </h3>
               </div>
-              <p className="text-lg font-normal font-dm-sans text-white-turtle leading-[1.4] tracking-[-0.216px]">
+              <p className="text-lg font-normal font-dm-sans text-wise-white leading-[1.4] tracking-[-0.216px]">
                 Performance-based fees. Incentives only earn once liquidity is live and measurable.
               </p>
             </div>
