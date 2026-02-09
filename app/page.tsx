@@ -7,6 +7,8 @@ import VideoPlayer from './components/VideoPlayer';
 import AuthFormV2 from './components/AuthFormV2';
 import HeroDescription from './components/HeroDescription';
 import { useScrollThreshold } from './hooks/useScrollThreshold';
+import { motion } from 'framer-motion';
+import { EASING } from './config/animationTimings';
 
 export default function Home() {
   const isScrolled = useScrollThreshold(10);
@@ -14,9 +16,19 @@ export default function Home() {
   return (
     <main className="w-full">
       <HeroSection isScrolled={isScrolled} />
-      <div className="lg:hidden shrink-0 pb-2 px-4">
+      {/* add margin negative if is scrolled */}
+
+      <motion.div
+          className={`lg:hidden px-4 -mt-10`}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: isScrolled ? 1 : 0 }}
+          transition={{
+            duration: 0.4,
+            ease: EASING,
+          }}
+        >
           <HeroDescription isVisible={true} />
-        </div>
+        </motion.div>
       <ScrollSection />
       <LiquidityPrograms />
       <section 

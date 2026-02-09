@@ -15,25 +15,25 @@ interface HeroSectionProps {
 export default function HeroSection({ isScrolled }: HeroSectionProps) {
   return (
     <section 
-      className="relative w-full h-svh lg:h-[140vh] overflow-x-hidden"
+      className="relative w-full h-lvh lg:h-[140vh] overflow-hidden"
       style={{ scrollSnapAlign: 'start' }}
     >
       <Header />
       
       {/* MOBILE LAYOUT: Flex Column */}
-      <div className="lg:hidden flex flex-col justify-evenly h-full pt-20">
+      <div className="lg:hidden flex flex-col justify-center h-full pt-20">
         {/* Hero Title */}
         <div className="shrink-0 px-4 pt-2">
           <HeroTitle isScrolled={isScrolled} />
         </div>
 
         {/* Canvas */}
-        <div className="w-full min-h-[30svh]">
+        <div className="w-full min-h-[50svh]">
           <CanvasAnimation />
         </div>
 
         {/* Hero Description */}
-        <div className="hidden lg:block shrink-0 pb-2 px-4">
+        <div className="hidden lg:block shrink-0 px-4">
           <HeroDescription isVisible={true} />
         </div>
       </div>
