@@ -153,7 +153,7 @@ export default function Header() {
 
         {/* Mobile hamburger icon */}
         <button
-          className="md:hidden flex items-center justify-center p-2 rounded-full hover:bg-white/10 transition-colors shadow-green-turtle outline outline-offset-[-1px] outline-green-turtle"
+          className="md:hidden flex items-center justify-center p-2 rounded-full hover:bg-white/10 transition-colors shadow-green-turtle outline -outline-offset-1 outline-green-turtle"
           aria-label="Open menu"
           onClick={() => setMobileOpen(true)}
         >
@@ -178,7 +178,7 @@ export default function Header() {
                 <Image className="w-20 h-10" src="media/turtle-logo.svg" alt="Logo" width={127} height={50} />
               </Link>
               <button
-                className="absolute top-8 right-8 p-2 rounded-full hover:bg-white/10 transition-colors z-50 shadow-green-turtle outline outline-offset-[-1px] outline-green-turtle"
+                className="absolute top-8 right-8 p-2 rounded-full hover:bg-white/10 transition-colors z-50 shadow-green-turtle outline -outline-offset-1 outline-green-turtle"
                 aria-label="Close menu"
                 onClick={() => setMobileOpen(false)}
               >
