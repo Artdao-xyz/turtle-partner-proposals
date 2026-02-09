@@ -63,7 +63,7 @@ export default function HeroTitle({ isScrolled }: HeroTitleProps) {
             }}
             className="w-full mt-4 lg:mt-6"
           >
-            <div className="text-center font-montserrat text-xl leading-tight font-light text-white/50 lg:text-3xl">
+            <div className="text-center font-montserrat text-xl leading-tight font-light text-white/50 lg:text-4xl">
               Design, launch, & distribute<br />incentives to the right LPs, at scale.
             </div>
           </motion.div>
