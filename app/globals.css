@@ -34,6 +34,8 @@ body {
   background-color: var(--black-turtle);
   scrollbar-gutter: stable;
   overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 canvas {
