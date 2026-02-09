@@ -31,7 +31,7 @@ const MOBILE_TEXT_OFFSET = 10; // Reduced from 20
 const MOBILE_PERPENDICULAR_OFFSET = 22; // Increased from 18
 
 const SIZE_THRESHOLD = 2;
-const ORBIT_STROKE_COLOR = 'rgba(255, 255, 255, 0.3)';
+const ORBIT_STROKE_COLOR = 'rgba(255, 255, 255, 0.05)';
 const GLOW_COLOR = 'rgba(115, 243, 108, 0.75)';
 const GLOW_COLOR_DISABLED = 'rgba(128, 128, 128, 0.3)'; // Gray glow when not authenticated
 const GLOW_BLUR = 50;
@@ -144,18 +144,18 @@ export default function CanvasAnimation() {
   const glowColorProgressRef = useRef(1); // Always with glow
   const [glowColorProgress, setGlowColorProgress] = useState(1);
   // Initialize scale factor based on screen size (mobile vs desktop)
-  // Mobile: always at final size (0.91), Desktop: initial is smaller (reduced by 1/3)
+  // Mobile: always at final size (0.91), Desktop: initial is smaller
   const getInitialScaleFactor = () => {
-    if (typeof window === 'undefined') return 0.9; // 90% - reduced by 1/3
-    return window.innerWidth < 1024 ? 0.91 : 0.9; // Mobile: 91%, Desktop: 90% (reduced by 1/3)
+    if (typeof window === 'undefined') return 0.8; // 80% - smaller initial size
+    return window.innerWidth < 1024 ? 0.91 : 0.8; // Mobile: 91%, Desktop: 80% (smaller)
   };
   const scaleFactorRef = useRef(getInitialScaleFactor());
   const [scaleFactor, setScaleFactor] = useState(getInitialScaleFactor());
-  // Mobile: always centered (0), Desktop: composition 30% outside bottom when not scrolled
+  // Mobile: always centered (0), Desktop: positioned higher up
   // Offset represents vertical position (0.0 = centered, positive = below center)
   const getInitialVerticalOffset = () => {
-    if (typeof window === 'undefined') return 1.0;
-    return window.innerWidth < 1024 ? 0 : 1.0; // Mobile: centered, Desktop: 1.0 = half cut off bottom
+    if (typeof window === 'undefined') return 0.85;
+    return window.innerWidth < 1024 ? 0 : 0.85; // Mobile: centered, Desktop: 0.85 = less cut off, higher up
   };
   const verticalOffsetRef = useRef(getInitialVerticalOffset());
   const [verticalOffset, setVerticalOffset] = useState(getInitialVerticalOffset());
@@ -513,18 +513,18 @@ export default function CanvasAnimation() {
     const targetGrayscale = 0;
     const targetGlowColorProgress = 1; // Always with glow
     // Scale factor: Mobile always at final size (0.91), Desktop animates on scroll
-    // Initial state (not scrolled): Desktop 90% (small, 2/3 cut off at bottom)
+    // Initial state (not scrolled): Desktop 80% (small, positioned higher)
     // Final state (scrolled): Desktop 75% (reduced, centered and visible)
     const finalScaleFactor = isMobile ? 0.91 : 0.75;
     const targetScaleFactor = isMobile 
       ? 0.91 // Mobile: always at final size
-      : (isScrolled ? 0.75 : 0.9); // Desktop: shrinks from 90% to 75% when scrolled
+      : (isScrolled ? 0.75 : 0.8); // Desktop: shrinks from 80% to 75% when scrolled
     // Offset represents vertical position (0.0 = centered, positive = below center)
-    // Desktop: 1.0 = half cut off when not scrolled, 0.125 = slightly below center when scrolled
+    // Desktop: 0.85 = positioned higher when not scrolled, 0.125 = slightly below center when scrolled
     // Mobile: always centered
     const targetVerticalOffset = isMobile 
       ? 0 // Mobile: always centered
-      : (isScrolled ? 0.125 : 1.15); // Desktop: 0.125 (below center) when scrolled, 1.0 = half cut off when not scrolled
+      : (isScrolled ? 0.125 : 1.1); // Desktop: 0.125 (below center) when scrolled, 0.85 = higher up when not scrolled
     const targetTextOpacities = isMobile
       ? new Array(IMAGE_DATA.length).fill(1) // Mobile: always visible
       : (isScrolled 
