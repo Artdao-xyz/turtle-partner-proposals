@@ -45,14 +45,9 @@ export default function HeroTitle({ isScrolled }: HeroTitleProps) {
         <Line /> 
         
         {/* Text overlay */}
-        <h1 className="relative z-10 lg:px-20 font-dm-sans text-center" style={{ backgroundColor: 'var(--black-turtle)' }}>
-          <span className="text-3xl lg:text-6xl 2xl:text-8xl font-normal leading-9 lg:leading-[60px] 2xl:leading-[90px]" style={{ color: 'var(--white-turtle)' }}>
-            <span className="lg:hidden whitespace-nowrap">
-              The Coordination Layer<br />for Liquidity Incentives
-            </span>
-            <span className="hidden lg:inline whitespace-nowrap">
-              The Coordination Layer for<br />Liquidity Incentives
-            </span>
+        <h1 className="relative z-10 lg:px-20 text-center" style={{ backgroundColor: 'var(--black-turtle)', fontFamily: 'var(--font-montserrat)' }}>
+          <span className="text-center font-montserrat text-5xl font-medium text-wise-white lg:text-7xl 2xl:text-8xl" style={{ color: 'var(--wise-white)' }}>
+            Liquidity <br />Incentives Toolkit
           </span>
         </h1>
 
@@ -70,7 +65,7 @@ export default function HeroTitle({ isScrolled }: HeroTitleProps) {
         }}
         className="w-full max-w-2xl mx-auto mt-4 lg:mt-6"
       >
-        <div className="text-center text-white/50 lg:text-2xl font-normal font-dm-sans lg:leading-7">
+        <div className="mt-4 text-center font-montserrat text-xl leading-tight text-white/50 lg:text-3xl">
           Design, launch, and distribute incentives <br/>to the right LPs, at scale.
         </div>
       </motion.div>

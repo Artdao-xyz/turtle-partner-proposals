@@ -29,7 +29,7 @@ function FeeCard({ title, description, price, optional, maxHeight }: FeeCardProp
         <div className="flex flex-col lg:flex-row lg:items-start gap-2">
           <h3 className="text-[#eff8ed] font-medium text-2xl leading-7 tracking-tight">{title}</h3>
           {optional && (
-            <span className="px-2 py-1 text-xs rounded-full bg-black-highlight/10 text-white-turtle whitespace-nowrap self-start lg:self-auto">
+            <span className="px-2 py-1 text-xs rounded-full bg-black-highlight/10 text-wise-white whitespace-nowrap self-start lg:self-auto">
               {typeof optional === 'string' ? optional : 'Optional'}
             </span>
           )}
@@ -67,10 +67,10 @@ function FeeSection({ title, subtitle, tag, cards, maxCardHeight = 256 }: Sectio
         <div className="flex flex-col lg:flex-row items-center justify-center lg:gap-2 mb-2">
           <div className="flex items-center gap-2 lg:gap-3" style={{ width: 'fit-content' }}>
             <GreenDot className='shrink-0'/>
-            <h2 className="text-white-turtle text-xl lg:text-2xl font-semibold tracking-tight">{title}</h2>
+            <h2 className="text-wise-white text-xl lg:text-2xl font-semibold tracking-tight">{title}</h2>
           </div>
           {tag && (
-            <span className="px-3 py-1 text-xs rounded-full bg-black-highlight/10 text-white-turtle mt-2 lg:mt-0">
+            <span className="px-3 py-1 text-xs rounded-full bg-black-highlight/10 text-wise-white mt-2 lg:mt-0">
               {tag}
             </span>
           )}

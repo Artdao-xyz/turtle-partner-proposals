@@ -1,10 +1,15 @@
 import type { Metadata } from "next";
-import { DM_Sans } from "next/font/google";
+import { DM_Sans, Montserrat } from "next/font/google";
 import "./globals.css";
 import { AuthProvider } from "./contexts/AuthContext";
 
 const dmSans = DM_Sans({
   variable: "--font-dm-sans",
+  subsets: ["latin"],
+});
+
+const montserrat = Montserrat({
+  variable: "--font-montserrat",
   subsets: ["latin"],
 });
 
@@ -60,7 +65,7 @@ export default function RootLayout({
   return (
     <html lang="en" style={{ backgroundColor: 'var(--black-turtle)' }}>
       <body
-        className={`${dmSans.variable} antialiased`}
+        className={`${dmSans.variable} ${montserrat.variable} antialiased`}
         style={{ backgroundColor: 'var(--black-turtle)' }}
       >
         <AuthProvider>

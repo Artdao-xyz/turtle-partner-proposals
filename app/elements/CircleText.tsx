@@ -60,7 +60,7 @@ export default function CircleText({ isActive = true, className, style, ...props
   </g>
   <circle cx="415.006" cy="230" r="186" fill="url(#paint0_radial_472_9340)"/>
   <g filter="url(#filter5_d_472_9340)">
-  <rect x="231.786" y="53.7803" width="351.439" height="352.439" rx="175.72" stroke="var(--white-turtle)" strokeOpacity="0.1" strokeWidth="1.56053" shapeRendering="crispEdges"/>
+  <rect x="231.786" y="53.7803" width="351.439" height="352.439" rx="175.72" stroke="var(--wise-white)" strokeOpacity="0.1" strokeWidth="1.56053" shapeRendering="crispEdges"/>
   <g filter="url(#filter6_i_472_9340)">
   <rect x="229.006" y="130" width="56" height="56" rx="28" fill="var(--black-turtle)"/>
   <rect x="229.566" y="130.56" width="54.8793" height="54.8793" rx="27.4397" stroke="url(#paint1_linear_472_9340)" strokeWidth="1.12068" strokeLinecap="round"/>
