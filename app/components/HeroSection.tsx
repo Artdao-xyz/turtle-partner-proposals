@@ -15,7 +15,7 @@ interface HeroSectionProps {
 export default function HeroSection({ isScrolled }: HeroSectionProps) {
   return (
     <section 
-      className="relative w-full h-svh lg:h-[120vh] overflow-x-hidden"
+      className="relative w-full h-svh lg:h-[140vh] overflow-x-hidden"
       style={{ scrollSnapAlign: 'start' }}
     >
       <Header />

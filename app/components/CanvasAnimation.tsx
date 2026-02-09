@@ -518,13 +518,13 @@ export default function CanvasAnimation() {
     const finalScaleFactor = isMobile ? 0.91 : 0.75;
     const targetScaleFactor = isMobile 
       ? 0.91 // Mobile: always at final size
-      : (isScrolled ? 0.75 : 0.8); // Desktop: shrinks from 80% to 75% when scrolled
+      : (isScrolled ? 0.75 : 0.65); // Desktop: shrinks from 80% to 75% when scrolled
     // Offset represents vertical position (0.0 = centered, positive = below center)
     // Desktop: 0.85 = positioned higher when not scrolled, 0.125 = slightly below center when scrolled
     // Mobile: always centered
     const targetVerticalOffset = isMobile 
       ? 0 // Mobile: always centered
-      : (isScrolled ? 0.125 : 1.1); // Desktop: 0.125 (below center) when scrolled, 0.85 = higher up when not scrolled
+      : (isScrolled ? 0.35 : 0.9); // Desktop: 0.125 (below center) when scrolled, 0.85 = higher up when not scrolled
     const targetTextOpacities = isMobile
       ? new Array(IMAGE_DATA.length).fill(1) // Mobile: always visible
       : (isScrolled 
