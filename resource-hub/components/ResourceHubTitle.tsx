@@ -53,7 +53,7 @@ export default function ResourceHubTitle({ title, subtitle, badge }: ResourceHub
       )}
 
       {/* Main title - break at colon if present */}
-      <h1 className="font-dm-sans font-semibold text-wise-white text-3xl md:text-4xl lg:text-5xl leading-tight tracking-tight mb-[15px]">
+      <h1 className="font-dm-sans font-semibold text-wise-white text-3xl md:text-4xl lg:text-5xl leading-9 lg:leading-tight tracking-tight mb-[15px]">
         {title.includes(": ") ? (
           <>
             {title.split(": ")[0]}:
@@ -66,7 +66,7 @@ export default function ResourceHubTitle({ title, subtitle, badge }: ResourceHub
       </h1>
 
       {/* Subtitle */}
-      <p className="font-light text-white/50 text-lg leading-relaxed" style={{ fontFamily: "var(--font-montserrat)" }}>
+      <p className="font-light text-white/50 text-lg leading-6 lg:leading-relaxed" style={{ fontFamily: "var(--font-montserrat)" }}>
         {subtitle}
       </p>
     </header>

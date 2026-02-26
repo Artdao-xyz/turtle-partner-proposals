@@ -21,7 +21,7 @@ export default async function ResourceHub({ slug = DEFAULT_SLUG }: ResourceHubPr
       className="w-full min-h-screen"
       style={{ backgroundColor: "var(--black-turtle)" }}
     >
-      <div className="w-full max-w-[1440px] mx-auto px-6 md:px-10 pt-24 pb-16 md:pt-32 md:pb-24">
+      <div className="w-full max-w-[1440px] mx-auto px-6 md:px-10 pt-24 pb-28 md:pt-32 md:pb-24">
         {/* Wide: hero image, title, subtitle */}
         <div className="space-y-10 lg:space-y-16">
           <ResourceHubHeroImage />
