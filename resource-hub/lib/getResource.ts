@@ -1,8 +1,16 @@
-import { readFile } from "fs/promises";
+import { readFile, readdir } from "fs/promises";
 import { join } from "path";
 import type { ResourceFrontmatter } from "./parse";
+import { parseFrontmatter } from "./parse";
 
 const CONTENT_DIR = join(process.cwd(), "resource-hub", "content");
+
+export async function getResourceSlugs(): Promise<string[]> {
+  const files = await readdir(CONTENT_DIR);
+  return files
+    .filter((f) => f.endsWith(".md"))
+    .map((f) => f.replace(/\.md$/, ""));
+}
 
 export async function getResourceContent(slug: string): Promise<string> {
   const filePath = join(CONTENT_DIR, `${slug}.md`);
@@ -12,4 +20,31 @@ export async function getResourceContent(slug: string): Promise<string> {
 export async function getResourceBySlug(slug: string) {
   const content = await getResourceContent(slug);
   return content;
+}
+
+export interface ResourceCardData {
+  slug: string;
+  title: string;
+  subtitle: string;
+  badge?: string;
+}
+
+export async function getAllResources(): Promise<ResourceCardData[]> {
+  const slugs = await getResourceSlugs();
+  const resources: ResourceCardData[] = [];
+
+  for (const slug of slugs) {
+    const rawContent = await getResourceContent(slug);
+    const { frontmatter } = parseFrontmatter(rawContent);
+    const title = frontmatter.title || slug;
+    const subtitle = frontmatter.subtitle || "";
+    resources.push({
+      slug,
+      title,
+      subtitle,
+      badge: frontmatter.badge,
+    });
+  }
+
+  return resources;
 }

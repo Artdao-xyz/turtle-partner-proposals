@@ -1,7 +1,18 @@
-export default function ResourceHubHeroImage() {
+interface ResourceHubHeroImageProps {
+  className?: string;
+  variant?: "article" | "card";
+}
+
+export default function ResourceHubHeroImage({
+  className = "",
+  variant = "article",
+}: ResourceHubHeroImageProps) {
+  const isCard = variant === "card";
   return (
     <div
-      className="w-full aspect-[2.5/1] md:aspect-3/1 rounded-xl overflow-hidden mb-8 lg:mb-12"
+      className={`rounded-xl overflow-hidden ${
+        isCard ? "w-full h-full" : "w-full aspect-[2.5/1] md:aspect-3/1 mb-8 lg:mb-12"
+      } ${className}`.trim()}
       style={{
         backgroundColor: "var(--black-turtle)",
         border: "1px solid rgba(255, 255, 255, 0.06)",
