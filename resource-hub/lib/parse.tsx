@@ -130,7 +130,7 @@ function H3(props: React.ComponentPropsWithoutRef<"h3">) {
 
 function P({ children, ...props }: { children?: React.ReactNode }) {
   return (
-    <p className="text-wise-white/90 text-base leading-relaxed" {...props}>
+    <p className="text-wise-white/90 text-base leading-relaxed mb-[15px] last:mb-0" {...props}>
       {children}
     </p>
   );

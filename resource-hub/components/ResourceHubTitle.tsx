@@ -6,7 +6,7 @@ interface ResourceHubTitleProps {
 
 export default function ResourceHubTitle({ title, subtitle, badge }: ResourceHubTitleProps) {
   return (
-    <header className="space-y-6 mb-16 max-w-4xl">
+    <header className="space-y-6 mb-4 lg:mb-16 max-w-4xl">
       {/* Badge - only show if provided */}
       {badge && (
       <div

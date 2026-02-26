@@ -84,9 +84,19 @@ input[type="range"].slider-empty::-moz-range-thumb {
   background: rgb(144, 144, 144);
 }
 
-/* Resource Hub section hierarchy */
+/* Resource Hub section hierarchy - no padding on mobile/tablet, 45px on lg+ */
 .resource-hub-section {
-  padding-left: 45px;
+  padding-left: 0;
+}
+@media (min-width: 1024px) {
+  .resource-hub-section {
+    padding-left: 45px;
+  }
+}
+
+/* 15px spacing between paragraphs */
+.prose-resource-hub p + p {
+  margin-top: 15px;
 }
 
 /* Offset h2 when scrolling into view (for nav clicks, accounts for header) */

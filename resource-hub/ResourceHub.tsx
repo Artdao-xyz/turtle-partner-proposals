@@ -23,7 +23,7 @@ export default async function ResourceHub({ slug = DEFAULT_SLUG }: ResourceHubPr
     >
       <div className="w-full max-w-[1440px] mx-auto px-6 md:px-10 pt-24 pb-16 md:pt-32 md:pb-24">
         {/* Wide: hero image, title, subtitle */}
-        <div className="space-y-16">
+        <div className="space-y-10 lg:space-y-16">
           <ResourceHubHeroImage />
           <ResourceHubTitle
             title={frontmatter.title}
@@ -32,7 +32,7 @@ export default async function ResourceHub({ slug = DEFAULT_SLUG }: ResourceHubPr
           />
         </div>
         {/* Content with navigator */}
-        <div className="flex gap-16 mt-16">
+        <div className="flex flex-col lg:flex-row gap-8 lg:gap-16 mt-4 lg:mt-16">
           <ResourceHubNavigator items={headings} />
           <article className="shrink-0 max-w-3xl w-full">
             <div className="prose-resource-hub [&>*:last-child]:mb-0">{body}</div>

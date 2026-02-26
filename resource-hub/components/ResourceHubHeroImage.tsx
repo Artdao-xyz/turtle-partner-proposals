@@ -1,7 +1,7 @@
 export default function ResourceHubHeroImage() {
   return (
     <div
-      className="w-full aspect-[2.5/1] md:aspect-3/1 rounded-xl overflow-hidden mb-12"
+      className="w-full aspect-[2.5/1] md:aspect-3/1 rounded-xl overflow-hidden mb-8 lg:mb-12"
       style={{
         backgroundColor: "var(--black-turtle)",
         border: "1px solid rgba(255, 255, 255, 0.06)",
