@@ -3,6 +3,8 @@ import remarkParse from "remark-parse";
 import remarkGfm from "remark-gfm";
 import remarkRehype from "remark-rehype";
 import rehypeRaw from "rehype-raw";
+import rehypeSectionWrap from "./rehype-section-wrap";
+import rehypeAddH2Ids from "./rehype-add-h2-ids";
 import rehypeReact from "rehype-react";
 import matter from "gray-matter";
 import * as prod from "react/jsx-runtime";
@@ -71,6 +73,8 @@ function stripFrontmatterManually(markdown: string): { frontmatter: ResourceFron
     content: content.trim(),
   };
 }
+
+export { extractHeadings } from "./extract-headings";
 
 export function parseFrontmatter(markdown: string): ParsedResource {
   const parsed = matter(markdown);
@@ -146,18 +150,19 @@ const components = {
   em: Em,
 };
 
-const processor = unified()
-  .use(remarkParse)
-  .use(remarkGfm)
-  .use(remarkRehype, { allowDangerousHtml: true })
-  .use(rehypeRaw)
-  .use(rehypeReact, {
-    ...production,
-    components,
-    development: false,
-  });
-
 export async function markdownToReact(markdown: string): Promise<ReactElement> {
+  const processor = unified()
+    .use(remarkParse)
+    .use(remarkGfm)
+    .use(remarkRehype, { allowDangerousHtml: true })
+    .use(rehypeRaw)
+    .use(rehypeAddH2Ids, markdown)
+    .use(rehypeSectionWrap)
+    .use(rehypeReact, {
+      ...production,
+      components,
+      development: false,
+    });
   const result = await processor.process(markdown);
   return result.result as ReactElement;
 }

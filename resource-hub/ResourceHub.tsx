@@ -1,6 +1,7 @@
 import ResourceHubHeroImage from "./components/ResourceHubHeroImage";
 import ResourceHubTitle from "./components/ResourceHubTitle";
-import { parseFrontmatter, markdownToReact } from "./lib/parse";
+import ResourceHubNavigator from "./components/ResourceHubNavigator";
+import { parseFrontmatter, markdownToReact, extractHeadings } from "./lib/parse";
 import { getResourceContent } from "./lib/getResource";
 
 const DEFAULT_SLUG = "turtle-1";
@@ -13,6 +14,7 @@ export default async function ResourceHub({ slug = DEFAULT_SLUG }: ResourceHubPr
   const rawContent = await getResourceContent(slug);
   const { frontmatter, content } = parseFrontmatter(rawContent);
   const body = await markdownToReact(content);
+  const headings = extractHeadings(content).map((h) => ({ id: h.id, text: h.text }));
 
   return (
     <main
@@ -29,10 +31,13 @@ export default async function ResourceHub({ slug = DEFAULT_SLUG }: ResourceHubPr
             badge={frontmatter.badge}
           />
         </div>
-        {/* Content: narrower, keeps max-w-3xl */}
-        <article className="max-w-3xl mx-auto mt-16">
-          <div className="prose-resource-hub [&>*:last-child]:mb-0">{body}</div>
-        </article>
+        {/* Content with navigator */}
+        <div className="flex gap-16 mt-16">
+          <ResourceHubNavigator items={headings} />
+          <article className="shrink-0 max-w-3xl w-full">
+            <div className="prose-resource-hub [&>*:last-child]:mb-0">{body}</div>
+          </article>
+        </div>
       </div>
     </main>
   );

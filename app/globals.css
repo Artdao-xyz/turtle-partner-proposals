@@ -84,6 +84,16 @@ input[type="range"].slider-empty::-moz-range-thumb {
   background: rgb(144, 144, 144);
 }
 
+/* Resource Hub section hierarchy */
+.resource-hub-section {
+  padding-left: 45px;
+}
+
+/* Offset h2 when scrolling into view (for nav clicks, accounts for header) */
+.prose-resource-hub h2 {
+  scroll-margin-top: 7rem;
+}
+
 /* Liquidity Programs Card Gradient */
 .liquidity-card-gradient {
   background: #022b02;

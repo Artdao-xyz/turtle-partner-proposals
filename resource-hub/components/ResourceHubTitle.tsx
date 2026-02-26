@@ -52,17 +52,9 @@ export default function ResourceHubTitle({ title, subtitle, badge }: ResourceHub
       </div>
       )}
 
-      {/* Main title - line break after colon */}
+      {/* Main title */}
       <h1 className="font-dm-sans font-semibold text-wise-white text-3xl md:text-4xl lg:text-5xl leading-tight tracking-tight mb-[15px]">
-        {title.includes(":") ? (
-          <>
-            {title.slice(0, title.indexOf(":") + 1)}
-            <br />
-            {title.slice(title.indexOf(":") + 1).trim()}
-          </>
-        ) : (
-          title
-        )}
+        {title}
       </h1>
 
       {/* Subtitle */}
