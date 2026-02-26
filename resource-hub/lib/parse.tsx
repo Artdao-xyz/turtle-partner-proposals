@@ -22,6 +22,7 @@ export interface ResourceFrontmatter {
   title: string;
   subtitle: string;
   badge?: string;
+  category?: string;
   slug: string;
   heroImage?: string;
 }

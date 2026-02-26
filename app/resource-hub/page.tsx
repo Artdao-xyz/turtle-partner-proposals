@@ -1,5 +1,5 @@
 import { getAllResources } from "@/resource-hub/lib/getResource";
-import ArticleCard from "@/resource-hub/components/ArticleCard";
+import ResourceHubListing from "@/resource-hub/components/ResourceHubListing";
 
 export const metadata = {
   title: "Resource Hub | Turtle Partner Proposals",
@@ -28,19 +28,7 @@ export default async function ResourceHubListingPage() {
           </p>
         </header>
 
-        <div className="rounded-3xl p-6 md:p-8 bg-[#F9F9F9]/[0.02]">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 items-start auto-rows-[minmax(320px,auto)]">
-            {resources.map((resource) => (
-            <ArticleCard
-              key={resource.slug}
-              slug={resource.slug}
-              title={resource.title}
-              subtitle={resource.subtitle}
-              badge={resource.badge}
-            />
-          ))}
-          </div>
-        </div>
+        <ResourceHubListing resources={resources} />
       </div>
     </main>
   );

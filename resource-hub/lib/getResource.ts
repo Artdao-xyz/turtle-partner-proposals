@@ -22,11 +22,25 @@ export async function getResourceBySlug(slug: string) {
   return content;
 }
 
+export const FILTER_OPTIONS = [
+  "All",
+  "Guides",
+  "Playbooks",
+  "Research",
+  "Comparisons",
+  "Updates",
+] as const;
+
+export type FilterOption = (typeof FILTER_OPTIONS)[number];
+
+const ARTICLE_CATEGORIES = ["Guides", "Playbooks", "Research", "Comparisons", "Updates"];
+
 export interface ResourceCardData {
   slug: string;
   title: string;
   subtitle: string;
   badge?: string;
+  category: string;
 }
 
 export async function getAllResources(): Promise<ResourceCardData[]> {
@@ -38,11 +52,16 @@ export async function getAllResources(): Promise<ResourceCardData[]> {
     const { frontmatter } = parseFrontmatter(rawContent);
     const title = frontmatter.title || slug;
     const subtitle = frontmatter.subtitle || "";
+    const category =
+      frontmatter.category && ARTICLE_CATEGORIES.includes(frontmatter.category)
+        ? frontmatter.category
+        : "Research";
     resources.push({
       slug,
       title,
       subtitle,
       badge: frontmatter.badge,
+      category,
     });
   }
 
