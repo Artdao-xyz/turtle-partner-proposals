@@ -32,13 +32,29 @@ export interface ParsedResource {
 }
 
 const FRONTMATTER_REGEX = /^---\r?\n([\s\S]*?)\r?\n---\r?\n([\s\S]*)$/;
+const H1_REGEX = /^#\s+(.+)$/m;
+
+function extractTitleFromMarkdown(markdown: string): { title: string; subtitle: string; content: string } {
+  const trimmed = markdown.trim();
+  const h1Match = trimmed.match(H1_REGEX);
+  if (!h1Match) {
+    return { title: "", subtitle: "", content: trimmed };
+  }
+  const title = h1Match[1].trim();
+  const afterH1 = trimmed.slice(trimmed.indexOf(h1Match[0]) + h1Match[0].length).trimStart();
+  const paraEnd = afterH1.search(/\n\s*\n/);
+  const subtitle = paraEnd === -1 ? afterH1 : afterH1.slice(0, paraEnd).trim();
+  const content = paraEnd === -1 ? "" : afterH1.slice(paraEnd).trim();
+  return { title, subtitle, content };
+}
 
 function stripFrontmatterManually(markdown: string): { frontmatter: ResourceFrontmatter; content: string } {
   const match = markdown.match(FRONTMATTER_REGEX);
   if (!match) {
+    const { title, subtitle, content } = extractTitleFromMarkdown(markdown);
     return {
-      frontmatter: { title: "", subtitle: "", slug: "" },
-      content: markdown.trim(),
+      frontmatter: { title, subtitle, slug: "" },
+      content,
     };
   }
   const [, yamlBlock, content] = match;

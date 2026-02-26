@@ -7,7 +7,7 @@ export const metadata = {
     "An original research analysis of incentive efficiency across DeFi campaign types, with benchmark data protocol teams can use to evaluate their own spend.",
 };
 
-export const dynamic = "force-static";
+export const dynamic = "force-dynamic";
 
 export default function ResourceHubPage() {
   return (
