@@ -18,6 +18,13 @@ import Divider from "../components/Divider";
 import MarkdownTable from "../components/MarkdownTable";
 import SectionHeading from "../components/SectionHeading";
 
+export interface SourceItem {
+  title: string;
+  url?: string;
+  author: string;
+  year?: string;
+}
+
 export interface ResourceFrontmatter {
   title: string;
   subtitle: string;
@@ -25,6 +32,9 @@ export interface ResourceFrontmatter {
   category?: string;
   slug: string;
   heroImage?: string;
+  sources?: SourceItem[];
+  disclaimer?: string;
+  publishedDate?: string;
 }
 
 export interface ParsedResource {

@@ -135,7 +135,7 @@ export default function Header() {
     >
     <div className="flex justify-between items-center w-full">
         <Link href="/">
-          <Image className="h-7" src="media/turtle-logo.svg" alt="Logo" width={127} height={50} />
+          <Image className="h-7 w-auto" src="/media/turtle-logo.svg" alt="Logo" width={127} height={50} style={{ width: "auto", height: "auto" }} />
         </Link>
 
         {/* Desktop menu - Centered with absolute positioning */}
@@ -176,7 +176,7 @@ export default function Header() {
               {/* Top bar: logo + close (sin animación) */}
               
               <Link className="absolute top-8 left-8" href="/">
-                <Image className="w-20 h-10" src="media/turtle-logo.svg" alt="Logo" width={127} height={50} />
+                <Image className="w-20 h-10" src="/media/turtle-logo.svg" alt="Logo" width={127} height={50} style={{ width: "auto", height: "auto" }} />
               </Link>
               <button
                 className="absolute top-8 right-8 p-2 rounded-full hover:bg-white/10 transition-colors z-50 shadow-green-turtle outline -outline-offset-1 outline-green-turtle"

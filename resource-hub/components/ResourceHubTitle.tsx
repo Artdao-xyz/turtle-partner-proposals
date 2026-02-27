@@ -1,55 +1,50 @@
+import Image from "next/image";
+
+const CATEGORY_ICONS: Record<string, string> = {
+  Benchmark: "/hub/Icons/icon-benchmark.svg",
+  Comparison: "/hub/Icons/icon-comparison.svg",
+  Comparisons: "/hub/Icons/icon-comparison.svg",
+  Guides: "/hub/Icons/icon-guide.svg",
+  Playbooks: "/hub/Icons/icon-playbook.svg",
+  Research: "/hub/Icons/icon-casestudy.svg",
+  Updates: "/hub/Icons/icon-benchmark.svg", // fallback
+};
+
 interface ResourceHubTitleProps {
   title: string;
   subtitle: string;
   badge?: string;
 }
 
+function CategoryIcon({ category }: { category: string }) {
+  const src = CATEGORY_ICONS[category] ?? CATEGORY_ICONS.Benchmark;
+  return (
+    <Image
+      src={src}
+      alt=""
+      width={24}
+      height={24}
+      className="shrink-0"
+      aria-hidden
+    />
+  );
+}
+
 export default function ResourceHubTitle({ title, subtitle, badge }: ResourceHubTitleProps) {
   return (
     <header className="space-y-6 mb-4 lg:mb-16 max-w-4xl">
-      {/* Badge - only show if provided */}
+      {/* Badge - above title, Figma style: pill, dark bg, green icon */}
       {badge && (
-      <div
-        className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full"
-        style={{
-          backgroundColor: "rgba(255, 255, 255, 0.06)",
-          border: "1px solid rgba(255, 255, 255, 0.08)",
-        }}
-      >
-        <svg
-          width="16"
-          height="16"
-          viewBox="0 0 16 16"
-          fill="none"
-          aria-hidden
+        <div
+          className="inline-flex items-center gap-2 px-2.5 py-2 rounded-full"
+          style={{
+            backgroundColor: "#F9F9F902",
+            border: "1px solid rgba(255, 255, 255, 0.08)",
+          }}
         >
-          <rect
-            x="3"
-            y="8"
-            width="2"
-            height="5"
-            rx="1"
-            fill="var(--green-turtle)"
-          />
-          <rect
-            x="7"
-            y="5"
-            width="2"
-            height="8"
-            rx="1"
-            fill="var(--green-turtle)"
-          />
-          <rect
-            x="11"
-            y="2"
-            width="2"
-            height="11"
-            rx="1"
-            fill="var(--green-turtle)"
-          />
-        </svg>
-        <span className="text-sm font-medium text-wise-white">{badge}</span>
-      </div>
+          <CategoryIcon category={badge} />
+          <span className="text-lg font-medium text-wise-white">{badge}</span>
+        </div>
       )}
 
       {/* Main title - break at colon if present */}

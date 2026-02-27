@@ -29,11 +29,19 @@ export const FILTER_OPTIONS = [
   "Research",
   "Comparisons",
   "Updates",
+  "Benchmark",
 ] as const;
 
 export type FilterOption = (typeof FILTER_OPTIONS)[number];
 
-const ARTICLE_CATEGORIES = ["Guides", "Playbooks", "Research", "Comparisons", "Updates"];
+const ARTICLE_CATEGORIES = [
+  "Guides",
+  "Playbooks",
+  "Research",
+  "Comparisons",
+  "Updates",
+  "Benchmark",
+];
 
 export interface ResourceCardData {
   slug: string;
@@ -41,6 +49,7 @@ export interface ResourceCardData {
   subtitle: string;
   badge?: string;
   category: string;
+  heroImage?: string;
 }
 
 export async function getAllResources(): Promise<ResourceCardData[]> {
@@ -62,6 +71,7 @@ export async function getAllResources(): Promise<ResourceCardData[]> {
       subtitle,
       badge: frontmatter.badge,
       category,
+      heroImage: frontmatter.heroImage,
     });
   }
 

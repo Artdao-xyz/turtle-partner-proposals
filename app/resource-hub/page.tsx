@@ -1,5 +1,6 @@
 import { getAllResources } from "@/resource-hub/lib/getResource";
 import ResourceHubListing from "@/resource-hub/components/ResourceHubListing";
+import GoBackButton from "@/resource-hub/components/GoBackButton";
 
 export const metadata = {
   title: "Resource Hub | Turtle Partner Proposals",
@@ -17,17 +18,10 @@ export default async function ResourceHubListingPage() {
       className="w-full min-h-screen"
       style={{ backgroundColor: "var(--black-turtle)" }}
     >
-      <div className="w-full max-w-[1440px] mx-auto px-6 md:px-10 pt-24 pb-16 md:pt-32 md:pb-24">
-        <header className="mb-12 lg:mb-16">
-          <h1 className="font-dm-sans font-semibold text-wise-white text-3xl md:text-4xl lg:text-5xl leading-tight tracking-tight">
-            Resource Hub
-          </h1>
-          <p className="mt-4 text-white/60 text-lg max-w-2xl">
-            Research, benchmarks, and guides for DeFi incentive programs and
-            liquidity campaigns.
-          </p>
-        </header>
-
+      <div className="w-full flex flex-col items-center px-4 lg:px-20 pt-24 pb-16 md:pt-32 md:pb-24">
+        <div className="w-full flex justify-start mb-6">
+          <GoBackButton href="/" />
+        </div>
         <ResourceHubListing resources={resources} />
       </div>
     </main>

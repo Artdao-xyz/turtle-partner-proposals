@@ -1,6 +1,8 @@
 import ResourceHubHeroImage from "./components/ResourceHubHeroImage";
 import ResourceHubTitle from "./components/ResourceHubTitle";
 import ResourceHubNavigator from "./components/ResourceHubNavigator";
+import GoBackButton from "./components/GoBackButton";
+import ArticleFooter from "./components/ArticleFooter";
 import { parseFrontmatter, markdownToReact, extractHeadings } from "./lib/parse";
 import { getResourceContent } from "./lib/getResource";
 
@@ -22,13 +24,14 @@ export default async function ResourceHub({ slug = DEFAULT_SLUG }: ResourceHubPr
       style={{ backgroundColor: "var(--black-turtle)" }}
     >
       <div className="w-full max-w-[1440px] mx-auto px-6 md:px-10 pt-24 pb-28 md:pt-32 md:pb-24">
-        {/* Wide: hero image, title, subtitle */}
-        <div className="space-y-10 lg:space-y-16">
-          <ResourceHubHeroImage />
+        {/* Wide: go back, hero image, title, subtitle */}
+        <div className="space-y-10 lg:space-y-5">
+          <GoBackButton href="/resource-hub" />
+          <ResourceHubHeroImage src={frontmatter.heroImage} />
           <ResourceHubTitle
             title={frontmatter.title}
             subtitle={frontmatter.subtitle}
-            badge={frontmatter.badge}
+            badge={frontmatter.badge ?? frontmatter.category}
           />
         </div>
         {/* Content with navigator */}
@@ -36,6 +39,11 @@ export default async function ResourceHub({ slug = DEFAULT_SLUG }: ResourceHubPr
           <ResourceHubNavigator items={headings} />
           <article className="shrink-0 max-w-3xl w-full">
             <div className="prose-resource-hub [&>*:last-child]:mb-0">{body}</div>
+            <ArticleFooter
+              disclaimer={frontmatter.disclaimer}
+              sources={frontmatter.sources}
+              publishedDate={frontmatter.publishedDate}
+            />
           </article>
         </div>
       </div>
