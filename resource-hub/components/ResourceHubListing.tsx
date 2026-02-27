@@ -53,7 +53,7 @@ export default function ResourceHubListing({ resources }: ResourceHubListingProp
         <div className="rounded-2xl sm:rounded-3xl p-4 sm:p-6 md:p-8 bg-[#f9f9f9]/2">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6 md:gap-8">
             {filtered.map((resource) => (
-              <div key={resource.slug} className="min-h-[280px] sm:min-h-[320px]">
+              <div key={resource.slug}>
                 <ArticleCard
                   slug={resource.slug}
                   title={resource.title}
