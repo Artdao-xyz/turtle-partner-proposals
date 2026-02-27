@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import type { ResourceCardData, FilterOption } from "../lib/getResource";
+import type { ResourceCardData, FilterOption } from "../lib/types";
 import ResourceHubLanding from "./ResourceHubLanding";
 import GreenGlowLine from "./GreenGlowLine";
 import ResourceHubFilter from "./ResourceHubFilter";
@@ -15,9 +15,10 @@ export default function ResourceHubListing({ resources }: ResourceHubListingProp
   const [filter, setFilter] = useState<FilterOption>("All");
 
   const featured = resources.slice(0, 2);
+  const featuredSlugs = new Set(featured.map((r) => r.slug));
   const filtered =
     filter === "All"
-      ? resources
+      ? resources.filter((r) => !featuredSlugs.has(r.slug))
       : resources.filter((r) => r.category === filter);
 
   return (

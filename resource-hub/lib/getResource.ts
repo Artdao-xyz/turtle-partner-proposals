@@ -1,58 +1,31 @@
 import { readFile, readdir } from "fs/promises";
 import { join } from "path";
+import { cache } from "react";
+import { FILTER_OPTIONS } from "./constants";
+import type { ResourceCardData } from "./types";
 import type { ResourceFrontmatter } from "./parse";
 import { parseFrontmatter } from "./parse";
 
 const CONTENT_DIR = join(process.cwd(), "resource-hub", "content");
 
-export async function getResourceSlugs(): Promise<string[]> {
+export type { ResourceCardData, FilterOption } from "./types";
+export { FILTER_OPTIONS } from "./constants";
+
+export const getResourceSlugs = cache(async (): Promise<string[]> => {
   const files = await readdir(CONTENT_DIR);
   return files
     .filter((f) => f.endsWith(".md"))
     .map((f) => f.replace(/\.md$/, ""));
-}
+});
 
-export async function getResourceContent(slug: string): Promise<string> {
+export const getResourceContent = cache(async (slug: string): Promise<string> => {
   const filePath = join(CONTENT_DIR, `${slug}.md`);
   return readFile(filePath, "utf-8");
-}
+});
 
-export async function getResourceBySlug(slug: string) {
-  const content = await getResourceContent(slug);
-  return content;
-}
+const ARTICLE_CATEGORIES = FILTER_OPTIONS.filter((c) => c !== "All");
 
-export const FILTER_OPTIONS = [
-  "All",
-  "Guides",
-  "Playbooks",
-  "Research",
-  "Comparisons",
-  "Updates",
-  "Benchmark",
-] as const;
-
-export type FilterOption = (typeof FILTER_OPTIONS)[number];
-
-const ARTICLE_CATEGORIES = [
-  "Guides",
-  "Playbooks",
-  "Research",
-  "Comparisons",
-  "Updates",
-  "Benchmark",
-];
-
-export interface ResourceCardData {
-  slug: string;
-  title: string;
-  subtitle: string;
-  badge?: string;
-  category: string;
-  heroImage?: string;
-}
-
-export async function getAllResources(): Promise<ResourceCardData[]> {
+export const getAllResources = cache(async (): Promise<ResourceCardData[]> => {
   const slugs = await getResourceSlugs();
   const resources: ResourceCardData[] = [];
 
@@ -62,7 +35,8 @@ export async function getAllResources(): Promise<ResourceCardData[]> {
     const title = frontmatter.title || slug;
     const subtitle = frontmatter.subtitle || "";
     const category =
-      frontmatter.category && ARTICLE_CATEGORIES.includes(frontmatter.category)
+      frontmatter.category &&
+      (ARTICLE_CATEGORIES as readonly string[]).includes(frontmatter.category)
         ? frontmatter.category
         : "Research";
     resources.push({
@@ -72,8 +46,13 @@ export async function getAllResources(): Promise<ResourceCardData[]> {
       badge: frontmatter.badge,
       category,
       heroImage: frontmatter.heroImage,
+      publishedDate: frontmatter.publishedDate,
     });
   }
 
-  return resources;
-}
+  return resources.sort((a, b) => {
+    const dateA = a.publishedDate ? new Date(a.publishedDate).getTime() : 0;
+    const dateB = b.publishedDate ? new Date(b.publishedDate).getTime() : 0;
+    return dateB - dateA;
+  });
+});

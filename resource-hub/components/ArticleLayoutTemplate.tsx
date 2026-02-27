@@ -1,7 +1,7 @@
 import Image from "next/image";
 import RelatedContent from "./RelatedContent";
 import TalkToUsSection from "./TalkToUsSection";
-import type { ResourceCardData } from "../lib/getResource";
+import type { ResourceCardData } from "../lib/types";
 
 interface ArticleLayoutTemplateProps {
   currentSlug: string;

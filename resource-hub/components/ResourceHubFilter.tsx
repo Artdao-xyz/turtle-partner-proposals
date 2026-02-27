@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useState, useEffect } from "react";
-import type { FilterOption } from "../lib/getResource";
+import { FILTER_OPTIONS, type FilterOption } from "../lib/constants";
 
 interface ResourceHubFilterProps {
   selected: FilterOption;
@@ -12,14 +12,7 @@ export default function ResourceHubFilter({
   selected,
   onSelect,
 }: ResourceHubFilterProps) {
-  const options: FilterOption[] = [
-    "All",
-    "Guides",
-    "Playbooks",
-    "Research",
-    "Comparisons",
-    "Updates",
-  ];
+  const options: FilterOption[] = [...FILTER_OPTIONS];
 
   const containerRef = useRef<HTMLDivElement>(null);
   const buttonRefs = useRef<(HTMLButtonElement | null)[]>([]);

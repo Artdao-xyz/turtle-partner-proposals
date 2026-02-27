@@ -1,5 +1,9 @@
 import { ResourceHub } from "@/resource-hub";
-import { getResourceSlugs } from "@/resource-hub/lib/getResource";
+import {
+  getResourceSlugs,
+  getResourceContent,
+} from "@/resource-hub/lib/getResource";
+import { parseFrontmatter } from "@/resource-hub/lib/parse";
 import { notFound } from "next/navigation";
 
 export const dynamic = "force-dynamic";
@@ -12,8 +16,11 @@ export async function generateMetadata({ params }: ResourceHubArticlePageProps) 
   const { slug } = await params;
   const slugs = await getResourceSlugs();
   if (!slugs.includes(slug)) return { title: "Not Found" };
+  const rawContent = await getResourceContent(slug);
+  const { frontmatter } = parseFrontmatter(rawContent);
+  const title = frontmatter.title || slug.replace(/-/g, " ");
   return {
-    title: `${slug.replace(/-/g, " ")} | Turtle Partner Proposals`,
+    title: `${title} | Turtle Partner Proposals`,
   };
 }
 
