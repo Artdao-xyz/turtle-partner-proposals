@@ -17,17 +17,21 @@ export default function RelatedContent({ currentSlug, resources }: RelatedConten
         <h2 className="text-[#f9f9f9] text-4xl font-normal font-dm-sans leading-[48px]">
           Related Content
         </h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+        <div className="flex flex-wrap justify-center gap-6 md:gap-8">
           {related.map((resource) => (
-            <ArticleCard
+            <div
               key={resource.slug}
-              slug={resource.slug}
-              title={resource.title}
-              subtitle={resource.subtitle}
-              badge={resource.badge}
-              category={resource.category}
-              heroImage={resource.heroImage}
-            />
+              className="w-full sm:w-[calc(50%-0.75rem)] lg:w-[calc(33.333%-1.33rem)]"
+            >
+              <ArticleCard
+                slug={resource.slug}
+                title={resource.title}
+                subtitle={resource.subtitle}
+                badge={resource.badge}
+                category={resource.category}
+                heroImage={resource.heroImage}
+              />
+            </div>
           ))}
         </div>
       </div>

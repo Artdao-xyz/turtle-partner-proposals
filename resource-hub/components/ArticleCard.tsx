@@ -47,40 +47,10 @@ export default function ArticleCard({
         <article
           className={`flex flex-col rounded-2xl overflow-hidden w-full h-full p-2.5 bg-black-turtle ${isFeatured ? "p-3" : ""}`}
         >
-        {/* Top: hero image (hidden on hover) / title + description (visible on hover) */}
-        <div
-          className={`relative rounded-xl overflow-hidden ${isFeatured ? "aspect-[16/9] md:aspect-[3/2]" : "aspect-video"}`}
-        >
-          {/* Image - fades out on hover */}
-          <div className="absolute inset-0 transition-opacity duration-200 group-hover:opacity-0">
-            <ResourceHubHeroImage
-              variant="card"
-              src={heroImage}
-              className="absolute inset-0 w-full h-full mb-0 rounded-t-xl rounded-b-none"
-            />
-          </div>
-          {/* Title + description - fades in on hover, centered */}
-          <div className="absolute inset-0 flex flex-col justify-center items-center text-center p-4 opacity-0 group-hover:opacity-100 transition-opacity duration-200 bg-black-turtle">
-            <h2
-              className={`font-dm-sans font-semibold text-wise-white leading-6 line-clamp-3 shrink-0 ${isFeatured ? "text-xl md:text-2xl" : "text-lg md:text-xl"}`}
-            >
-              {title}
-            </h2>
-            {subtitle && (
-              <p className="mt-2 text-wise-white/80 text-sm leading-relaxed line-clamp-3">
-                {subtitle}
-              </p>
-            )}
-            {/* Read full - bottom right, green arrow */}
-            <span className="absolute bottom-4 right-4 inline-flex items-center gap-1.5 text-sm font-medium text-green-turtle">
-              Read full
-              <ArrowRight className="w-4 h-4" strokeWidth={2.5} />
-            </span>
-          </div>
-          {/* Badge - top left, absolute over image */}
+          {/* Badge - always visible, in flow so nothing overlays it */}
           {badgeLabel && (
             <div
-              className="absolute top-4 left-4 z-10 inline-flex items-center gap-2 px-3 py-1.5 rounded-full"
+              className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full w-fit mb-3 shrink-0"
               style={{
                 backgroundColor: "rgba(255, 255, 255, 0.06)",
                 border: "1px solid rgba(255, 255, 255, 0.08)",
@@ -97,16 +67,47 @@ export default function ArticleCard({
               <span className="text-sm font-medium text-wise-white">{badgeLabel}</span>
             </div>
           )}
-        </div>
 
-        {/* Bottom: title only (invisible on hover, keeps space so card doesn't shrink) */}
-        <div className={`px-2.5 py-2.5 group-hover:invisible ${isFeatured ? "px-3 py-3" : ""}`}>
-          <h2
-            className={`font-dm-sans font-semibold text-wise-white leading-6 line-clamp-3 ${isFeatured ? "text-xl md:text-2xl" : "text-lg md:text-xl"}`}
-          >
-            {title}
-          </h2>
-        </div>
+          {/* Content area - badge sits above this */}
+          <div className="relative flex-1 min-h-0 flex flex-col">
+            {/* Default: image, title - hidden on hover */}
+            <div className="flex flex-col flex-1 group-hover:opacity-0 group-hover:pointer-events-none transition-opacity duration-200">
+              <div
+                className={`relative rounded-xl overflow-hidden flex-1 min-h-0 ${isFeatured ? "aspect-video md:aspect-3/2" : "aspect-video"}`}
+              >
+                <ResourceHubHeroImage
+                  variant="card"
+                  src={heroImage}
+                  className="absolute inset-0 w-full h-full mb-0 rounded-xl"
+                />
+              </div>
+              <h2
+                className={`mt-3 font-dm-sans font-semibold text-wise-white leading-6 line-clamp-3 ${isFeatured ? "text-xl md:text-2xl" : "text-lg md:text-xl"}`}
+              >
+                {title}
+              </h2>
+            </div>
+
+            {/* Hovered: title, description, read full - visible on hover, only covers content area */}
+            <div className="absolute inset-0 flex flex-col justify-between p-4 opacity-0 group-hover:opacity-100 pointer-events-none group-hover:pointer-events-auto transition-opacity duration-200 bg-black-turtle rounded-xl">
+              <div>
+                <h2
+                  className={`font-dm-sans font-semibold text-wise-white leading-6 line-clamp-3 ${isFeatured ? "text-xl md:text-2xl" : "text-lg md:text-xl"}`}
+                >
+                  {title}
+                </h2>
+                {subtitle && (
+                  <p className="mt-2 text-wise-white/80 text-sm leading-relaxed line-clamp-3">
+                    {subtitle}
+                  </p>
+                )}
+              </div>
+              <span className="inline-flex items-center self-end gap-1.5 text-sm font-medium text-green-turtle w-fit">
+                Read full
+                <ArrowRight className="w-4 h-4" strokeWidth={2.5} />
+              </span>
+            </div>
+          </div>
         </article>
       </div>
     </Link>
