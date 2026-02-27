@@ -1,5 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
+import { ArrowRight } from "lucide-react";
 import ResourceHubHeroImage from "./ResourceHubHeroImage";
 
 const CATEGORY_ICONS: Record<string, string> = {
@@ -25,6 +26,7 @@ interface ArticleCardProps {
 export default function ArticleCard({
   slug,
   title,
+  subtitle,
   badge,
   category,
   heroImage,
@@ -36,7 +38,7 @@ export default function ArticleCard({
   return (
     <Link href={`/resource-hub/${slug}`} className="block group">
       <div
-        className="rounded-2xl p-px transition-transform duration-200 group-hover:scale-[1.02] w-full"
+        className="rounded-2xl p-px w-full"
         style={{
           background:
             "linear-gradient(to bottom right, #f9f9f950, #141514, #f9f9f950)",
@@ -45,15 +47,36 @@ export default function ArticleCard({
         <article
           className={`flex flex-col rounded-2xl overflow-hidden w-full h-full p-2.5 bg-black-turtle ${isFeatured ? "p-3" : ""}`}
         >
-        {/* Top: hero image - fills space, rounded */}
+        {/* Top: hero image (hidden on hover) / title + description (visible on hover) */}
         <div
           className={`relative rounded-xl overflow-hidden ${isFeatured ? "aspect-[16/9] md:aspect-[3/2]" : "aspect-video"}`}
         >
-          <ResourceHubHeroImage
-            variant="card"
-            src={heroImage}
-            className="absolute inset-0 w-full h-full mb-0 rounded-t-xl rounded-b-none"
-          />
+          {/* Image - fades out on hover */}
+          <div className="absolute inset-0 transition-opacity duration-200 group-hover:opacity-0">
+            <ResourceHubHeroImage
+              variant="card"
+              src={heroImage}
+              className="absolute inset-0 w-full h-full mb-0 rounded-t-xl rounded-b-none"
+            />
+          </div>
+          {/* Title + description - fades in on hover, centered */}
+          <div className="absolute inset-0 flex flex-col justify-center items-center text-center p-4 opacity-0 group-hover:opacity-100 transition-opacity duration-200 bg-black-turtle">
+            <h2
+              className={`font-dm-sans font-semibold text-wise-white leading-6 line-clamp-3 shrink-0 ${isFeatured ? "text-xl md:text-2xl" : "text-lg md:text-xl"}`}
+            >
+              {title}
+            </h2>
+            {subtitle && (
+              <p className="mt-2 text-wise-white/80 text-sm leading-relaxed line-clamp-3">
+                {subtitle}
+              </p>
+            )}
+            {/* Read full - bottom right, green arrow */}
+            <span className="absolute bottom-4 right-4 inline-flex items-center gap-1.5 text-sm font-medium text-green-turtle">
+              Read full
+              <ArrowRight className="w-4 h-4" strokeWidth={2.5} />
+            </span>
+          </div>
           {/* Badge - top left, absolute over image */}
           {badgeLabel && (
             <div
@@ -76,8 +99,8 @@ export default function ArticleCard({
           )}
         </div>
 
-        {/* Bottom: title only, max 3 lines */}
-        <div className={`px-2.5 py-2.5 ${isFeatured ? "px-3 py-3" : ""}`}>
+        {/* Bottom: title only (invisible on hover, keeps space so card doesn't shrink) */}
+        <div className={`px-2.5 py-2.5 group-hover:invisible ${isFeatured ? "px-3 py-3" : ""}`}>
           <h2
             className={`font-dm-sans font-semibold text-wise-white leading-6 line-clamp-3 ${isFeatured ? "text-xl md:text-2xl" : "text-lg md:text-xl"}`}
           >

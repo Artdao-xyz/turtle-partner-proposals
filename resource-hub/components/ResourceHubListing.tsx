@@ -3,6 +3,7 @@
 import { useState } from "react";
 import type { ResourceCardData, FilterOption } from "../lib/getResource";
 import ResourceHubLanding from "./ResourceHubLanding";
+import GreenGlowLine from "./GreenGlowLine";
 import ResourceHubFilter from "./ResourceHubFilter";
 import ArticleCard from "./ArticleCard";
 
@@ -23,6 +24,9 @@ export default function ResourceHubListing({ resources }: ResourceHubListingProp
     <div className="space-y-10 lg:space-y-12">
       {/* Landing: title, subtitle, "Latest updates" heading */}
       <ResourceHubLanding />
+
+      {/* Green glow line - edge to edge */}
+      <GreenGlowLine />
 
       {/* Two featured articles - bigger, side by side */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">

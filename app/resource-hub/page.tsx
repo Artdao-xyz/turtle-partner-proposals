@@ -1,6 +1,5 @@
 import { getAllResources } from "@/resource-hub/lib/getResource";
 import ResourceHubListing from "@/resource-hub/components/ResourceHubListing";
-import GoBackButton from "@/resource-hub/components/GoBackButton";
 
 export const metadata = {
   title: "Resource Hub | Turtle Partner Proposals",
@@ -19,9 +18,6 @@ export default async function ResourceHubListingPage() {
       style={{ backgroundColor: "var(--black-turtle)" }}
     >
       <div className="w-full flex flex-col items-center px-4 lg:px-20 pt-24 pb-16 md:pt-32 md:pb-24">
-        <div className="w-full flex justify-start mb-6">
-          <GoBackButton href="/" />
-        </div>
         <ResourceHubListing resources={resources} />
       </div>
     </main>
