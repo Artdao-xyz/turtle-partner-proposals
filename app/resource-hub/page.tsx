@@ -17,7 +17,7 @@ export default async function ResourceHubListingPage() {
       className="w-full min-h-screen"
       style={{ backgroundColor: "var(--black-turtle)" }}
     >
-      <div className="w-full flex flex-col items-center px-4 lg:px-20 pt-24 pb-16 md:pt-32 md:pb-24">
+      <div className="w-full flex flex-col items-center px-4 sm:px-6 lg:px-20 pt-28 pb-12 sm:pt-32 sm:pb-16 md:pt-36 md:pb-24">
         <ResourceHubListing resources={resources} />
       </div>
     </main>

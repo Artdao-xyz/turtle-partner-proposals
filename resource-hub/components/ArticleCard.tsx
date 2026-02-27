@@ -45,7 +45,7 @@ export default function ArticleCard({
         }}
       >
         <article
-          className={`flex flex-col rounded-2xl overflow-hidden w-full h-full p-2.5 bg-black-turtle ${isFeatured ? "p-3" : ""}`}
+          className={`flex flex-col rounded-2xl overflow-hidden w-full h-full p-2 sm:p-2.5 bg-black-turtle ${isFeatured ? "sm:p-3" : ""}`}
         >
           {/* Badge - always visible, in flow so nothing overlays it */}
           {badgeLabel && (

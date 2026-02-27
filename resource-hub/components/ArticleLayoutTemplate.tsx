@@ -20,11 +20,13 @@ export default function ArticleLayoutTemplate({
     <>
       <RelatedContent currentSlug={currentSlug} resources={resources} />
       <TalkToUsSection />
+      <div className="w-full max-w-[1440px] mx-auto px-4 sm:px-6 md:px-10 py-8">
         <img
           src="/media/turtle-big.svg"
           alt="Turtle"
           className="w-auto h-auto mx-auto"
         />
+      </div>
     </>
   );
 }

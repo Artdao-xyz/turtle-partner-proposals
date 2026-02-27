@@ -104,6 +104,15 @@ input[type="range"].slider-empty::-moz-range-thumb {
   scroll-margin-top: 7rem;
 }
 
+/* Hide scrollbar for horizontal scroll (e.g. filter chips on mobile) */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
 /* Liquidity Programs Card Gradient */
 .liquidity-card-gradient {
   background: #022b02;

@@ -2,10 +2,10 @@ import Link from "next/link";
 
 export default function TalkToUsSection() {
   return (
-    <section className="w-full max-w-[1440px] mx-auto px-6 md:px-10 py-16 border-t border-white/10">
+    <section className="w-full max-w-[1440px] mx-auto px-4 sm:px-6 md:px-10 py-12 sm:py-16 border-t border-white/10">
       <div className="flex flex-col items-center text-center gap-6">
         <div>
-          <h2 className="text-wise-white text-2xl md:text-4xl font-semibold font-dm-sans leading-tight mb-3">
+          <h2 className="text-wise-white text-xl sm:text-2xl md:text-4xl font-semibold font-dm-sans leading-tight mb-3">
             Building a liquidity program?
           </h2>
           <p className="text-white/60 text-base leading-relaxed max-w-md mx-auto">

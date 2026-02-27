@@ -27,7 +27,7 @@ export default async function ResourceHub({ slug = DEFAULT_SLUG }: ResourceHubPr
       className="w-full min-h-screen"
       style={{ backgroundColor: "var(--black-turtle)" }}
     >
-      <div className="w-full max-w-[1440px] mx-auto px-6 md:px-10 pt-24 pb-28 md:pt-32 md:pb-24">
+      <div className="w-full max-w-[1440px] mx-auto px-4 sm:px-6 md:px-10 pt-28 pb-12 sm:pt-32 sm:pb-28 md:pt-36 md:pb-24">
         {/* Wide: go back, hero image, title, subtitle */}
         <div className="space-y-10 lg:space-y-5">
           <GoBackButton href="/resource-hub" />

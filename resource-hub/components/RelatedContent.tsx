@@ -21,7 +21,7 @@ export default function RelatedContent({ currentSlug, resources }: RelatedConten
     .slice(0, 3);
 
   return (
-    <section className="w-full max-w-[1440px] mx-auto px-6 md:px-10 pt-16 pb-24 border-t border-white/10">
+    <section className="w-full max-w-[1440px] mx-auto px-4 sm:px-6 md:px-10 pt-12 sm:pt-16 pb-16 sm:pb-24 border-t border-white/10">
       <div className="space-y-8">
         <h2 className="text-[#f9f9f9] text-4xl font-normal font-dm-sans leading-[48px]">
           Related Content
