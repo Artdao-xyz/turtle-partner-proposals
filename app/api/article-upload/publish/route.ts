@@ -1,36 +1,10 @@
 import { NextResponse } from "next/server";
-import { writeFile } from "fs/promises";
-import { join } from "path";
 import { revalidatePath } from "next/cache";
-import { z } from "zod";
-
-const CONTENT_DIR = join(process.cwd(), "resource-hub", "content");
-const IMAGES_DIR = join(process.cwd(), "public", "hub", "images");
-
-const SourceSchema = z.object({
-  title: z.string(),
-  url: z.string().optional(),
-  author: z.string(),
-  year: z.string().optional(),
-});
-
-const PublishSchema = z.object({
-  slug: z.string().min(1).regex(/^[a-z0-9-]+$/, "Slug must be lowercase letters, numbers, and hyphens only"),
-  title: z.string().min(1),
-  subtitle: z.string(),
-  category: z.enum([
-    "Benchmark",
-    "Guides",
-    "Playbooks",
-    "Research",
-    "Comparisons",
-    "Updates",
-  ]),
-  body: z.string(),
-  publishedDate: z.string().optional(),
-  heroImage: z.string().optional(),
-  sources: z.array(SourceSchema).optional(),
-});
+import {
+  ArticlePublishSchema,
+  type ArticlePublishPayload,
+} from "@/resource-hub/lib/article-schema";
+import { filesystemStorage } from "@/resource-hub/lib/storage";
 
 function escapeYamlString(s: string): string {
   return s.replace(/\\/g, "\\\\").replace(/"/g, '\\"').replace(/\n/g, " ");
@@ -44,15 +18,11 @@ async function saveHeroImageIfBase64(
   const match = heroImage.match(/^data:image\/(\w+);base64,(.+)$/);
   if (!match) return undefined;
   const [, ext, base64] = match;
-  const safeExt = ext === "jpeg" ? "jpg" : ext;
-  const filename = `${slug}-hero.${safeExt}`;
   const buffer = Buffer.from(base64, "base64");
-  const filePath = join(IMAGES_DIR, filename);
-  await writeFile(filePath, buffer);
-  return filename;
+  return filesystemStorage.saveHeroImage(slug, buffer, ext);
 }
 
-function buildSourcesYaml(sources: z.infer<typeof SourceSchema>[]): string {
+function buildSourcesYaml(sources: { title: string; url?: string; author: string; year?: string }[]): string {
   if (!sources.length) return "";
   const lines = sources.map((s) => {
     const title = `  - title: "${escapeYamlString(s.title)}"`;
@@ -65,7 +35,7 @@ function buildSourcesYaml(sources: z.infer<typeof SourceSchema>[]): string {
 }
 
 function buildFrontmatter(
-  data: z.infer<typeof PublishSchema>,
+  data: ArticlePublishPayload,
   heroImageFilename?: string
 ): string {
   const date = data.publishedDate || new Date().toISOString().slice(0, 10);
@@ -87,7 +57,7 @@ ${heroLine}${sourcesBlock}---
 export async function POST(req: Request) {
   try {
     const body = await req.json();
-    const parsed = PublishSchema.safeParse(body);
+    const parsed = ArticlePublishSchema.safeParse(body);
     if (!parsed.success) {
       return NextResponse.json(
         { error: "Invalid request", details: parsed.error.flatten() },
@@ -105,8 +75,7 @@ export async function POST(req: Request) {
     const frontmatter = buildFrontmatter(data, heroImageFilename);
     const fullContent = frontmatter + data.body;
 
-    const filePath = join(CONTENT_DIR, `${data.slug}.md`);
-    await writeFile(filePath, fullContent, "utf-8");
+    await filesystemStorage.writeArticle(data.slug, fullContent);
 
     revalidatePath("/resource-hub");
     revalidatePath(`/resource-hub/${data.slug}`);

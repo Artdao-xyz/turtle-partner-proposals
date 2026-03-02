@@ -10,6 +10,7 @@ import matter from "gray-matter";
 import * as prod from "react/jsx-runtime";
 import type { ReactElement } from "react";
 
+import { ExternalLink } from "lucide-react";
 import BulletList from "../components/BulletList";
 import { BulletListItem } from "../components/BulletList";
 import Callout from "../components/Callout";
@@ -17,13 +18,9 @@ import SourceCitation from "../components/SourceCitation";
 import Divider from "../components/Divider";
 import MarkdownTable from "../components/MarkdownTable";
 import SectionHeading from "../components/SectionHeading";
+import type { SourceItem } from "./article-schema";
 
-export interface SourceItem {
-  title: string;
-  url?: string;
-  author: string;
-  year?: string;
-}
+export type { SourceItem } from "./article-schema";
 
 export interface ResourceFrontmatter {
   title: string;
@@ -167,6 +164,25 @@ function H1() {
   return null;
 }
 
+function Anchor({ href, children, ...props }: React.AnchorHTMLAttributes<HTMLAnchorElement>) {
+  const isExternal = href?.startsWith("http://") || href?.startsWith("https://");
+  const className =
+    "text-wise-white/90 underline underline-offset-2 hover:text-green-turtle transition-colors inline-flex items-center gap-1.5";
+  if (isExternal) {
+    return (
+      <a href={href} target="_blank" rel="noopener noreferrer" className={className} {...props}>
+        {children}
+        <ExternalLink className="w-3.5 h-3.5 text-green-turtle shrink-0" aria-hidden />
+      </a>
+    );
+  }
+  return (
+    <a href={href} className={className} {...props}>
+      {children}
+    </a>
+  );
+}
+
 const components = {
   aside: Callout,
   blockquote: SourceCitation,
@@ -174,6 +190,7 @@ const components = {
   ul: BulletList,
   li: BulletListItem,
   table: MarkdownTable,
+  a: Anchor,
   h1: H1,
   h2: H2,
   h3: H3,

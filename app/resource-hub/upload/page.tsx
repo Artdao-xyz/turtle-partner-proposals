@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { FILTER_OPTIONS } from "@/resource-hub/lib/constants";
+import { ARTICLE_CATEGORIES } from "@/resource-hub/lib/constants";
 import GoBackButton from "@/resource-hub/components/GoBackButton";
 import ResourceHubHeroImage from "@/resource-hub/components/ResourceHubHeroImage";
 import ResourceHubTitle from "@/resource-hub/components/ResourceHubTitle";
@@ -10,9 +10,7 @@ import ArticleFooter from "@/resource-hub/components/ArticleFooter";
 import ArticleBodyPreview from "@/resource-hub/components/ArticleBodyPreview";
 import TalkToUsSection from "@/resource-hub/components/TalkToUsSection";
 
-const CATEGORIES = FILTER_OPTIONS.filter((c) => c !== "All");
-
-type SourceItem = { title: string; url?: string; author: string; year?: string };
+const CATEGORIES = ARTICLE_CATEGORIES;
 
 type ConvertResult = {
   frontmatter: {
@@ -20,7 +18,7 @@ type ConvertResult = {
     subtitle: string;
     category: string;
     publishedDate?: string;
-    sources?: SourceItem[];
+    sources?: { title: string; url?: string; author: string; year?: string }[];
   };
   body: string;
   slug: string;
@@ -216,7 +214,7 @@ export default function ArticleUploadPage() {
                     </div>
                     <div className="mt-4 lg:mt-16 max-w-3xl">
                       <article>
-                        <div className="prose-resource-hub [&_p]:text-wise-white/90 [&_p]:text-base [&_p]:leading-relaxed [&_p]:mb-[15px] [&_h2]:text-wise-white [&_h3]:text-wise-white [&_strong]:text-wise-white [&_a]:text-green-turtle [&_a]:underline">
+                        <div className="prose-resource-hub [&_p]:text-wise-white/90 [&_p]:text-base [&_p]:leading-relaxed [&_p]:mb-[15px] [&_h2]:text-wise-white [&_h3]:text-wise-white [&_strong]:text-wise-white">
                           <ArticleBodyPreview body={result.body} />
                         </div>
                         <ArticleFooter
