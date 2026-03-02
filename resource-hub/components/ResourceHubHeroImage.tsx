@@ -14,21 +14,33 @@ export default function ResourceHubHeroImage({
   const isCard = variant === "card";
 
   if (src) {
-    const imagePath = src.startsWith("/") ? src : `/hub/images/${src}`;
+    const isDataUrl = src.startsWith("data:");
+    const isAbsoluteUrl = src.startsWith("http://") || src.startsWith("https://");
+    const imagePath =
+      isDataUrl || isAbsoluteUrl ? src : src.startsWith("/") ? src : `/hub/images/${src}`;
+    const useImgTag = isDataUrl || isAbsoluteUrl;
     return (
       <div
         className={`rounded-xl overflow-hidden relative ${
           isCard ? "w-full h-full" : "w-full aspect-[2.5/1] md:aspect-3/1 mb-8 lg:mb-12"
         } ${className}`.trim()}
       >
-        <Image
-          src={imagePath}
-          alt=""
-          fill
-          className="object-cover"
-          sizes={isCard ? "(max-width: 768px) 100vw, 50vw" : "100vw"}
-          unoptimized
-        />
+        {useImgTag ? (
+          <img
+            src={imagePath}
+            alt=""
+            className="absolute inset-0 w-full h-full object-cover"
+          />
+        ) : (
+          <Image
+            src={imagePath}
+            alt=""
+            fill
+            className="object-cover"
+            sizes={isCard ? "(max-width: 768px) 100vw, 50vw" : "100vw"}
+            unoptimized
+          />
+        )}
       </div>
     );
   }
