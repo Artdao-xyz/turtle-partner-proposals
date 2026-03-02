@@ -199,7 +199,7 @@ export default function ArticleUploadPage() {
               <div className="px-4 py-2 bg-white/5 text-wise-white/70 text-sm border-b border-white/10">
                 Preview (same layout as published article)
               </div>
-              <div className="min-h-[400px] bg-[var(--black-turtle)] w-full">
+              <div className="min-h-[400px] bg-black-turtle w-full">
                 <main
                   className="w-full min-h-screen"
                   style={{ backgroundColor: "var(--black-turtle)" }}
