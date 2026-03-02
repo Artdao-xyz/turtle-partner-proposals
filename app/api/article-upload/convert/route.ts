@@ -28,18 +28,132 @@ function ensureUniqueSlug(baseSlug: string, existingSlugs: string[]): string {
   return slug;
 }
 
+function textMatches(a: string, b: string): boolean {
+  const normalize = (s: string) =>
+    s
+      .trim()
+      .toLowerCase()
+      .replace(/\s+/g, " ")
+      .replace(/\*\*|\*|_/g, "")
+      .replace(/[""''„]/g, '"');
+  return normalize(a) === normalize(b);
+}
+
+function subtitleMatches(para: string, subtitle: string): boolean {
+  const clean = (s: string) =>
+    s
+      .trim()
+      .toLowerCase()
+      .replace(/\s+/g, " ")
+      .replace(/\*\*|\*|_/g, "")
+      .replace(/[""''„]/g, '"')
+      .replace(/^>\s*/, "");
+  const nPara = clean(para);
+  const nSub = clean(subtitle);
+  if (nPara === nSub) return true;
+  if (nPara.length > 20 && nSub.length > 20 && (nPara.includes(nSub) || nSub.includes(nPara))) return true;
+  return false;
+}
+
 function extractFirstImageFromHtml(html: string): string | null {
   const imgMatch = html.match(/<img[^>]+src=["']([^"']+)["']/i);
   return imgMatch ? imgMatch[1] : null;
 }
 
+function parseBoldItalicClassesFromStyleBlock(html: string): {
+  boldClasses: Set<string>;
+  italicClasses: Set<string>;
+} {
+  const boldClasses = new Set<string>();
+  const italicClasses = new Set<string>();
+  const styleMatch = html.match(/<style[^>]*>([\s\S]*?)<\/style>/i);
+  if (!styleMatch) return { boldClasses, italicClasses };
+
+  const styleContent = styleMatch[1];
+  const ruleRegex = /\.([a-zA-Z0-9_-]+)\s*\{([^}]*)\}/g;
+  let ruleMatch;
+  while ((ruleMatch = ruleRegex.exec(styleContent)) !== null) {
+    const className = ruleMatch[1];
+    const decls = ruleMatch[2].toLowerCase();
+    const isBold = /font-weight:\s*(700|bold)/.test(decls);
+    const isItalic = /font-style:\s*italic/.test(decls);
+    if (isBold) boldClasses.add(className);
+    if (isItalic) italicClasses.add(className);
+  }
+  return { boldClasses, italicClasses };
+}
+
+function getClassList(node: { getAttribute?: (n: string) => string | null }): string[] {
+  const cls = node.getAttribute?.("class") || "";
+  return cls.trim().split(/\s+/).filter(Boolean);
+}
+
 function htmlToMarkdown(html: string): string {
+  const { boldClasses, italicClasses } = parseBoldItalicClassesFromStyleBlock(html);
+
   const turndown = new TurndownService({
     headingStyle: "atx",
     codeBlockStyle: "fenced",
   });
   turndown.use(gfm);
   turndown.keep(["aside", "blockquote"]);
+
+  turndown.addRule("googleBoldItalic", {
+    filter: (node) => {
+      if (node.nodeName !== "SPAN") return false;
+      const classes = getClassList(node);
+      const hasBold = classes.some((c) => boldClasses.has(c));
+      const hasItalic = classes.some((c) => italicClasses.has(c));
+      return hasBold && hasItalic;
+    },
+    replacement: (content) => `***${content}***`,
+  });
+
+  turndown.addRule("googleBold", {
+    filter: (node) => {
+      if (node.nodeName !== "SPAN") return false;
+      const classes = getClassList(node);
+      return classes.some((c) => boldClasses.has(c));
+    },
+    replacement: (content) => `**${content}**`,
+  });
+
+  turndown.addRule("googleItalic", {
+    filter: (node) => {
+      if (node.nodeName !== "SPAN") return false;
+      const classes = getClassList(node);
+      return classes.some((c) => italicClasses.has(c));
+    },
+    replacement: (content) => `*${content}*`,
+  });
+
+  turndown.addRule("googleBoldItalicInline", {
+    filter: (node) => {
+      if (node.nodeName !== "SPAN") return false;
+      const style = (node.getAttribute?.("style") || "").toLowerCase();
+      return /font-weight:\s*(700|bold)/.test(style) && /font-style:\s*italic/.test(style);
+    },
+    replacement: (content) => `***${content}***`,
+  });
+
+  turndown.addRule("googleBoldInline", {
+    filter: (node) => {
+      if (node.nodeName !== "SPAN") return false;
+      const style = (node.getAttribute?.("style") || "").toLowerCase();
+      return /font-weight:\s*(700|bold)/.test(style);
+    },
+    replacement: (content) => `**${content}**`,
+  });
+
+  turndown.addRule("googleItalicInline", {
+    filter: (node) => {
+      if (node.nodeName !== "SPAN") return false;
+      const style = (node.getAttribute?.("style") || "").toLowerCase();
+      return /font-style:\s*italic/.test(style);
+    },
+    replacement: (content) => `*${content}*`,
+  });
+
   return turndown.turndown(html);
 }
 
@@ -163,6 +277,28 @@ function parseMetadataBlock(markdown: string): {
 
   let body = afterMeta;
   body = body.replace(/!\[[^\]]*\]\([^)]+\)/, "");
+
+  const headingMatch = body.match(/^#{1,3}\s+(.+?)(?:\r?\n|$)/m);
+  if (headingMatch && textMatches(headingMatch[1].trim(), title)) {
+    body = body.slice(body.indexOf(headingMatch[0]) + headingMatch[0].length).replace(/^\s+/, "");
+  }
+
+  const boldLineMatch = body.match(/^\*\*(.+?)\*\*\s*(?:\r?\n|$)/m);
+  if (boldLineMatch && textMatches(boldLineMatch[1].trim(), title)) {
+    body = body.slice(body.indexOf(boldLineMatch[0]) + boldLineMatch[0].length).replace(/^\s+/, "");
+  }
+
+  if (subtitle) {
+    const firstBlock = body.match(/^([\s\S]+?)(?:\n\s*\n|\n##|$)/);
+    if (firstBlock && subtitleMatches(firstBlock[1], subtitle)) {
+      body = body.slice(firstBlock[0].length).replace(/^\s+/, "");
+    } else {
+      const secondBlock = body.match(/^[\s\S]+?\n\s*\n([\s\S]+?)(?:\n\s*\n|\n##|$)/);
+      if (secondBlock && subtitleMatches(secondBlock[1], subtitle)) {
+        body = body.slice(secondBlock[0].length).replace(/^\s+/, "");
+      }
+    }
+  }
 
   const { sources, bodyWithoutSources } = parseSourcesSection(body);
 

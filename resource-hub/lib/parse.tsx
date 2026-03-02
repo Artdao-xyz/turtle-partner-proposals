@@ -163,6 +163,10 @@ function Em({ children, ...props }: { children?: React.ReactNode }) {
   );
 }
 
+function H1() {
+  return null;
+}
+
 const components = {
   aside: Callout,
   blockquote: SourceCitation,
@@ -170,6 +174,7 @@ const components = {
   ul: BulletList,
   li: BulletListItem,
   table: MarkdownTable,
+  h1: H1,
   h2: H2,
   h3: H3,
   p: P,
