@@ -6,8 +6,8 @@ import {
 
 export async function POST(req: Request) {
   try {
-    const body = await req.json();
-    const docUrl = body?.docUrl;
+    const payload = await req.json();
+    const docUrl = payload?.docUrl;
     if (!docUrl || typeof docUrl !== "string" || !docUrl.startsWith("http")) {
       return NextResponse.json(
         { error: "Invalid request. docUrl is required and must be a valid URL." },
