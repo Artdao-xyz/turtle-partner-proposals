@@ -11,6 +11,16 @@ function getBaseUrl(): string {
   return process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
 }
 
+async function safeJson<T>(res: Response): Promise<T | null> {
+  const text = await res.text();
+  try {
+    return JSON.parse(text) as T;
+  } catch {
+    console.error("[bot] API returned non-JSON:", text.slice(0, 200));
+    return null;
+  }
+}
+
 export const bot = new Chat({
   userName: process.env.TELEGRAM_BOT_USERNAME ?? "turtle_publish_bot",
   adapters: {
@@ -36,7 +46,9 @@ async function handleDocUrl(thread: Thread, text: string) {
   try {
     await thread.startTyping();
 
-    const convertRes = await fetch(`${baseUrl}/api/article-upload/convert`, {
+    const convertUrl = `${baseUrl}/api/article-upload/convert`;
+    console.log("[bot] Fetching convert:", convertUrl);
+    const convertRes = await fetch(convertUrl, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ docUrl }),
@@ -45,12 +57,21 @@ async function handleDocUrl(thread: Thread, text: string) {
     console.log("[bot] Convert response:", convertRes.status);
 
     if (!convertRes.ok) {
-      const err = await convertRes.json();
-      await thread.post(`Conversion failed: ${err.error ?? convertRes.statusText}`);
+      const err = await safeJson<{ error?: string }>(convertRes);
+      await thread.post(`Conversion failed: ${err?.error ?? convertRes.statusText}`);
       return;
     }
 
-    const convertData = await convertRes.json();
+    const convertData = await safeJson<{
+      slug: string;
+      frontmatter: { title: string; subtitle?: string; category?: string; publishedDate?: string; sources?: unknown[] };
+      body: string;
+      heroImage?: string;
+    }>(convertRes);
+    if (!convertData) {
+      await thread.post("Conversion failed: invalid response from server");
+      return;
+    }
     const today = new Date().toISOString().slice(0, 10);
     const draftPayload = {
       slug: convertData.slug,
@@ -72,12 +93,17 @@ async function handleDocUrl(thread: Thread, text: string) {
     console.log("[bot] Draft response:", draftRes.status);
 
     if (!draftRes.ok) {
-      const err = await draftRes.json();
-      await thread.post(`Failed to save draft: ${err.error ?? draftRes.statusText}`);
+      const err = await safeJson<{ error?: string }>(draftRes);
+      await thread.post(`Failed to save draft: ${err?.error ?? draftRes.statusText}`);
       return;
     }
 
-    const { previewId, previewUrl } = await draftRes.json();
+    const draftResult = await safeJson<{ previewId: string; previewUrl: string }>(draftRes);
+    if (!draftResult) {
+      await thread.post("Failed to save draft: invalid response from server");
+      return;
+    }
+    const { previewId, previewUrl } = draftResult;
     console.log("[bot] Draft saved, previewUrl:", previewUrl);
 
     // Telegram rejects localhost URLs for inline keyboard buttons (must be HTTPS + public)
