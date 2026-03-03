@@ -3,15 +3,25 @@ import { join } from "path";
 import { cache } from "react";
 import { FILTER_OPTIONS } from "./constants";
 import type { ResourceCardData } from "./types";
-import type { ResourceFrontmatter } from "./parse";
 import { parseFrontmatter } from "./parse";
+import {
+  listBlobArticleSlugs,
+  getBlobArticleContent,
+} from "./storage";
 
 const CONTENT_DIR = join(process.cwd(), "resource-hub", "content");
 
 export type { ResourceCardData, FilterOption } from "./types";
 export { FILTER_OPTIONS } from "./constants";
 
+function useBlob(): boolean {
+  return process.env.CONTENT_SOURCE === "blob";
+}
+
 export const getResourceSlugs = cache(async (): Promise<string[]> => {
+  if (useBlob()) {
+    return listBlobArticleSlugs();
+  }
   const files = await readdir(CONTENT_DIR);
   return files
     .filter((f) => f.endsWith(".md"))
@@ -19,6 +29,9 @@ export const getResourceSlugs = cache(async (): Promise<string[]> => {
 });
 
 export const getResourceContent = cache(async (slug: string): Promise<string> => {
+  if (useBlob()) {
+    return getBlobArticleContent(slug);
+  }
   const filePath = join(CONTENT_DIR, `${slug}.md`);
   return readFile(filePath, "utf-8");
 });

@@ -16,9 +16,15 @@ export default function ResourceHubHeroImage({
   if (src) {
     const isDataUrl = src.startsWith("data:");
     const isAbsoluteUrl = src.startsWith("http://") || src.startsWith("https://");
-    const imagePath =
-      isDataUrl || isAbsoluteUrl ? src : src.startsWith("/") ? src : `/hub/images/${src}`;
-    const useImgTag = isDataUrl || isAbsoluteUrl;
+    const isBlobPath = src.startsWith("blob:");
+    const imagePath = isBlobPath
+      ? `/api/hub/blob?path=${encodeURIComponent(src.slice(5))}`
+      : isDataUrl || isAbsoluteUrl
+        ? src
+        : src.startsWith("/")
+          ? src
+          : `/hub/images/${src}`;
+    const useImgTag = isDataUrl || isAbsoluteUrl || isBlobPath;
     return (
       <div
         className={`rounded-xl overflow-hidden relative ${

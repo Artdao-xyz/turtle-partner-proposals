@@ -4,7 +4,7 @@ import {
   ArticlePublishSchema,
   type ArticlePublishPayload,
 } from "@/resource-hub/lib/article-schema";
-import { filesystemStorage } from "@/resource-hub/lib/storage";
+import { getStorage } from "@/resource-hub/lib/storage";
 
 function escapeYamlString(s: string): string {
   return s.replace(/\\/g, "\\\\").replace(/"/g, '\\"').replace(/\n/g, " ");
@@ -19,7 +19,7 @@ async function saveHeroImageIfBase64(
   if (!match) return undefined;
   const [, ext, base64] = match;
   const buffer = Buffer.from(base64, "base64");
-  return filesystemStorage.saveHeroImage(slug, buffer, ext);
+  return getStorage().saveHeroImage(slug, buffer, ext);
 }
 
 function buildSourcesYaml(sources: { title: string; url?: string; author: string; year?: string }[]): string {
@@ -75,7 +75,7 @@ export async function POST(req: Request) {
     const frontmatter = buildFrontmatter(data, heroImageFilename);
     const fullContent = frontmatter + data.body;
 
-    await filesystemStorage.writeArticle(data.slug, fullContent);
+    await getStorage().writeArticle(data.slug, fullContent);
 
     revalidatePath("/resource-hub");
     revalidatePath(`/resource-hub/${data.slug}`);
