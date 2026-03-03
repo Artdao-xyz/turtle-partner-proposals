@@ -20,10 +20,8 @@ export const bot = new Chat({
   logger: "info",
 });
 
-bot.onNewMention(async (thread, message) => {
-  const text = message.text?.trim() ?? "";
+async function handleDocUrl(thread: { post: (msg: unknown) => Promise<unknown>; startTyping: () => Promise<void> }, text: string) {
   const docMatch = text.match(GOOGLE_DOC_URL_REGEX);
-
   if (!docMatch) {
     await thread.post(
       "Send me a Google Doc URL to publish. Example:\nhttps://docs.google.com/document/d/xxx/edit"
@@ -33,6 +31,7 @@ bot.onNewMention(async (thread, message) => {
 
   const docUrl = docMatch[0];
   const baseUrl = getBaseUrl();
+  console.log("[bot] Processing doc URL:", docUrl, "baseUrl:", baseUrl);
 
   try {
     await thread.startTyping();
@@ -42,6 +41,8 @@ bot.onNewMention(async (thread, message) => {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ docUrl }),
     });
+
+    console.log("[bot] Convert response:", convertRes.status);
 
     if (!convertRes.ok) {
       const err = await convertRes.json();
@@ -68,6 +69,8 @@ bot.onNewMention(async (thread, message) => {
       body: JSON.stringify(draftPayload),
     });
 
+    console.log("[bot] Draft response:", draftRes.status);
+
     if (!draftRes.ok) {
       const err = await draftRes.json();
       await thread.post(`Failed to save draft: ${err.error ?? draftRes.statusText}`);
@@ -75,6 +78,7 @@ bot.onNewMention(async (thread, message) => {
     }
 
     const { previewId, previewUrl } = await draftRes.json();
+    console.log("[bot] Draft saved, previewUrl:", previewUrl);
 
     await thread.post(
       Card({
@@ -110,6 +114,18 @@ bot.onNewMention(async (thread, message) => {
       `Something went wrong: ${err instanceof Error ? err.message : "Unknown error"}`
     );
   }
+}
+
+bot.onNewMention(async (thread, message) => {
+  const text = message.text?.trim() ?? "";
+  console.log("[bot] onNewMention, text:", text?.slice(0, 80));
+  await handleDocUrl(thread, text);
+});
+
+bot.onNewMessage(GOOGLE_DOC_URL_REGEX, async (thread, message) => {
+  const text = message.text?.trim() ?? "";
+  console.log("[bot] onNewMessage (doc URL match), text:", text?.slice(0, 80));
+  await handleDocUrl(thread, text);
 });
 
 bot.onAction("publish", async (event) => {
