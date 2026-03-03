@@ -16,10 +16,9 @@ export default function ResourceHubListing({ resources }: ResourceHubListingProp
   const [filter, setFilter] = useState<FilterOption>("All");
 
   const featured = resources.slice(0, 2);
-  const featuredSlugs = new Set(featured.map((r) => r.slug));
   const filtered =
     filter === "All"
-      ? resources.filter((r) => !featuredSlugs.has(r.slug))
+      ? resources
       : resources.filter((r) => r.category === filter);
 
   return (
