@@ -1,11 +1,13 @@
 import { NextResponse } from "next/server";
 import { get } from "@vercel/blob";
 
-/** Proxies private blob images. GET ?path=hub/images/slug-hero.png */
+/** Proxies private blob images. GET ?path=hub/images/slug-hero.png or hub/drafts/images/previewId-hero.png */
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url);
   const path = searchParams.get("path");
-  if (!path || !path.startsWith("hub/images/")) {
+  const allowed =
+    path?.startsWith("hub/images/") || path?.startsWith("hub/drafts/images/");
+  if (!path || !allowed) {
     return NextResponse.json({ error: "Invalid path" }, { status: 400 });
   }
 

@@ -11,16 +11,18 @@ const DEFAULT_SLUG = "turtle-1";
 
 interface ResourceHubProps {
   slug?: string;
+  /** When provided, skip fetch and render this content (e.g. draft preview). */
+  rawContent?: string;
 }
 
-export default async function ResourceHub({ slug = DEFAULT_SLUG }: ResourceHubProps) {
-  const [rawContent, resources] = await Promise.all([
-    getResourceContent(slug),
-    getAllResources(),
-  ]);
-  const { frontmatter, content } = parseFrontmatter(rawContent);
-  const body = await markdownToReact(content);
-  const headings = extractHeadings(content).map((h) => ({ id: h.id, text: h.text }));
+export default async function ResourceHub({ slug = DEFAULT_SLUG, rawContent }: ResourceHubProps) {
+  const [content, resources] = rawContent
+    ? [rawContent, [] as Awaited<ReturnType<typeof getAllResources>>]
+    : await Promise.all([getResourceContent(slug), getAllResources()]);
+  const { frontmatter, content: markdown } = parseFrontmatter(content);
+  const displaySlug = frontmatter.slug ?? slug;
+  const body = await markdownToReact(markdown);
+  const headings = extractHeadings(markdown).map((h) => ({ id: h.id, text: h.text }));
 
   return (
     <main
@@ -53,7 +55,7 @@ export default async function ResourceHub({ slug = DEFAULT_SLUG }: ResourceHubPr
       </div>
 
       {/* Layout template: Related Content → Building a liquidity program → Turtle logo */}
-      <ArticleLayoutTemplate currentSlug={slug} resources={resources} />
+      <ArticleLayoutTemplate currentSlug={displaySlug} resources={resources} />
     </main>
   );
 }
