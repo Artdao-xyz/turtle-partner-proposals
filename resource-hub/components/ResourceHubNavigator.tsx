@@ -31,7 +31,7 @@ function NavItemButton({
           : "border-transparent text-white/50 hover:text-white/70"
       }`}
     >
-      <span className="text-sm leading-snug">{item.text}</span>
+      <span className="text-sm leading-snug font-medium">{item.text}</span>
     </button>
   </li>
   );
