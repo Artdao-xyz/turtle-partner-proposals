@@ -1,4 +1,4 @@
-import { Chat, Card, CardText, Actions, Button, LinkButton } from "chat";
+import { Chat, type Thread, Card, CardText, Actions, Button, LinkButton } from "chat";
 import { createTelegramAdapter } from "@chat-adapter/telegram";
 import { createRedisState } from "@chat-adapter/state-redis";
 
@@ -17,10 +17,10 @@ export const bot = new Chat({
     telegram: createTelegramAdapter(),
   },
   state: createRedisState(),
-  logger: "info",
+  logger: process.env.DEBUG ? "debug" : "info",
 });
 
-async function handleDocUrl(thread: { post: (msg: unknown) => Promise<unknown>; startTyping: () => Promise<void> }, text: string) {
+async function handleDocUrl(thread: Thread, text: string) {
   const docMatch = text.match(GOOGLE_DOC_URL_REGEX);
   if (!docMatch) {
     await thread.post(
@@ -80,31 +80,40 @@ async function handleDocUrl(thread: { post: (msg: unknown) => Promise<unknown>; 
     const { previewId, previewUrl } = await draftRes.json();
     console.log("[bot] Draft saved, previewUrl:", previewUrl);
 
+    // Telegram rejects localhost URLs for inline keyboard buttons (must be HTTPS + public)
+    const isPublicUrl = previewUrl.startsWith("https://") && !previewUrl.includes("localhost");
+
+    const actionButtons = [
+      ...(isPublicUrl
+        ? [
+            LinkButton({
+              url: previewUrl,
+              label: "View preview",
+              style: "primary",
+            }),
+          ]
+        : []),
+      Button({
+        id: "publish",
+        label: "Publish",
+        style: "primary",
+        value: previewId,
+      }),
+      Button({
+        id: "cancel",
+        label: "Cancel",
+        style: "danger",
+        value: previewId,
+      }),
+    ];
+
     await thread.post(
       Card({
         title: "Draft ready",
         subtitle: convertData.frontmatter.title,
         children: [
           CardText(`Preview: ${previewUrl}`),
-          Actions([
-            LinkButton({
-              url: previewUrl,
-              label: "View preview",
-              style: "primary",
-            }),
-            Button({
-              id: "publish",
-              label: "Publish",
-              style: "primary",
-              value: previewId,
-            }),
-            Button({
-              id: "cancel",
-              label: "Cancel",
-              style: "danger",
-              value: previewId,
-            }),
-          ]),
+          Actions(actionButtons),
         ],
       })
     );

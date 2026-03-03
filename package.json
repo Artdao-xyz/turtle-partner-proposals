@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
+    "webhook:simulate": "node scripts/simulate-telegram-webhook.mjs",
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
