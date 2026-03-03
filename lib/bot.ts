@@ -11,6 +11,21 @@ function getBaseUrl(): string {
   return process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
 }
 
+function getApiHeaders(): Record<string, string> {
+  const headers: Record<string, string> = { "Content-Type": "application/json" };
+  const bypass = process.env.VERCEL_AUTOMATION_BYPASS_SECRET;
+  if (bypass) headers["x-vercel-protection-bypass"] = bypass;
+  return headers;
+}
+
+function apiUrl(path: string): string {
+  const base = getBaseUrl();
+  const bypass = process.env.VERCEL_AUTOMATION_BYPASS_SECRET;
+  const url = `${base}${path}`;
+  if (bypass) return `${url}${path.includes("?") ? "&" : "?"}x-vercel-protection-bypass=${encodeURIComponent(bypass)}`;
+  return url;
+}
+
 async function safeJson<T>(res: Response): Promise<T | null> {
   const text = await res.text();
   try {
@@ -46,11 +61,12 @@ async function handleDocUrl(thread: Thread, text: string) {
   try {
     await thread.startTyping();
 
-    const convertUrl = `${baseUrl}/api/article-upload/convert`;
-    console.log("[bot] Fetching convert:", convertUrl);
+    const headers = getApiHeaders();
+    const convertUrl = apiUrl("/api/article-upload/convert");
+    console.log("[bot] Fetching convert:", convertUrl.replace(/x-vercel-protection-bypass=[^&]+/, "x-vercel-protection-bypass=***"));
     const convertRes = await fetch(convertUrl, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers,
       body: JSON.stringify({ docUrl }),
     });
 
@@ -84,9 +100,9 @@ async function handleDocUrl(thread: Thread, text: string) {
       sources: convertData.frontmatter.sources ?? [],
     };
 
-    const draftRes = await fetch(`${baseUrl}/api/article-upload/draft`, {
+    const draftRes = await fetch(apiUrl("/api/article-upload/draft"), {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers,
       body: JSON.stringify(draftPayload),
     });
 
@@ -151,6 +167,13 @@ async function handleDocUrl(thread: Thread, text: string) {
   }
 }
 
+bot.onNewMessage(/^\/start/, async (thread) => {
+  console.log("[bot] /start received");
+  await thread.post(
+    "Send me a Google Doc URL to publish.\n\nExample:\nhttps://docs.google.com/document/d/xxx/edit"
+  );
+});
+
 bot.onNewMention(async (thread, message) => {
   const text = message.text?.trim() ?? "";
   console.log("[bot] onNewMention, text:", text?.slice(0, 80));
@@ -175,9 +198,9 @@ bot.onAction("publish", async (event) => {
   try {
     await event.thread.startTyping();
 
-    const res = await fetch(`${baseUrl}/api/article-upload/publish-draft`, {
+    const res = await fetch(apiUrl("/api/article-upload/publish-draft"), {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: getApiHeaders(),
       body: JSON.stringify({ previewId }),
     });
 
@@ -224,9 +247,9 @@ bot.onAction("cancel", async (event) => {
   const baseUrl = getBaseUrl();
 
   try {
-    const res = await fetch(`${baseUrl}/api/article-upload/draft`, {
+    const res = await fetch(apiUrl("/api/article-upload/draft"), {
       method: "DELETE",
-      headers: { "Content-Type": "application/json" },
+      headers: getApiHeaders(),
       body: JSON.stringify({ previewId }),
     });
 

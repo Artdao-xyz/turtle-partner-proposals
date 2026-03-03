@@ -6,7 +6,8 @@ export async function POST(request: Request): Promise<Response> {
   const update = JSON.parse(body);
   const text = update?.message?.text ?? update?.callback_query?.data ?? "(no text)";
   const type = update?.message ? "message" : update?.callback_query ? "callback" : "other";
-  console.log("[webhook] Telegram", type, "text:", String(text).slice(0, 100));
+  const vercelUrl = process.env.VERCEL_URL ?? "local";
+  console.log("[webhook] Telegram", type, "VERCEL_URL=" + vercelUrl, "text:", String(text).slice(0, 100));
 
   const res = await bot.webhooks.telegram(
     new Request(request.url, { method: "POST", headers: request.headers, body }),

@@ -58,3 +58,21 @@ curl -X POST "https://api.telegram.org/bot$TELEGRAM_BOT_TOKEN/setWebhook" \
 2. Bot converts → saves draft → replies with preview link + [View preview] [Publish] [Cancel]
 3. Open the preview link in a browser to review
 4. Tap **Publish** to publish the article, or **Cancel** to discard the draft
+
+## Troubleshooting: Preview deployments (Vercel Deployment Protection)
+
+If you see `Authentication Required` or `API returned non-JSON: <!doctype html>` in logs, Vercel's Deployment Protection is blocking the bot's internal API calls.
+
+**Option A – Enable bypass (recommended):**
+
+1. Vercel Dashboard → Project → **Settings** → **Deployment Protection**
+2. Under **Protection Bypass for Automation**, click **Generate Secret**
+3. Copy the secret and add it as `VERCEL_AUTOMATION_BYPASS_SECRET` in your project's environment variables
+4. Redeploy
+
+The bot will send this header when calling its own APIs.
+
+**Option B – Disable protection for previews:**
+
+1. Vercel Dashboard → Project → **Settings** → **Deployment Protection**
+2. For **Preview Deployments**, set protection to **None** (or use **Deployment Protection Exceptions** to allow your preview domain)
