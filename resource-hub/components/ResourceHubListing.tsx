@@ -50,7 +50,7 @@ export default function ResourceHubListing({ resources }: ResourceHubListingProp
       <div className="space-y-4 sm:space-y-6">
         <ResourceHubFilter selected={filter} onSelect={setFilter} />
         <div className="rounded-5xl p-4 sm:p-6 md:p-8 bg-[#f9f9f9]/2">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6 md:gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6 md:gap-3.5">
             {filtered.map((resource) => (
               <div key={resource.slug} className="h-[300px]">
                 <ArticleCard
