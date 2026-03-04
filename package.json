@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "webhook:simulate": "node scripts/simulate-telegram-webhook.mjs",
+    "blob:empty": "node scripts/empty-blob.mjs",
     "build": "next build",
     "start": "next start",
     "lint": "eslint",

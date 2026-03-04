@@ -28,7 +28,7 @@ export default function RelatedContent({ currentSlug, resources }: RelatedConten
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
           {others.map((resource) => (
-            <div key={resource.slug}>
+            <div key={resource.slug} className="h-[300px]">
               <ArticleCard
                 slug={resource.slug}
                 title={resource.title}
