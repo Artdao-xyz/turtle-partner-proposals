@@ -183,6 +183,71 @@ function Anchor({ href, children, ...props }: React.AnchorHTMLAttributes<HTMLAnc
   );
 }
 
+/**
+ * Converts ::callout and ::source directives to <aside> and blockquote.
+ * Supports Google Docs–friendly plain-text syntax.
+ */
+function preprocessCalloutsAndSources(markdown: string): string {
+  const lines = markdown.split("\n");
+  const result: string[] = [];
+  let i = 0;
+
+  while (i < lines.length) {
+    const line = lines[i];
+    const trimmed = line.trim();
+
+    // ::callout or :callout (Google Docs may strip one colon) - block content until blank line or next directive
+    // Skip leading blank lines (e.g. from Google Docs: callout + line break + content)
+    if (trimmed === "::callout" || trimmed === ":callout") {
+      const contentLines: string[] = [];
+      i++;
+      while (i < lines.length && lines[i].trim() === "") i++;
+      while (i < lines.length) {
+        const next = lines[i];
+        const nextTrimmed = next.trim();
+        if (nextTrimmed === "" || nextTrimmed === ":callout" || nextTrimmed === "::callout" || nextTrimmed.startsWith("::") || nextTrimmed.startsWith(":source")) break;
+        contentLines.push(next);
+        i++;
+      }
+      const content = contentLines.join("\n").trim();
+      result.push("<aside>", "", content, "", "</aside>", "");
+      continue;
+    }
+
+    // ::source or :source with inline content: ::source Gauntlet, "Report," 2024
+    const sourceInlineMatch = trimmed.match(/^:?::?source\s+(.+)$/);
+    if (sourceInlineMatch) {
+      const content = sourceInlineMatch[1].trim();
+      result.push(`> [Source: ${content}]`, "");
+      i++;
+      continue;
+    }
+
+    // ::source or :source - block content until blank line or next directive
+    // Skip leading blank lines (e.g. from Google Docs)
+    if (trimmed === "::source" || trimmed === ":source") {
+      const contentLines: string[] = [];
+      i++;
+      while (i < lines.length && lines[i].trim() === "") i++;
+      while (i < lines.length) {
+        const next = lines[i];
+        const nextTrimmed = next.trim();
+        if (nextTrimmed === "" || nextTrimmed === ":source" || nextTrimmed === "::source" || nextTrimmed.startsWith("::") || nextTrimmed.startsWith(":callout")) break;
+        contentLines.push(next);
+        i++;
+      }
+      const content = contentLines.join(" ").trim();
+      result.push(`> [Source: ${content}]`, "");
+      continue;
+    }
+
+    result.push(line);
+    i++;
+  }
+
+  return result.join("\n");
+}
+
 const components = {
   aside: Callout,
   blockquote: SourceCitation,
@@ -200,18 +265,19 @@ const components = {
 };
 
 export async function markdownToReact(markdown: string): Promise<ReactElement> {
+  const processed = preprocessCalloutsAndSources(markdown);
   const processor = unified()
     .use(remarkParse)
     .use(remarkGfm)
     .use(remarkRehype, { allowDangerousHtml: true })
     .use(rehypeRaw)
-    .use(rehypeAddH2Ids, markdown)
+    .use(rehypeAddH2Ids, processed)
     .use(rehypeSectionWrap)
     .use(rehypeReact, {
       ...production,
       components,
       development: false,
     });
-  const result = await processor.process(markdown);
+  const result = await processor.process(processed);
   return result.result as ReactElement;
 }

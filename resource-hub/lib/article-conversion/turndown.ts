@@ -37,7 +37,16 @@ export function htmlToMarkdown(html: string): string {
     codeBlockStyle: "fenced",
   });
   turndown.use(gfm);
-  turndown.keep(["aside", "blockquote"]);
+  turndown.keep(["blockquote"]);
+
+  // Convert <aside> to ::callout format (not raw aside) for consistency with upload flow
+  turndown.addRule("asideToCallout", {
+    filter: "aside",
+    replacement: (content) => {
+      const trimmed = content.trim();
+      return `\n\n::callout\n\n${trimmed}\n\n`;
+    },
+  });
 
   turndown.addRule("googleBoldItalic", {
     filter: (node) => {

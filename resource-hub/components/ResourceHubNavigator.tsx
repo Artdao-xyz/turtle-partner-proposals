@@ -78,7 +78,7 @@ export default function ResourceHubNavigator({ items }: ResourceHubNavigatorProp
   return (
     <>
       {/* Desktop: sticky sidebar */}
-      <nav className="hidden lg:block flex-1 min-w-56 sticky top-40 self-start pt-8 pl-6 pr-4 pb-4 bg-[#f9f9f9]/2 rounded-3xl">
+      <nav className="hidden lg:block flex-1 min-w-56 max-w-[300px] sticky top-40 self-start pt-8 pl-6 pr-4 pb-4 bg-[#f9f9f9]/2 rounded-3xl">
         <ul className="space-y-4">
           {items.map((item) => (
           <NavItemButton key={item.id} item={item} activeId={activeId} onClick={handleClick} />

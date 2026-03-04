@@ -84,11 +84,8 @@ The findings are not comfortable. The median incentive dollar buys less TVL than
 
 ### The Basic Formula
 
-<aside>
-
+::callout
 Cost per $1 TVL = Total Incentive Spend (USD) / Peak Incremental TVL (USD)
-
-</aside>
 
 If a protocol distributes $1 million in token incentives and attracts $50 million in new deposits, the cost is $0.02 per dollar of TVL. Simple enough. But this number is almost useless in isolation. It tells you nothing about how long that TVL stayed, whether it was genuinely incremental, or whether it produced downstream value in volume, fees, or protocol revenue.
 
@@ -96,8 +93,8 @@ If a protocol distributes $1 million in token incentives and attracts $50 millio
 
 The more rigorous methodology, pioneered by Gauntlet and adopted by Blockworks Research, adjusts for aggregate market movements. Rather than comparing raw TVL before and after a campaign, analysts establish a baseline by tracking a control set of non-incentivized pools during the same period. Incremental TVL is the change in market share multiplied by total market values. This neutralizes the effect of a rising or falling market inflating raw TVL numbers.
 
-> [Source: Gauntlet, "Arbitrum LTIPP Program Retro," 2024; Blockworks Research, "Meta-Analysis on Incentive Programs," 2024]
-> 
+::source Gauntlet, "Arbitrum LTIPP Program Retro," 2024; Blockworks Research, "Meta-Analysis on Incentive Programs," 2024
+
 
 ### The Time Dimension
 
@@ -113,8 +110,8 @@ Throughout this report, figures represent market-share-adjusted incremental TVL 
 
 The more rigorous methodology, pioneered by Gauntlet and adopted by Blockworks Research, adjusts for aggregate market movements. Rather than comparing raw TVL before and after a campaign, analysts establish a baseline by tracking a control set of non-incentivized pools during the same period. Incremental TVL is the change in market share multiplied by total market values. This neutralizes the effect of a rising or falling market inflating raw TVL numbers.
 
-> [Source: Gauntlet, "Arbitrum LTIPP Program Retro," 2024; Blockworks Research, "Meta-Analysis on Incentive Programs," 2024]
-> 
+::source Gauntlet, "Arbitrum LTIPP Program Retro," 2024; Blockworks Research, "Meta-Analysis on Incentive Programs," 2024
+
 
 ---
 
