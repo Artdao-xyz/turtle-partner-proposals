@@ -32,6 +32,8 @@ export interface ResourceFrontmatter {
   sources?: SourceItem[];
   disclaimer?: string;
   publishedDate?: string;
+  /** When true, article is hidden from hub (soft-deleted). */
+  unpublished?: boolean;
 }
 
 export interface ParsedResource {

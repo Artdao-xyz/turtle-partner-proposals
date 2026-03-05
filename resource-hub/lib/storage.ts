@@ -1,3 +1,4 @@
+import matter from "gray-matter";
 import { writeFile } from "fs/promises";
 import { join } from "path";
 import { put, list, get, del, copy } from "@vercel/blob";
@@ -155,6 +156,26 @@ export async function publishBlobDraft(previewId: string): Promise<{ slug: strin
   if (blobs.length) await del(blobs.map((b) => b.pathname));
 
   return { slug };
+}
+
+/** Blob-only: soft-delete (unpublish) article by setting unpublished: true in frontmatter. */
+export async function unpublishBlobArticle(slug: string): Promise<{ title: string }> {
+  const rawContent = await getBlobArticleContent(slug);
+  const parsed = matter(rawContent);
+  const data = parsed.data as Record<string, unknown>;
+  if (data.unpublished === true) {
+    throw new Error("Article is already unpublished");
+  }
+  data.unpublished = true;
+  const updated = matter.stringify(parsed.content, data);
+  await put(`${BLOB_ARTICLES_PREFIX}${slug}.md`, updated, {
+    access: "private",
+    contentType: "text/markdown",
+    addRandomSuffix: false,
+    allowOverwrite: true,
+  });
+  const title = (data.title as string) || slug;
+  return { title };
 }
 
 /** Blob-only: delete draft and its images. */

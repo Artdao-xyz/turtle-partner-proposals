@@ -46,6 +46,15 @@ export function isPublished(publishedDate: string | undefined): boolean {
   return date <= today;
 }
 
+/** True if article should be visible (date check + not soft-deleted). */
+export function isVisible(
+  publishedDate: string | undefined,
+  unpublished: boolean | undefined
+): boolean {
+  if (unpublished === true) return false;
+  return isPublished(publishedDate);
+}
+
 export const getAllResources = cache(async (): Promise<ResourceCardData[]> => {
   const slugs = await getResourceSlugs();
   const resources: ResourceCardData[] = [];
@@ -53,7 +62,7 @@ export const getAllResources = cache(async (): Promise<ResourceCardData[]> => {
   for (const slug of slugs) {
     const rawContent = await getResourceContent(slug);
     const { frontmatter } = parseFrontmatter(rawContent);
-    if (!isPublished(frontmatter.publishedDate)) continue;
+    if (!isVisible(frontmatter.publishedDate, frontmatter.unpublished)) continue;
 
     const title = frontmatter.title || slug;
     const subtitle = frontmatter.subtitle || "";

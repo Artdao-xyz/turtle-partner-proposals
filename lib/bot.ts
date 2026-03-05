@@ -5,6 +5,12 @@ import { createRedisState } from "@chat-adapter/state-redis";
 const GOOGLE_DOC_URL_REGEX =
   /https:\/\/docs\.google\.com\/document\/d\/([a-zA-Z0-9_-]+)(?:\/edit)?(?:\?[^/]*)?/;
 
+/** Matches hub article URL (full or path). Captures slug. */
+const HUB_ARTICLE_REGEX = /(?:https?:\/\/[^/\s]+)?\/resource-hub\/([a-z0-9-]+)/;
+
+/** Matches /delete <slug or url>. */
+const DELETE_CMD_REGEX = /^\/delete\s+(.+)$/;
+
 function getBaseUrl(): string {
   const vercelUrl = process.env.VERCEL_URL;
   if (vercelUrl) return `https://${vercelUrl}`;
@@ -50,6 +56,70 @@ async function safeJson<T>(res: Response): Promise<T | null> {
   } catch {
     console.error("[bot] API returned non-JSON:", text.slice(0, 200));
     return null;
+  }
+}
+
+function extractSlugFromMessage(text: string): string | null {
+  const hubMatch = text.match(HUB_ARTICLE_REGEX);
+  if (hubMatch) return hubMatch[1];
+
+  const deleteMatch = text.match(DELETE_CMD_REGEX);
+  if (deleteMatch) {
+    const arg = deleteMatch[1].trim();
+    const fromUrl = arg.match(HUB_ARTICLE_REGEX);
+    if (fromUrl) return fromUrl[1];
+    const slug = arg.replace(/[^a-z0-9-]/g, "");
+    return slug || null;
+  }
+  return null;
+}
+
+async function handleDeleteFlow(thread: Thread, slug: string) {
+  try {
+    const res = await fetch(apiUrl("/api/article-upload/unpublish"), {
+      method: "POST",
+      headers: getApiHeaders(),
+      body: JSON.stringify({ slug, preview: true }),
+    });
+
+    if (res.status === 404) {
+      await thread.post("Article not found.");
+      return;
+    }
+    if (res.status === 409) {
+      await thread.post("Article is already unpublished.");
+      return;
+    }
+    if (!res.ok) {
+      const err = await safeJson<{ error?: string }>(res);
+      await thread.post(`Error: ${err?.error ?? res.statusText}`);
+      return;
+    }
+
+    const data = await safeJson<{ title: string }>(res);
+    if (!data) {
+      await thread.post("Invalid response from server.");
+      return;
+    }
+
+    await thread.post(
+      Card({
+        title: "Unpublish article?",
+        subtitle: data.title,
+        children: [
+          CardText("Article will be hidden from the hub. You can restore it later."),
+          Actions([
+            Button({ id: "delete", label: "Unpublish", style: "danger", value: slug }),
+            Button({ id: "cancel-delete", label: "Cancel", value: slug }),
+          ]),
+        ],
+      })
+    );
+  } catch (err) {
+    console.error("[bot] delete flow error:", err);
+    await thread.post(
+      `Something went wrong: ${err instanceof Error ? err.message : "Unknown error"}`
+    );
   }
 }
 
@@ -215,6 +285,20 @@ bot.onNewMessage(GOOGLE_DOC_URL_REGEX, async (thread, message) => {
   await handleDocUrl(thread, text);
 });
 
+// Delete flow: hub URL or /delete <slug|url>
+const DELETE_TRIGGER_REGEX = /(?:\/resource-hub\/[a-z0-9-]+|\/delete\s)/;
+bot.onNewMessage(DELETE_TRIGGER_REGEX, async (thread, message) => {
+  if (!isAllowedUser(message.author)) {
+    await thread.post("You're not on the publisher waitlist. Contact the team to get access.");
+    return;
+  }
+  const text = message.text?.trim() ?? "";
+  const slug = extractSlugFromMessage(text);
+  if (!slug) return;
+  console.log("[bot] onNewMessage (delete trigger), slug:", slug);
+  await handleDeleteFlow(thread, slug);
+});
+
 bot.onAction("publish", async (event) => {
   if (!isAllowedUser(event.user)) {
     await event.thread.post("You're not on the publisher waitlist. Contact the team to get access.");
@@ -302,4 +386,56 @@ bot.onAction("cancel", async (event) => {
       `Failed to discard: ${err instanceof Error ? err.message : "Unknown error"}`
     );
   }
+});
+
+bot.onAction("delete", async (event) => {
+  if (!isAllowedUser(event.user)) {
+    await event.thread.post("You're not on the publisher waitlist. Contact the team to get access.");
+    return;
+  }
+  const slug = event.value;
+  if (!slug) {
+    await event.thread.post("Invalid article. Please try again.");
+    return;
+  }
+
+  try {
+    await event.thread.startTyping();
+
+    const res = await fetch(apiUrl("/api/article-upload/unpublish"), {
+      method: "POST",
+      headers: getApiHeaders(),
+      body: JSON.stringify({ slug }),
+    });
+
+    if (res.status === 404) {
+      await event.thread.post("Article not found.");
+      return;
+    }
+    if (res.status === 409) {
+      await event.thread.post("Article is already unpublished.");
+      return;
+    }
+    if (!res.ok) {
+      const err = await safeJson<{ error?: string }>(res);
+      await event.thread.post(`Unpublish failed: ${err?.error ?? res.statusText}`);
+      return;
+    }
+
+    const data = await safeJson<{ title: string }>(res);
+    await event.thread.post(`Unpublished: ${data?.title ?? slug}`);
+  } catch (err) {
+    console.error("[bot] delete action error:", err);
+    await event.thread.post(
+      `Unpublish failed: ${err instanceof Error ? err.message : "Unknown error"}`
+    );
+  }
+});
+
+bot.onAction("cancel-delete", async (event) => {
+  if (!isAllowedUser(event.user)) {
+    await event.thread.post("You're not on the publisher waitlist. Contact the team to get access.");
+    return;
+  }
+  await event.thread.post("Cancelled.");
 });
