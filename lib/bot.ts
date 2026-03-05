@@ -1,6 +1,8 @@
+import { randomBytes } from "crypto";
 import { Chat, type Thread, Card, CardText, Actions, Button, LinkButton } from "chat";
 import { createTelegramAdapter } from "@chat-adapter/telegram";
 import { createRedisState } from "@chat-adapter/state-redis";
+import { kv } from "@vercel/kv";
 
 const GOOGLE_DOC_URL_REGEX =
   /https:\/\/docs\.google\.com\/document\/d\/([a-zA-Z0-9_-]+)(?:\/edit)?(?:\?[^/]*)?/;
@@ -59,6 +61,24 @@ async function safeJson<T>(res: Response): Promise<T | null> {
   }
 }
 
+const DELETE_PENDING_PREFIX = "bot:del:";
+const DELETE_PENDING_TTL = 300; // 5 min
+
+function shortId(): string {
+  return randomBytes(4).toString("hex");
+}
+
+async function storeDeletePending(slug: string): Promise<string> {
+  const id = shortId();
+  await kv.setex(`${DELETE_PENDING_PREFIX}${id}`, DELETE_PENDING_TTL, slug);
+  return id;
+}
+
+async function getDeletePending(id: string): Promise<string | null> {
+  const slug = await kv.get<string>(`${DELETE_PENDING_PREFIX}${id}`);
+  return slug ?? null;
+}
+
 function extractSlugFromMessage(text: string): string | null {
   const hubMatch = text.match(HUB_ARTICLE_REGEX);
   if (hubMatch) return hubMatch[1];
@@ -102,6 +122,8 @@ async function handleDeleteFlow(thread: Thread, slug: string) {
       return;
     }
 
+    const token = await storeDeletePending(slug);
+
     await thread.post(
       Card({
         title: "Unpublish article?",
@@ -109,8 +131,8 @@ async function handleDeleteFlow(thread: Thread, slug: string) {
         children: [
           CardText("Article will be hidden from the hub. You can restore it later."),
           Actions([
-            Button({ id: "delete", label: "Unpublish", style: "danger", value: slug }),
-            Button({ id: "cancel-delete", label: "Cancel", value: slug }),
+            Button({ id: "delete", label: "Unpublish", style: "danger", value: token }),
+            Button({ id: "cancel-delete", label: "Cancel", value: token }),
           ]),
         ],
       })
@@ -393,9 +415,14 @@ bot.onAction("delete", async (event) => {
     await event.thread.post("You're not on the publisher waitlist. Contact the team to get access.");
     return;
   }
-  const slug = event.value;
-  if (!slug) {
+  const token = event.value;
+  if (!token) {
     await event.thread.post("Invalid article. Please try again.");
+    return;
+  }
+  const slug = await getDeletePending(token);
+  if (!slug) {
+    await event.thread.post("Session expired. Send the article URL or /delete <slug> again.");
     return;
   }
 
