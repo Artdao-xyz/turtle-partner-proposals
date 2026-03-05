@@ -1,11 +1,8 @@
 import { getAllResources } from "@/resource-hub/lib/getResource";
 import ResourceHubListing from "@/resource-hub/components/ResourceHubListing";
+import { buildHubListingMetadata } from "@/resource-hub/lib/metadata";
 
-export const metadata = {
-  title: "Resource Hub | Turtle Partner Proposals",
-  description:
-    "Research, benchmarks, and guides for DeFi incentive programs and liquidity campaigns.",
-};
+export const metadata = buildHubListingMetadata();
 
 export const dynamic = "force-dynamic";
 

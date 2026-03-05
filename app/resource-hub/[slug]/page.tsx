@@ -4,6 +4,7 @@ import {
   getResourceContent,
 } from "@/resource-hub/lib/getResource";
 import { parseFrontmatter } from "@/resource-hub/lib/parse";
+import { buildArticleMetadata } from "@/resource-hub/lib/metadata";
 import { notFound } from "next/navigation";
 
 export const dynamic = "force-dynamic";
@@ -19,9 +20,12 @@ export async function generateMetadata({ params }: ResourceHubArticlePageProps) 
   const rawContent = await getResourceContent(slug);
   const { frontmatter } = parseFrontmatter(rawContent);
   const title = frontmatter.title || slug.replace(/-/g, " ");
-  return {
-    title: `${title} | Turtle Partner Proposals`,
-  };
+  return buildArticleMetadata({
+    title,
+    subtitle: frontmatter.subtitle,
+    heroImage: frontmatter.heroImage,
+    slug,
+  });
 }
 
 export default async function ResourceHubArticlePage({

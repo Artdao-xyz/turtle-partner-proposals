@@ -1,5 +1,7 @@
 import { ResourceHub } from "@/resource-hub";
 import { getBlobDraftContent } from "@/resource-hub/lib/storage";
+import { parseFrontmatter } from "@/resource-hub/lib/parse";
+import { buildArticleMetadata } from "@/resource-hub/lib/metadata";
 import { notFound } from "next/navigation";
 
 export const dynamic = "force-dynamic";
@@ -13,9 +15,14 @@ export async function generateMetadata({ params }: PreviewPageProps) {
   if (process.env.CONTENT_SOURCE !== "blob") return { title: "Not Found" };
   try {
     const rawContent = await getBlobDraftContent(previewId);
-    const match = rawContent.match(/title:\s*["']([^"']+)["']/);
-    const title = match?.[1] ?? "Draft preview";
-    return { title: `${title} (Draft) | Turtle Partner Proposals` };
+    const { frontmatter } = parseFrontmatter(rawContent);
+    const title = frontmatter.title || "Draft preview";
+    return buildArticleMetadata({
+      title,
+      subtitle: frontmatter.subtitle,
+      heroImage: frontmatter.heroImage,
+      isDraft: true,
+    });
   } catch {
     return { title: "Not Found" };
   }
