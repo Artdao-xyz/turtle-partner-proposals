@@ -2,6 +2,7 @@ import { ResourceHub } from "@/resource-hub";
 import {
   getResourceSlugs,
   getResourceContent,
+  isPublished,
 } from "@/resource-hub/lib/getResource";
 import { parseFrontmatter } from "@/resource-hub/lib/parse";
 import { buildArticleMetadata } from "@/resource-hub/lib/metadata";
@@ -19,6 +20,7 @@ export async function generateMetadata({ params }: ResourceHubArticlePageProps) 
   if (!slugs.includes(slug)) return { title: "Not Found" };
   const rawContent = await getResourceContent(slug);
   const { frontmatter } = parseFrontmatter(rawContent);
+  if (!isPublished(frontmatter.publishedDate)) return { title: "Not Found" };
   const title = frontmatter.title || slug.replace(/-/g, " ");
   return buildArticleMetadata({
     title,
@@ -35,6 +37,13 @@ export default async function ResourceHubArticlePage({
   const slugs = await getResourceSlugs();
 
   if (!slugs.includes(slug)) {
+    notFound();
+  }
+
+  const rawContent = await getResourceContent(slug);
+  const { frontmatter } = parseFrontmatter(rawContent);
+
+  if (!isPublished(frontmatter.publishedDate)) {
     notFound();
   }
 

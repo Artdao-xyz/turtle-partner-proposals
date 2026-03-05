@@ -38,6 +38,14 @@ export const getResourceContent = cache(async (slug: string): Promise<string> =>
 
 const ARTICLE_CATEGORIES = FILTER_OPTIONS.filter((c) => c !== "All");
 
+/** True if article should be visible (no date or publishedDate <= today, UTC). */
+export function isPublished(publishedDate: string | undefined): boolean {
+  if (!publishedDate?.trim()) return true;
+  const date = publishedDate.trim().slice(0, 10);
+  const today = new Date().toISOString().slice(0, 10);
+  return date <= today;
+}
+
 export const getAllResources = cache(async (): Promise<ResourceCardData[]> => {
   const slugs = await getResourceSlugs();
   const resources: ResourceCardData[] = [];
@@ -45,6 +53,8 @@ export const getAllResources = cache(async (): Promise<ResourceCardData[]> => {
   for (const slug of slugs) {
     const rawContent = await getResourceContent(slug);
     const { frontmatter } = parseFrontmatter(rawContent);
+    if (!isPublished(frontmatter.publishedDate)) continue;
+
     const title = frontmatter.title || slug;
     const subtitle = frontmatter.subtitle || "";
     const category =
