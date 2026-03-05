@@ -26,6 +26,20 @@ function apiUrl(path: string): string {
   return url;
 }
 
+function getAllowedUserIds(): string[] {
+  const raw = process.env.TELEGRAM_ALLOWED_USER_IDS;
+  if (!raw?.trim()) return [];
+  return raw.split(",").map((s) => s.trim()).filter(Boolean);
+}
+
+function isAllowedUser(author: { userId: string; userName?: string }): boolean {
+  const allowed = getAllowedUserIds();
+  if (allowed.length === 0) return true;
+  return allowed.some(
+    (id) => id === author.userId || id === author.userName || id === `@${author.userName}`
+  );
+}
+
 async function safeJson<T>(res: Response): Promise<T | null> {
   const text = await res.text();
   try {
@@ -167,7 +181,11 @@ async function handleDocUrl(thread: Thread, text: string) {
   }
 }
 
-bot.onNewMessage(/^\/start/, async (thread) => {
+bot.onNewMessage(/^\/start/, async (thread, message) => {
+  if (!isAllowedUser(message.author)) {
+    await thread.post("You're not on the publisher waitlist. Contact the team to get access.");
+    return;
+  }
   console.log("[bot] /start received");
   await thread.post(
     "Send me a Google Doc URL to publish.\n\nExample:\nhttps://docs.google.com/document/d/xxx/edit"
@@ -175,18 +193,30 @@ bot.onNewMessage(/^\/start/, async (thread) => {
 });
 
 bot.onNewMention(async (thread, message) => {
+  if (!isAllowedUser(message.author)) {
+    await thread.post("You're not on the publisher waitlist. Contact the team to get access.");
+    return;
+  }
   const text = message.text?.trim() ?? "";
   console.log("[bot] onNewMention, text:", text?.slice(0, 80));
   await handleDocUrl(thread, text);
 });
 
 bot.onNewMessage(GOOGLE_DOC_URL_REGEX, async (thread, message) => {
+  if (!isAllowedUser(message.author)) {
+    await thread.post("You're not on the publisher waitlist. Contact the team to get access.");
+    return;
+  }
   const text = message.text?.trim() ?? "";
   console.log("[bot] onNewMessage (doc URL match), text:", text?.slice(0, 80));
   await handleDocUrl(thread, text);
 });
 
 bot.onAction("publish", async (event) => {
+  if (!isAllowedUser(event.user)) {
+    await event.thread.post("You're not on the publisher waitlist. Contact the team to get access.");
+    return;
+  }
   const previewId = event.value;
   if (!previewId) {
     await event.thread.post("Invalid preview. Please try again.");
@@ -238,6 +268,10 @@ bot.onAction("publish", async (event) => {
 });
 
 bot.onAction("cancel", async (event) => {
+  if (!isAllowedUser(event.user)) {
+    await event.thread.post("You're not on the publisher waitlist. Contact the team to get access.");
+    return;
+  }
   const previewId = event.value;
   if (!previewId) {
     await event.thread.post("Invalid preview. Please try again.");
