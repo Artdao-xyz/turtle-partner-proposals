@@ -29,7 +29,10 @@ function apiUrl(path: string): string {
 function getAllowedUserIds(): string[] {
   const raw = process.env.TELEGRAM_ALLOWED_USER_IDS;
   if (!raw?.trim()) return [];
-  return raw.split(",").map((s) => s.trim()).filter(Boolean);
+  return raw
+    .split(",")
+    .map((s) => s.trim().replace(/^["']|["']$/g, ""))
+    .filter(Boolean);
 }
 
 function isAllowedUser(author: { userId: string; userName?: string }): boolean {
