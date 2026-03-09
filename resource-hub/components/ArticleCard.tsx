@@ -58,7 +58,9 @@ export default function ArticleCard({
 }: ArticleCardProps) {
   const badgeLabel = badge ?? category;
   const isBig = variant === "featured";
-  const heightClass = isBig ? "h-[455px] max-h-[455px]" : "h-[300px] max-h-[300px]";
+  const heightClass = isBig
+    ? "h-[280px] max-h-[280px] md:h-[455px] md:max-h-[455px]"
+    : "h-[280px] max-h-[280px] md:h-[300px] md:max-h-[300px]";
 
   return (
     <Link href={`/resource-hub/${slug}`} className="block group h-full shadow">

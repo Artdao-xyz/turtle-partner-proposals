@@ -32,7 +32,7 @@ export default function ResourceHubListing({ resources }: ResourceHubListingProp
       {/* Two featured articles - horizontal scroll on mobile, side by side on desktop */}
       <div className="flex overflow-x-auto overflow-y-hidden -mx-4 px-4 sm:mx-0 sm:px-0 md:flex-wrap md:justify-center gap-4 sm:gap-6 md:gap-8 scrollbar-hide" style={{ WebkitOverflowScrolling: "touch" }}>
         {featured.map((resource) => (
-          <div key={resource.slug} className="shrink-0 w-[85vw] sm:w-full md:w-[calc(50%-1rem)] min-w-0 h-[455px] max-h-[455px]">
+          <div key={resource.slug} className="shrink-0 w-[85vw] sm:w-full md:w-[calc(50%-1rem)] min-w-0 h-[280px] max-h-[280px] md:h-[455px] md:max-h-[455px]">
             <ArticleCard
               slug={resource.slug}
               title={resource.title}
@@ -52,7 +52,7 @@ export default function ResourceHubListing({ resources }: ResourceHubListingProp
         <div className="rounded-5xl p-4 sm:p-6 md:p-8 bg-[#f9f9f9]/2">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6 md:gap-3.5">
             {filtered.map((resource) => (
-              <div key={resource.slug} className="h-[300px]">
+              <div key={resource.slug} className="h-[280px] md:h-[300px]">
                 <ArticleCard
                   slug={resource.slug}
                   title={resource.title}
