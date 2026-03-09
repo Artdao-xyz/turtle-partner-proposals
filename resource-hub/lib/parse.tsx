@@ -227,12 +227,31 @@ function preprocessCalloutsAndSources(markdown: string): string {
       continue;
     }
 
+    // Strip any existing [Source: ...] wrapper to prevent duplication.
+    // Handles: leading "> ", blockquote HTML from Turndown, and [Source: ...] anywhere in content.
+    function unwrapSource(raw: string): string {
+      let s = raw.replace(/^>\s*/, "").trim();
+      // Extract text from blockquote HTML (Turndown keeps blockquote as raw HTML)
+      const blockquoteMatch = s.match(/<blockquote[^>]*>([\s\S]*?)<\/blockquote>/i);
+      if (blockquoteMatch) {
+        s = blockquoteMatch[1].replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim();
+      }
+      // Remove all [Source: ...] wrappers (including nested); ] not followed by ( avoids breaking [link](url)
+      let prev = "";
+      while (prev !== s) {
+        prev = s;
+        s = s.replace(/\[Source:\s*([\s\S]*?)\](?!\()/gi, (_, inner) => inner.trim());
+        s = s.replace(/^\\?\[?Source:\s*/i, "").replace(/\]\s*$/, "");
+      }
+      // Strip leading backslashes (markdown uses \[ to escape [)
+      return s.replace(/^\\+/, "").trim();
+    }
+
     // ::source or :source with inline content: ::source Gauntlet, "Report," 2024
     const sourceInlineMatch = trimmed.match(/^:?::?source\s+(.+)$/);
     if (sourceInlineMatch) {
-      const content = sourceInlineMatch[1].trim();
-      const blockquote = /^\[?Source:\s/i.test(content) ? `> ${content}` : `> [Source: ${content}]`;
-      result.push(blockquote, "");
+      const content = unwrapSource(sourceInlineMatch[1]);
+      result.push(`> [Source: ${content}]`, "");
       i++;
       continue;
     }
@@ -250,10 +269,20 @@ function preprocessCalloutsAndSources(markdown: string): string {
         contentLines.push(next);
         i++;
       }
-      const content = contentLines.join(" ").trim();
-      const blockquote = /^\[?Source:\s/i.test(content) ? `> ${content}` : `> [Source: ${content}]`;
-      result.push(blockquote, "");
+      const content = unwrapSource(contentLines.join(" "));
+      result.push(`> [Source: ${content}]`, "");
       continue;
+    }
+
+    // Standalone escaped source line: \[Source: ...] (markdown escape)
+    const escapedSourceMatch = trimmed.match(/^\\?\s*\[Source:\s*([\s\S]*?)\]\s*$/);
+    if (escapedSourceMatch) {
+      const content = unwrapSource(trimmed);
+      if (content) {
+        result.push(`> [Source: ${content}]`, "");
+        i++;
+        continue;
+      }
     }
 
     result.push(line);
