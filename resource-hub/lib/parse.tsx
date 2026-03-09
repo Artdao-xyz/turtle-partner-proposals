@@ -231,7 +231,8 @@ function preprocessCalloutsAndSources(markdown: string): string {
     const sourceInlineMatch = trimmed.match(/^:?::?source\s+(.+)$/);
     if (sourceInlineMatch) {
       const content = sourceInlineMatch[1].trim();
-      result.push(`> [Source: ${content}]`, "");
+      const blockquote = /^\[?Source:\s/i.test(content) ? `> ${content}` : `> [Source: ${content}]`;
+      result.push(blockquote, "");
       i++;
       continue;
     }
@@ -250,7 +251,8 @@ function preprocessCalloutsAndSources(markdown: string): string {
         i++;
       }
       const content = contentLines.join(" ").trim();
-      result.push(`> [Source: ${content}]`, "");
+      const blockquote = /^\[?Source:\s/i.test(content) ? `> ${content}` : `> [Source: ${content}]`;
+      result.push(blockquote, "");
       continue;
     }
 
