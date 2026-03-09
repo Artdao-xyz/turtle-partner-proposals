@@ -18,6 +18,7 @@ import SourceCitation from "../components/SourceCitation";
 import Divider from "../components/Divider";
 import MarkdownTable from "../components/MarkdownTable";
 import SectionHeading from "../components/SectionHeading";
+import ScrollRevealBlock from "../components/ScrollRevealBlock";
 import type { SourceItem } from "./article-schema";
 
 export type { SourceItem } from "./article-schema";
@@ -131,18 +132,28 @@ const production = {
 };
 
 function H2(props: React.ComponentPropsWithoutRef<"h2">) {
-  return <SectionHeading level={2} {...props} />;
+  return (
+    <ScrollRevealBlock>
+      <SectionHeading level={2} {...props} />
+    </ScrollRevealBlock>
+  );
 }
 
 function H3(props: React.ComponentPropsWithoutRef<"h3">) {
-  return <SectionHeading level={3} {...props} />;
+  return (
+    <ScrollRevealBlock>
+      <SectionHeading level={3} {...props} />
+    </ScrollRevealBlock>
+  );
 }
 
 function P({ children, ...props }: { children?: React.ReactNode }) {
   return (
-    <p className="text-wise-white/90 text-base leading-relaxed mb-[15px] last:mb-0" {...props}>
-      {children}
-    </p>
+    <ScrollRevealBlock>
+      <p className="text-wise-white/90 text-base leading-relaxed mb-[15px] last:mb-0" {...props}>
+        {children}
+      </p>
+    </ScrollRevealBlock>
   );
 }
 
@@ -250,13 +261,61 @@ function preprocessCalloutsAndSources(markdown: string): string {
   return result.join("\n");
 }
 
+function CalloutWithReveal(props: React.ComponentProps<typeof Callout>) {
+  return (
+    <ScrollRevealBlock>
+      <Callout {...props} />
+    </ScrollRevealBlock>
+  );
+}
+
+function SourceCitationWithReveal(props: React.ComponentProps<typeof SourceCitation>) {
+  return (
+    <ScrollRevealBlock>
+      <SourceCitation {...props} />
+    </ScrollRevealBlock>
+  );
+}
+
+function DividerWithReveal() {
+  return (
+    <ScrollRevealBlock>
+      <Divider />
+    </ScrollRevealBlock>
+  );
+}
+
+function BulletListWithReveal(props: React.ComponentProps<typeof BulletList>) {
+  return (
+    <ScrollRevealBlock>
+      <BulletList {...props} />
+    </ScrollRevealBlock>
+  );
+}
+
+function MarkdownTableWithReveal(props: React.ComponentProps<typeof MarkdownTable>) {
+  return (
+    <ScrollRevealBlock>
+      <MarkdownTable {...props} />
+    </ScrollRevealBlock>
+  );
+}
+
+function ResourceHubSectionDiv(props: React.ComponentPropsWithoutRef<"div">) {
+  return (
+    <ScrollRevealBlock>
+      <div {...props} />
+    </ScrollRevealBlock>
+  );
+}
+
 const components = {
-  aside: Callout,
-  blockquote: SourceCitation,
-  hr: Divider,
-  ul: BulletList,
+  aside: CalloutWithReveal,
+  blockquote: SourceCitationWithReveal,
+  hr: DividerWithReveal,
+  ul: BulletListWithReveal,
   li: BulletListItem,
-  table: MarkdownTable,
+  table: MarkdownTableWithReveal,
   a: Anchor,
   h1: H1,
   h2: H2,
@@ -264,6 +323,16 @@ const components = {
   p: P,
   strong: Strong,
   em: Em,
+  div: (props: React.ComponentPropsWithoutRef<"div">) => {
+    const className = props.className;
+    const isSection =
+      (typeof className === "string" && className.includes("resource-hub-section")) ||
+      (Array.isArray(className) && className.includes("resource-hub-section"));
+    if (isSection) {
+      return <ResourceHubSectionDiv {...props} />;
+    }
+    return <div {...props} />;
+  },
 };
 
 export async function markdownToReact(markdown: string): Promise<ReactElement> {
