@@ -94,9 +94,10 @@ input[type="range"].slider-empty::-moz-range-thumb {
   }
 }
 
-/* 15px spacing between paragraphs */
-.prose-resource-hub p + p {
-  margin-top: 15px;
+/* Spacing only between paragraph blocks (divs that contain a p) */
+.prose-resource-hub > *:has(> p) + *:has(> p),
+.resource-hub-section > *:has(> p) + *:has(> p) {
+  margin-top: 1em;
 }
 
 /* Offset h2 when scrolling into view (for nav clicks, accounts for header) */

@@ -1,10 +1,26 @@
 import { ResourceHub } from "@/resource-hub";
 import { getBlobDraftContent } from "@/resource-hub/lib/storage";
+import {
+  isLocalPreviewId,
+  getLocalPreviewContent,
+} from "@/resource-hub/lib/preview-store";
 import { parseFrontmatter } from "@/resource-hub/lib/parse";
 import { buildArticleMetadata } from "@/resource-hub/lib/metadata";
 import { notFound } from "next/navigation";
 
 export const dynamic = "force-dynamic";
+
+async function getPreviewContent(previewId: string): Promise<string | null> {
+  if (isLocalPreviewId(previewId)) {
+    return getLocalPreviewContent(previewId);
+  }
+  if (process.env.CONTENT_SOURCE !== "blob") return null;
+  try {
+    return await getBlobDraftContent(previewId);
+  } catch {
+    return null;
+  }
+}
 
 interface PreviewPageProps {
   params: Promise<{ previewId: string }>;
@@ -12,9 +28,9 @@ interface PreviewPageProps {
 
 export async function generateMetadata({ params }: PreviewPageProps) {
   const { previewId } = await params;
-  if (process.env.CONTENT_SOURCE !== "blob") return { title: "Not Found" };
   try {
-    const rawContent = await getBlobDraftContent(previewId);
+    const rawContent = await getPreviewContent(previewId);
+    if (!rawContent) return { title: "Not Found" };
     const { frontmatter } = parseFrontmatter(rawContent);
     const title = frontmatter.title || "Draft preview";
     return buildArticleMetadata({
@@ -31,14 +47,8 @@ export async function generateMetadata({ params }: PreviewPageProps) {
 export default async function ResourceHubPreviewPage({ params }: PreviewPageProps) {
   const { previewId } = await params;
 
-  if (process.env.CONTENT_SOURCE !== "blob") {
-    notFound();
-  }
-
-  let rawContent: string;
-  try {
-    rawContent = await getBlobDraftContent(previewId);
-  } catch {
+  const rawContent = await getPreviewContent(previewId);
+  if (!rawContent) {
     notFound();
   }
 

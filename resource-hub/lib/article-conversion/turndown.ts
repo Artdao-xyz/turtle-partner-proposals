@@ -104,5 +104,14 @@ export function htmlToMarkdown(html: string): string {
     replacement: (content) => `*${content}*`,
   });
 
-  return turndown.turndown(html);
+  const markdown = turndown.turndown(html);
+  return normalizeParagraphBreaks(markdown);
+}
+
+/**
+ * Ensure double line breaks after sentence-ending punctuation.
+ * Fixes Google Docs export that produces single newlines between paragraphs.
+ */
+function normalizeParagraphBreaks(markdown: string): string {
+  return markdown.replace(/([.?!])(\s*\n)(?!\n)/g, "$1\n\n");
 }
