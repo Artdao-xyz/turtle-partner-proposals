@@ -274,9 +274,9 @@ function preprocessCalloutsAndSources(markdown: string): string {
       continue;
     }
 
-    // Standalone escaped source line: \[Source: ...] (markdown escape)
-    const escapedSourceMatch = trimmed.match(/^\\?\s*\[Source:\s*([\s\S]*?)\]\s*$/);
-    if (escapedSourceMatch) {
+    // Standalone [Source: ...] line (LLM/human forgot ::source, or markdown-escaped \[Source: ...])
+    const standaloneSourceMatch = trimmed.match(/^\\?\s*\[Source:\s*([\s\S]*?)\]\s*$/);
+    if (standaloneSourceMatch) {
       const content = unwrapSource(trimmed);
       if (content) {
         result.push(`> [Source: ${content}]`, "");
