@@ -7,6 +7,7 @@
     "webhook:simulate": "node scripts/simulate-telegram-webhook.mjs",
     "blob:empty": "node scripts/empty-blob.mjs",
     "test:publish-date": "node scripts/test-publish-date.mjs",
+    "inspect-docx": "node scripts/inspect-docx.mjs",
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
