@@ -278,25 +278,48 @@ async function handleDocUrl(thread: Thread, text: string) {
   }
 }
 
-async function handleDocxFile(thread: Thread, fileUrl: string, fileName?: string | null) {
+async function handleDocxFile(
+  thread: Thread,
+  options: { fileUrl?: string; data?: ArrayBuffer | Uint8Array | Buffer; fileName?: string | null }
+) {
   const baseUrl = getBaseUrl();
-  console.log("[bot] Processing DOCX file:", fileName ?? "(no name)", "baseUrl:", baseUrl);
+  console.log(
+    "[bot] Processing DOCX file:",
+    options.fileName ?? "(no name)",
+    "baseUrl:",
+    baseUrl
+  );
 
   try {
     await thread.startTyping();
 
     const headers = getApiHeaders();
-    const convertUrl = apiUrl(
-      `/api/article-upload/convert-docx?fileUrl=${encodeURIComponent(fileUrl)}`
-    );
-    console.log(
-      "[bot] Fetching convert-docx:",
-      convertUrl.replace(/x-vercel-protection-bypass=[^&]+/, "x-vercel-protection-bypass=***")
-    );
-    const convertRes = await fetch(convertUrl, {
-      method: "POST",
-      headers,
-    });
+
+    let convertRes: Response;
+    if (options.fileUrl) {
+      const convertUrl = apiUrl(
+        `/api/article-upload/convert-docx?fileUrl=${encodeURIComponent(options.fileUrl)}`
+      );
+      console.log(
+        "[bot] Fetching convert-docx (url):",
+        convertUrl.replace(/x-vercel-protection-bypass=[^&]+/, "x-vercel-protection-bypass=***")
+      );
+      convertRes = await fetch(convertUrl, {
+        method: "POST",
+        headers,
+      });
+    } else if (options.data) {
+      const convertUrl = apiUrl("/api/article-upload/convert-docx");
+      console.log("[bot] Fetching convert-docx (bytes):", convertUrl);
+      convertRes = await fetch(convertUrl, {
+        method: "POST",
+        headers,
+        body: options.data as any,
+      });
+    } else {
+      await thread.post("DOCX conversion failed: no file data provided.");
+      return;
+    }
 
     console.log("[bot] Convert-docx response:", convertRes.status);
 
@@ -412,35 +435,57 @@ bot.onNewMessage(/^\/start/, async (thread, message) => {
   );
 });
 
-// Handle DOCX uploads (Telegram adapter exposes files array).
+// Handle DOCX uploads (Telegram adapter exposes attachments array).
 // Use a catch-all pattern so this runs for any message, and bail out
-// early if there are no files.
+// early if there are no attachments.
 bot.onNewMessage(/.*/, async (thread, message) => {
   if (!isAllowedUser(message.author)) {
     await thread.post("You're not on the publisher waitlist. Contact the team to get access.");
     return;
   }
 
-  const files: any[] | undefined = (message as any).files;
-  if (!files || files.length === 0) return;
+  const attachments: any[] | undefined = (message as any).attachments;
+  if (!attachments || attachments.length === 0) return;
 
-  const docx = files.find((f) => {
+  const docx = attachments.find((f) => {
     const name = (f.name as string | undefined) ?? "";
     const mime = (f.mimeType as string | undefined) ?? "";
-    return name.toLowerCase().endsWith(".docx") ||
-      mime === "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
+    return (
+      name.toLowerCase().endsWith(".docx") ||
+      mime === "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+    );
   });
 
   if (!docx) return;
 
+  const fileName = (docx.name as string | undefined) ?? null;
   const fileUrl = (docx.url as string | undefined) ?? (docx.href as string | undefined);
-  if (!fileUrl) {
-    console.warn("[bot] DOCX file detected but no URL/href available on file object");
-    await thread.post("I received a DOCX file but couldn't access its contents.");
+  const fetchData: (() => Promise<ArrayBuffer | Uint8Array | Buffer>) | undefined = (docx as any)
+    .fetchData;
+
+  if (fileUrl) {
+    await handleDocxFile(thread, { fileUrl, fileName });
     return;
   }
 
-  await handleDocxFile(thread, fileUrl, (docx.name as string | undefined) ?? null);
+  if (fetchData) {
+    try {
+      const data = await fetchData();
+      await handleDocxFile(thread, { data, fileName });
+      return;
+    } catch (err) {
+      console.error("[bot] DOCX fetchData error:", err);
+      await thread.post(
+        `I received a DOCX file but failed to download it: ${
+          err instanceof Error ? err.message : "Unknown error"
+        }`
+      );
+      return;
+    }
+  }
+
+  console.warn("[bot] DOCX attachment detected but no url or fetchData available", docx);
+  await thread.post("I received a DOCX file but couldn't access its contents.");
 });
 
 bot.onNewMention(async (thread, message) => {
