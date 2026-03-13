@@ -1,10 +1,12 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 
 export default function EditorLoginPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const from = searchParams.get("from") || "/resource-hub/editor";
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -25,7 +27,7 @@ export default function EditorLoginPage() {
         setError(data.error ?? "Login failed");
         return;
       }
-      router.push("/resource-hub/editor");
+      router.push(from);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Login failed");
     } finally {
