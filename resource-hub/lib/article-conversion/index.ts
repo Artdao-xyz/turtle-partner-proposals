@@ -17,6 +17,11 @@ export function extractFirstImageFromHtml(html: string): string | null {
   return imgMatch ? imgMatch[1] : null;
 }
 
+function extractFirstImageFromMarkdown(markdown: string): string | null {
+  const imageMatch = markdown.match(/!\[[^\]]*]\(([^)]+)\)/);
+  return imageMatch ? imageMatch[1] : null;
+}
+
 function ensureUniqueSlug(baseSlug: string, existingSlugs: string[]): string {
   let slug = baseSlug;
   let n = 2;
@@ -54,6 +59,34 @@ export async function convertGoogleDoc(html: string): Promise<ConvertResult> {
   const slug = ensureUniqueSlug(baseSlug, existingSlugs);
 
   const heroImage = extractFirstImageFromHtml(html);
+
+  return {
+    frontmatter: {
+      title: parsed.title,
+      subtitle: parsed.subtitle,
+      category: parsed.category,
+      publishedDate: parsed.publishedDate,
+      sources: parsed.sources,
+    },
+    body: parsed.body,
+    slug,
+    heroImage: heroImage || undefined,
+  };
+}
+
+/**
+ * Convert Markdown (e.g. from DOCX via mammoth) to article structure.
+ * Reuses the same metadata parsing and slug logic as Google Docs.
+ */
+export async function convertDocxMarkdown(markdown: string): Promise<ConvertResult> {
+  const parsed =
+    parseMetadataBlock(markdown) ?? parseFallbackMetadata(markdown);
+
+  const existingSlugs = await getResourceSlugs();
+  const baseSlug = slugify(parsed.title);
+  const slug = ensureUniqueSlug(baseSlug, existingSlugs);
+
+  const heroImage = extractFirstImageFromMarkdown(markdown);
 
   return {
     frontmatter: {

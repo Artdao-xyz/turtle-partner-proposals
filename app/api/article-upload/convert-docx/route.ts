@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { convertGoogleDoc } from "@/resource-hub/lib/article-conversion";
+import { convertDocxMarkdown } from "@/resource-hub/lib/article-conversion";
 import mammoth from "mammoth";
 
 export const runtime = "nodejs";
@@ -42,16 +42,18 @@ export async function POST(req: Request) {
 
     // mammoth Node API expects a Buffer, not an ArrayBuffer
     const buffer = Buffer.from(arrayBuffer);
-    const { value: html } = await mammoth.convertToHtml({ buffer });
+    // Use mammoth's markdown output for better table fidelity.
+    // Some typings don't expose convertToMarkdown, so cast to any.
+    const { value: markdown } = await (mammoth as any).convertToMarkdown({ buffer });
 
-    if (!html || html.length < 50) {
+    if (!markdown || markdown.length < 50) {
       return NextResponse.json(
-        { error: "DOCX file conversion produced empty HTML." },
+        { error: "DOCX file conversion produced empty markdown." },
         { status: 400 }
       );
     }
 
-    const result = await convertGoogleDoc(html);
+    const result = await convertDocxMarkdown(markdown);
 
     return NextResponse.json({
       frontmatter: result.frontmatter,
