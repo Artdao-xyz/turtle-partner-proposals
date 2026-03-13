@@ -37,7 +37,13 @@ export default function EditorLoginPage() {
         setError(data.error ?? "Login failed");
         return;
       }
-      router.push(redirectTo);
+      // Use full page navigation so the new cookie is definitely
+      // attached and middleware sees it on the next request.
+      if (typeof window !== "undefined") {
+        window.location.href = redirectTo;
+      } else {
+        router.push(redirectTo);
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : "Login failed");
     } finally {
