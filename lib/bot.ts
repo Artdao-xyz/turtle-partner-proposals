@@ -278,6 +278,129 @@ async function handleDocUrl(thread: Thread, text: string) {
   }
 }
 
+async function handleDocxFile(thread: Thread, fileUrl: string, fileName?: string | null) {
+  const baseUrl = getBaseUrl();
+  console.log("[bot] Processing DOCX file:", fileName ?? "(no name)", "baseUrl:", baseUrl);
+
+  try {
+    await thread.startTyping();
+
+    const headers = getApiHeaders();
+    const convertUrl = apiUrl(
+      `/api/article-upload/convert-docx?fileUrl=${encodeURIComponent(fileUrl)}`
+    );
+    console.log(
+      "[bot] Fetching convert-docx:",
+      convertUrl.replace(/x-vercel-protection-bypass=[^&]+/, "x-vercel-protection-bypass=***")
+    );
+    const convertRes = await fetch(convertUrl, {
+      method: "POST",
+      headers,
+    });
+
+    console.log("[bot] Convert-docx response:", convertRes.status);
+
+    if (!convertRes.ok) {
+      const err = await safeJson<{ error?: string }>(convertRes);
+      await thread.post(`DOCX conversion failed: ${err?.error ?? convertRes.statusText}`);
+      return;
+    }
+
+    const convertData = await safeJson<{
+      slug: string;
+      frontmatter: {
+        title: string;
+        subtitle?: string;
+        category?: string;
+        publishedDate?: string;
+        sources?: unknown[];
+      };
+      body: string;
+      heroImage?: string;
+    }>(convertRes);
+    if (!convertData) {
+      await thread.post("DOCX conversion failed: invalid response from server");
+      return;
+    }
+
+    const today = new Date().toISOString().slice(0, 10);
+    const draftPayload = {
+      slug: convertData.slug,
+      title: convertData.frontmatter.title,
+      subtitle: convertData.frontmatter.subtitle,
+      category: convertData.frontmatter.category ?? "Research",
+      body: convertData.body,
+      publishedDate: convertData.frontmatter.publishedDate ?? today,
+      heroImage: convertData.heroImage ?? undefined,
+      sources: convertData.frontmatter.sources ?? [],
+    };
+
+    const draftRes = await fetch(apiUrl("/api/article-upload/draft"), {
+      method: "POST",
+      headers,
+      body: JSON.stringify(draftPayload),
+    });
+
+    console.log("[bot] Draft (from DOCX) response:", draftRes.status);
+
+    if (!draftRes.ok) {
+      const err = await safeJson<{ error?: string }>(draftRes);
+      await thread.post(`Failed to save draft: ${err?.error ?? draftRes.statusText}`);
+      return;
+    }
+
+    const draftResult = await safeJson<{ previewId: string; previewUrl: string }>(draftRes);
+    if (!draftResult) {
+      await thread.post("Failed to save draft: invalid response from server");
+      return;
+    }
+    const { previewId, previewUrl } = draftResult;
+    console.log("[bot] Draft (from DOCX) saved, previewUrl:", previewUrl);
+
+    const isPublicUrl = previewUrl.startsWith("https://") && !previewUrl.includes("localhost");
+
+    const actionButtons = [
+      ...(isPublicUrl
+        ? [
+            LinkButton({
+              url: previewUrl,
+              label: "View preview",
+              style: "primary",
+            }),
+          ]
+        : []),
+      Button({
+        id: "publish",
+        label: "Publish",
+        style: "primary",
+        value: previewId,
+      }),
+      Button({
+        id: "cancel",
+        label: "Cancel",
+        style: "danger",
+        value: previewId,
+      }),
+    ];
+
+    await thread.post(
+      Card({
+        title: "Draft ready (from DOCX)",
+        subtitle: convertData.frontmatter.title,
+        children: [
+          CardText(`Preview: ${previewUrl}`),
+          Actions(actionButtons),
+        ],
+      })
+    );
+  } catch (err) {
+    console.error("[bot] DOCX publish flow error:", err);
+    await thread.post(
+      `Something went wrong: ${err instanceof Error ? err.message : "Unknown error"}`
+    );
+  }
+}
+
 bot.onNewMessage(/^\/start/, async (thread, message) => {
   if (!isAllowedUser(message.author)) {
     await thread.post("You're not on the publisher waitlist. Contact the team to get access.");
@@ -287,6 +410,35 @@ bot.onNewMessage(/^\/start/, async (thread, message) => {
   await thread.post(
     "Send me a Google Doc URL to publish.\n\nExample:\nhttps://docs.google.com/document/d/xxx/edit"
   );
+});
+
+// Handle DOCX uploads (Telegram adapter exposes files array)
+bot.onNewMessage(async (thread, message) => {
+  if (!isAllowedUser(message.author)) {
+    await thread.post("You're not on the publisher waitlist. Contact the team to get access.");
+    return;
+  }
+
+  const files: any[] | undefined = (message as any).files;
+  if (!files || files.length === 0) return;
+
+  const docx = files.find((f) => {
+    const name = (f.name as string | undefined) ?? "";
+    const mime = (f.mimeType as string | undefined) ?? "";
+    return name.toLowerCase().endsWith(".docx") ||
+      mime === "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
+  });
+
+  if (!docx) return;
+
+  const fileUrl = (docx.url as string | undefined) ?? (docx.href as string | undefined);
+  if (!fileUrl) {
+    console.warn("[bot] DOCX file detected but no URL/href available on file object");
+    await thread.post("I received a DOCX file but couldn't access its contents.");
+    return;
+  }
+
+  await handleDocxFile(thread, fileUrl, (docx.name as string | undefined) ?? null);
 });
 
 bot.onNewMention(async (thread, message) => {
