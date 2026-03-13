@@ -26,7 +26,6 @@ export default function EditorLoginPage() {
     e.preventDefault();
     setError(null);
     setLoading(true);
-    console.log("PASSWORD:", password);
     try {
       const res = await fetch("/api/editor/login", {
         method: "POST",
