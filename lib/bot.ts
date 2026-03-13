@@ -23,6 +23,8 @@ function getApiHeaders(): Record<string, string> {
   const headers: Record<string, string> = { "Content-Type": "application/json" };
   const bypass = process.env.VERCEL_AUTOMATION_BYPASS_SECRET;
   if (bypass) headers["x-vercel-protection-bypass"] = bypass;
+  const editorToken = process.env.INTERNAL_EDITOR_TOKEN;
+  if (editorToken) headers["x-internal-editor-token"] = editorToken;
   return headers;
 }
 

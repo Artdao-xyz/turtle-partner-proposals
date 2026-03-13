@@ -10,7 +10,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "generate-hash": "node scripts/generate-password-hash.js"
+    "generate-hash": "node scripts/generate-password-hash.mjs"
   },
   "dependencies": {
     "@chat-adapter/state-redis": "^4.15.0",

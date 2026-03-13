@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import bcrypt from 'bcryptjs';
+import crypto from 'crypto';
 import { saveEmailToSheets } from '@/app/lib/google-sheets';
 
 export const runtime = 'nodejs';
@@ -78,6 +79,29 @@ function badRequest(message: string) {
   return NextResponse.json({ error: message }, { status: 400 });
 }
 
+// ===== Editor session helpers =====
+
+function getEditorSecret(): string | null {
+  return process.env.EDITOR_SESSION_SECRET || null;
+}
+
+function createEditorSessionCookie(): string | null {
+  const secret = getEditorSecret();
+  if (!secret) {
+    console.error('EDITOR_SESSION_SECRET not configured');
+    return null;
+  }
+  const payload = {
+    role: 'editor',
+    exp: Date.now() + 12 * 60 * 60 * 1000, // 12h
+  };
+  const payloadStr = JSON.stringify(payload);
+  const hmac = crypto.createHmac('sha256', secret);
+  hmac.update(payloadStr);
+  const sig = hmac.digest('base64url');
+  return `${Buffer.from(payloadStr).toString('base64url')}.${sig}`;
+}
+
 export async function POST(req: NextRequest) {
   try {
     cleanupAttempts();
@@ -152,8 +176,24 @@ export async function POST(req: NextRequest) {
       // No fallamos la autenticación si falla guardar el email
     });
 
+    // Crear cookie de sesión del editor (si está configurado el secret)
+    const sessionValue = createEditorSessionCookie();
+    const res = NextResponse.json({
+      success: true,
+      message: 'Authentication successful',
+    });
+    if (sessionValue) {
+      res.cookies.set('editor_session', sessionValue, {
+        httpOnly: true,
+        secure: true,
+        sameSite: 'lax',
+        path: '/',
+        maxAge: 12 * 60 * 60, // 12h
+      });
+    }
+
     // Autenticación exitosa - no incrementar rate limit
-    return NextResponse.json({ success: true, message: 'Authentication successful' });
+    return res;
   } catch (err) {
     console.error('Auth error:', err);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
