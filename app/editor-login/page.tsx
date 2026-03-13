@@ -1,15 +1,26 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 
 export default function EditorLoginPage() {
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const from = searchParams.get("from") || "/resource-hub/editor";
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [redirectTo, setRedirectTo] = useState("/resource-hub/editor");
+
+  useEffect(() => {
+    try {
+      const params = new URLSearchParams(window.location.search);
+      const from = params.get("from");
+      if (from && from.startsWith("/")) {
+        setRedirectTo(from);
+      }
+    } catch {
+      // ignore
+    }
+  }, []);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -27,7 +38,7 @@ export default function EditorLoginPage() {
         setError(data.error ?? "Login failed");
         return;
       }
-      router.push(from);
+      router.push(redirectTo);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Login failed");
     } finally {
