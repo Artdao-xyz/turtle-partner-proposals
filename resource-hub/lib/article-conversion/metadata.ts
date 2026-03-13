@@ -11,6 +11,11 @@ function parseDate(value: string | undefined): string | undefined {
   return isNaN(d.getTime()) ? undefined : d.toISOString().slice(0, 10);
 }
 
+/** Unescape simple markdown escapes like \- \_ \* for metadata fields. */
+function unescapeSimpleMarkdown(text: string): string {
+  return text.replace(/\\([\\`*_{}\[\]()#+\-.!])/g, "$1");
+}
+
 export function parseMetadataBlock(markdown: string): {
   title: string;
   subtitle: string;
@@ -24,15 +29,19 @@ export function parseMetadataBlock(markdown: string): {
   const categoryMatch = markdown.match(/^Category\s*:\s*(.+?)(?=\r?\n|$)/im);
   const dateMatch = markdown.match(/^(?:Date|PublishedDate)\s*:\s*(.+?)(?=\r?\n|$)/im);
 
-  const title = titleMatch?.[1]?.trim();
-  const subtitle = subtitleMatch?.[1]?.trim();
-  const categoryRaw = categoryMatch?.[1]?.trim();
+  const rawTitle = titleMatch?.[1]?.trim();
+  const rawSubtitle = subtitleMatch?.[1]?.trim();
+  const rawCategory = categoryMatch?.[1]?.trim();
   const publishedDate = parseDate(dateMatch?.[1]);
 
-  if (!title || !subtitle) return null;
+  if (!rawTitle || !rawSubtitle) return null;
+
+  const title = unescapeSimpleMarkdown(rawTitle);
+  const subtitle = unescapeSimpleMarkdown(rawSubtitle);
+  const categoryRaw = unescapeSimpleMarkdown(rawCategory ?? "");
 
   const category =
-    ARTICLE_CATEGORIES.find((c) => c.toLowerCase() === (categoryRaw ?? "").toLowerCase()) ?? "Research";
+    ARTICLE_CATEGORIES.find((c) => c.toLowerCase() === categoryRaw.toLowerCase()) ?? "Research";
 
   const metaEnds = [titleMatch, subtitleMatch, categoryMatch, dateMatch]
     .filter((m): m is RegExpMatchArray => !!m)
@@ -62,7 +71,8 @@ export function parseFallbackMetadata(markdown: string): {
   sources: SourceItem[];
 } {
   const titleMatch = markdown.match(/^#+\s+(.+)$/m);
-  const title = titleMatch?.[1]?.trim() || "Untitled";
+  const rawTitle = titleMatch?.[1]?.trim() || "Untitled";
+  const title = unescapeSimpleMarkdown(rawTitle);
   const body = markdown.replace(/!\[[^\]]*\]\([^)]+\)/, "").trim();
   const { sources, bodyWithoutSources } = parseSourcesSection(body);
 

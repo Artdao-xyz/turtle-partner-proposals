@@ -15,14 +15,26 @@ function stripMarkdown(text: string): string {
     .trim();
 }
 
+/** Remove leading <a id="..."></a> fragments from headings. */
+function stripLeadingAnchor(text: string): string {
+  return text.replace(/^<a[^>]*>\s*<\/a>\s*/i, "").trim();
+}
+
+/** Unescape simple markdown escapes like \- \_ \* in plain text. */
+function unescapeSimpleMarkdown(text: string): string {
+  return text.replace(/\\([\\`*_{}\[\]()#+\-.!])/g, "$1");
+}
+
 export function extractHeadings(content: string): { id: string; text: string }[] {
   const regex = /^## (.+)$/gm;
   const headings: { id: string; text: string }[] = [];
   let match;
   while ((match = regex.exec(content)) !== null) {
     const raw = match[1].trim();
-    const text = stripMarkdown(raw);
-    const id = slugify(raw);
+    const withoutAnchor = stripLeadingAnchor(raw);
+    const unescaped = unescapeSimpleMarkdown(withoutAnchor);
+    const text = stripMarkdown(unescaped);
+    const id = slugify(unescaped);
     headings.push({ id, text });
   }
   return headings;
