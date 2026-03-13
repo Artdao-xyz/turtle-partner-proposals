@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { ResourceHub } from "@/resource-hub";
 import { getBlobDraftContent } from "@/resource-hub/lib/storage";
 import {
@@ -53,11 +54,21 @@ export default async function ResourceHubPreviewPage({ params }: PreviewPageProp
   }
 
   return (
-    <div className="relative pt-14">
-      <div className="absolute top-4 left-1/2 -translate-x-1/2 z-10 px-4 py-2 rounded-lg bg-amber-500/20 border border-amber-500/40 text-amber-200 text-sm font-medium">
-        Draft preview
-      </div>
-      <ResourceHub rawContent={rawContent} />
-    </div>
+    <ResourceHub
+      rawContent={rawContent}
+      headerRight={
+        <div className="flex items-center gap-3">
+          <div className="px-4 py-2 rounded-lg bg-amber-500/20 border border-amber-500/40 text-amber-200 text-sm font-medium">
+            Draft preview
+          </div>
+          <Link
+            href={`/resource-hub/preview/${previewId}/edit`}
+            className="px-4 py-2 rounded-lg bg-green-turtle/20 border border-green-turtle/40 text-green-turtle text-sm font-medium hover:bg-green-turtle/30"
+          >
+            Edit
+          </Link>
+        </div>
+      }
+    />
   );
 }

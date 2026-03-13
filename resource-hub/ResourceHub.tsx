@@ -1,3 +1,4 @@
+import type React from "react";
 import ResourceHubHeroImage from "./components/ResourceHubHeroImage";
 import ResourceHubTitle from "./components/ResourceHubTitle";
 import ResourceHubNavigator from "./components/ResourceHubNavigator";
@@ -13,9 +14,15 @@ interface ResourceHubProps {
   slug?: string;
   /** When provided, skip fetch and render this content (e.g. draft preview). */
   rawContent?: string;
+  /** Optional right-side header content (e.g. draft badge + edit button). */
+  headerRight?: React.ReactNode;
 }
 
-export default async function ResourceHub({ slug = DEFAULT_SLUG, rawContent }: ResourceHubProps) {
+export default async function ResourceHub({
+  slug = DEFAULT_SLUG,
+  rawContent,
+  headerRight,
+}: ResourceHubProps) {
   const [content, resources] = rawContent
     ? [rawContent, [] as Awaited<ReturnType<typeof getAllResources>>]
     : await Promise.all([getResourceContent(slug), getAllResources()]);
@@ -32,7 +39,10 @@ export default async function ResourceHub({ slug = DEFAULT_SLUG, rawContent }: R
       <div className="w-full max-w-[1440px] mx-auto px-4 sm:px-6 md:px-10 pt-28 pb-12 sm:pt-32 sm:pb-28 md:pt-36 md:pb-24">
         {/* Wide: go back, hero image, title, subtitle */}
         <div className="space-y-10 lg:space-y-5">
-          <GoBackButton href="/resource-hub" />
+          <div className="flex items-center justify-between gap-3">
+            <GoBackButton href="/resource-hub" />
+            {headerRight}
+          </div>
           <ResourceHubHeroImage src={frontmatter.heroImage} />
           <ResourceHubTitle
             title={frontmatter.title}
