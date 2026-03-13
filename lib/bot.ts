@@ -412,8 +412,10 @@ bot.onNewMessage(/^\/start/, async (thread, message) => {
   );
 });
 
-// Handle DOCX uploads (Telegram adapter exposes files array)
-bot.onNewMessage(async (thread, message) => {
+// Handle DOCX uploads (Telegram adapter exposes files array).
+// Use a catch-all pattern so this runs for any message, and bail out
+// early if there are no files.
+bot.onNewMessage(/.*/, async (thread, message) => {
   if (!isAllowedUser(message.author)) {
     await thread.post("You're not on the publisher waitlist. Contact the team to get access.");
     return;
