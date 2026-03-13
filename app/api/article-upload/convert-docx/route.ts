@@ -40,7 +40,9 @@ export async function POST(req: Request) {
       );
     }
 
-    const { value: html } = await mammoth.convertToHtml({ arrayBuffer });
+    // mammoth Node API expects a Buffer, not an ArrayBuffer
+    const buffer = Buffer.from(arrayBuffer);
+    const { value: html } = await mammoth.convertToHtml({ buffer });
 
     if (!html || html.length < 50) {
       return NextResponse.json(
