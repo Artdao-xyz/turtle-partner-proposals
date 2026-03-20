@@ -6,7 +6,7 @@ import {
   getLocalPreviewContent,
 } from "@/resource-hub/lib/preview-store";
 import { parseFrontmatter, type ResourceFrontmatter } from "@/resource-hub/lib/parse";
-import { ARTICLE_CATEGORIES } from "@/resource-hub/lib/constants";
+import { ARTICLE_CATEGORIES, normalizeArticleCategory } from "@/resource-hub/lib/constants";
 import DraftEditForm from "./DraftEditForm";
 
 export const dynamic = "force-dynamic";
@@ -71,7 +71,7 @@ export default async function DraftPreviewEditPage({ params }: EditPageProps) {
           previewId={previewId}
           initialTitle={frontmatter.title ?? ""}
           initialSubtitle={frontmatter.subtitle ?? ""}
-          initialCategory={frontmatter.category ?? "Research"}
+          initialCategory={normalizeArticleCategory(frontmatter.category)}
           initialPublishedDate={frontmatter.publishedDate ?? ""}
           initialBody={content}
           categories={categories}

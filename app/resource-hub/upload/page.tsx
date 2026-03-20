@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { ARTICLE_CATEGORIES } from "@/resource-hub/lib/constants";
+import { ARTICLE_CATEGORIES, normalizeArticleCategory } from "@/resource-hub/lib/constants";
 import GoBackButton from "@/resource-hub/components/GoBackButton";
 import ResourceHubHeroImage from "@/resource-hub/components/ResourceHubHeroImage";
 import ResourceHubTitle from "@/resource-hub/components/ResourceHubTitle";
@@ -53,7 +53,7 @@ export default function ArticleUploadPage() {
       }
       setResult(data);
       setSlug(data.slug);
-      setCategory(data.frontmatter.category);
+      setCategory(normalizeArticleCategory(data.frontmatter.category));
       setPublishedDate(data.frontmatter.publishedDate ?? "");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Conversion failed");

@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { getResourceContent } from "@/resource-hub/lib/getResource";
 import { parseFrontmatter, type ResourceFrontmatter } from "@/resource-hub/lib/parse";
-import { ARTICLE_CATEGORIES } from "@/resource-hub/lib/constants";
+import { ARTICLE_CATEGORIES, normalizeArticleCategory } from "@/resource-hub/lib/constants";
 import ArticleEditorForm from "./ArticleEditorForm";
 
 export const dynamic = "force-dynamic";
@@ -52,7 +52,7 @@ export default async function ResourceHubEditorPage({ params }: EditorPageProps)
           slug={slug}
           initialTitle={frontmatter.title ?? ""}
           initialSubtitle={frontmatter.subtitle ?? ""}
-          initialCategory={frontmatter.category ?? "Research"}
+          initialCategory={normalizeArticleCategory(frontmatter.category)}
           initialPublishedDate={frontmatter.publishedDate ?? ""}
           initialBody={content}
           categories={categories}

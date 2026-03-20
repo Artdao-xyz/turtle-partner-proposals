@@ -2,12 +2,15 @@ import Link from "next/link";
 import Image from "next/image";
 import { ArrowUpRight } from "lucide-react";
 import ResourceHubHeroImage from "./ResourceHubHeroImage";
+import { buildArticlePath } from "../lib/article-url";
 
 const CATEGORY_ICONS: Record<string, string> = {
   Benchmark: "/hub/Icons/icon-benchmark.svg",
   Comparison: "/hub/Icons/icon-comparison.svg",
   Comparisons: "/hub/Icons/icon-comparison.svg",
   Guides: "/hub/Icons/icon-guide.svg",
+  Usecases: "/hub/Icons/icon-playbook.svg",
+  "Case Studies": "/hub/Icons/icon-playbook.svg",
   Playbooks: "/hub/Icons/icon-playbook.svg",
   Research: "/hub/Icons/icon-casestudy.svg",
   Updates: "/hub/Icons/icon-benchmark.svg",
@@ -61,9 +64,10 @@ export default function ArticleCard({
   const heightClass = isBig
     ? "h-[280px] max-h-[280px] md:h-[455px] md:max-h-[455px]"
     : "h-[280px] max-h-[280px] md:h-[300px] md:max-h-[300px]";
+  const href = buildArticlePath(slug, category);
 
   return (
-    <Link href={`/resource-hub/${slug}`} className="block group h-full shadow">
+    <Link href={href} className="block group h-full shadow">
       <div
         className={`rounded-5xl p-px w-full overflow-hidden ${heightClass}`}
         style={{

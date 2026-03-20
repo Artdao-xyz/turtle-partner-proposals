@@ -3,12 +3,14 @@ import { Chat, type Thread, Card, CardText, Actions, Button, LinkButton } from "
 import { createTelegramAdapter } from "@chat-adapter/telegram";
 import { createRedisState } from "@chat-adapter/state-redis";
 import { kv } from "@vercel/kv";
+import { normalizeArticleCategory } from "@/resource-hub/lib/constants";
 
 const GOOGLE_DOC_URL_REGEX =
   /https:\/\/docs\.google\.com\/document\/d\/([a-zA-Z0-9_-]+)(?:\/edit)?(?:\?[^/]*)?/;
 
-/** Matches hub article URL (full or path). Captures slug. */
-const HUB_ARTICLE_REGEX = /(?:https?:\/\/[^/\s]+)?\/resource-hub\/([a-z0-9-]+)/;
+/** Matches article URL (full or path). Captures slug from old or new routes. */
+const HUB_ARTICLE_REGEX =
+  /(?:https?:\/\/[^/\s]+)?(?:\/resource-hub\/([a-z0-9-]+)|\/blog\/[a-z0-9-]+\/([a-z0-9-]+))/;
 
 /** Matches /delete <slug or url>. */
 const DELETE_CMD_REGEX = /^\/delete\s+(.+)$/;
@@ -83,7 +85,7 @@ async function getDeletePending(id: string): Promise<string | null> {
 
 function extractSlugFromMessage(text: string): string | null {
   const hubMatch = text.match(HUB_ARTICLE_REGEX);
-  if (hubMatch) return hubMatch[1];
+  if (hubMatch) return hubMatch[1] || hubMatch[2] || null;
 
   const deleteMatch = text.match(DELETE_CMD_REGEX);
   if (deleteMatch) {
@@ -204,7 +206,7 @@ async function handleDocUrl(thread: Thread, text: string) {
       slug: convertData.slug,
       title: convertData.frontmatter.title,
       subtitle: convertData.frontmatter.subtitle,
-      category: convertData.frontmatter.category ?? "Research",
+      category: normalizeArticleCategory(convertData.frontmatter.category),
       body: convertData.body,
       publishedDate: convertData.frontmatter.publishedDate ?? today,
       heroImage: convertData.heroImage ?? undefined,
@@ -351,7 +353,7 @@ async function handleDocxFile(
       slug: convertData.slug,
       title: convertData.frontmatter.title,
       subtitle: convertData.frontmatter.subtitle,
-      category: convertData.frontmatter.category ?? "Research",
+      category: normalizeArticleCategory(convertData.frontmatter.category),
       body: convertData.body,
       publishedDate: convertData.frontmatter.publishedDate ?? today,
       heroImage: convertData.heroImage ?? undefined,
@@ -508,8 +510,9 @@ bot.onNewMessage(GOOGLE_DOC_URL_REGEX, async (thread, message) => {
   await handleDocUrl(thread, text);
 });
 
-// Delete flow: hub URL or /delete <slug|url>
-const DELETE_TRIGGER_REGEX = /(?:\/resource-hub\/[a-z0-9-]+|\/delete\s)/;
+// Delete flow: article URL (old/new) or /delete <slug|url>
+const DELETE_TRIGGER_REGEX =
+  /(?:\/resource-hub\/[a-z0-9-]+|\/blog\/[a-z0-9-]+\/[a-z0-9-]+|\/delete\s)/;
 bot.onNewMessage(DELETE_TRIGGER_REGEX, async (thread, message) => {
   if (!isAllowedUser(message.author)) {
     await thread.post("You're not on the publisher waitlist. Contact the team to get access.");

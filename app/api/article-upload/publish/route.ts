@@ -5,6 +5,7 @@ import {
   type ArticlePublishPayload,
 } from "@/resource-hub/lib/article-schema";
 import { getStorage } from "@/resource-hub/lib/storage";
+import { buildArticlePath } from "@/resource-hub/lib/article-url";
 
 function escapeYamlString(s: string): string {
   return s.replace(/\\/g, "\\\\").replace(/"/g, '\\"').replace(/\n/g, " ");
@@ -77,13 +78,16 @@ export async function POST(req: Request) {
 
     await getStorage().writeArticle(data.slug, fullContent);
 
+    const articlePath = buildArticlePath(data.slug, data.category);
+
     revalidatePath("/resource-hub");
     revalidatePath(`/resource-hub/${data.slug}`);
+    revalidatePath(articlePath);
 
     return NextResponse.json({
       success: true,
       slug: data.slug,
-      url: `/resource-hub/${data.slug}`,
+      url: articlePath,
     });
   } catch (err) {
     console.error("[article-upload/publish]", err);

@@ -26,19 +26,22 @@ export function buildArticleMetadata({
   subtitle,
   heroImage,
   slug,
+  articlePath,
   isDraft = false,
 }: {
   title: string;
   subtitle?: string;
   heroImage?: string;
   slug?: string;
+  articlePath?: string;
   isDraft?: boolean;
 }): Metadata {
   const base = getBaseUrl();
   const fullTitle = `${title}${isDraft ? " (Draft)" : ""} | ${SITE_NAME}`;
   const description = subtitle?.trim() || undefined;
   const ogImage = getAbsoluteOgImageUrl(heroImage);
-  const url = slug ? `${base}/resource-hub/${slug}` : undefined;
+  const resolvedPath = articlePath ?? (slug ? `/resource-hub/${slug}` : undefined);
+  const url = resolvedPath ? `${base}${resolvedPath}` : undefined;
 
   return {
     title: fullTitle,

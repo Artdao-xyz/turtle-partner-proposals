@@ -1,12 +1,11 @@
-import { ResourceHub } from "@/resource-hub";
 import {
   getResourceSlugs,
   getResourceContent,
   isVisible,
 } from "@/resource-hub/lib/getResource";
 import { parseFrontmatter } from "@/resource-hub/lib/parse";
-import { buildArticleMetadata } from "@/resource-hub/lib/metadata";
-import { notFound } from "next/navigation";
+import { buildArticlePathFromFrontmatter } from "@/resource-hub/lib/article-url";
+import { notFound, permanentRedirect } from "next/navigation";
 
 export const dynamic = "force-dynamic";
 
@@ -15,19 +14,8 @@ interface ResourceHubArticlePageProps {
 }
 
 export async function generateMetadata({ params }: ResourceHubArticlePageProps) {
-  const { slug } = await params;
-  const slugs = await getResourceSlugs();
-  if (!slugs.includes(slug)) return { title: "Not Found" };
-  const rawContent = await getResourceContent(slug);
-  const { frontmatter } = parseFrontmatter(rawContent);
-  if (!isVisible(frontmatter.publishedDate, frontmatter.unpublished)) return { title: "Not Found" };
-  const title = frontmatter.title || slug.replace(/-/g, " ");
-  return buildArticleMetadata({
-    title,
-    subtitle: frontmatter.subtitle,
-    heroImage: frontmatter.heroImage,
-    slug,
-  });
+  void params;
+  return { title: "Redirecting..." };
 }
 
 export default async function ResourceHubArticlePage({
@@ -47,5 +35,5 @@ export default async function ResourceHubArticlePage({
     notFound();
   }
 
-  return <ResourceHub slug={slug} />;
+  permanentRedirect(buildArticlePathFromFrontmatter(slug, frontmatter));
 }

@@ -2,6 +2,8 @@ import { NextResponse } from "next/server";
 import { revalidatePath } from "next/cache";
 import { getStorage } from "@/resource-hub/lib/storage";
 import { getResourceContent } from "@/resource-hub/lib/getResource";
+import { parseFrontmatter } from "@/resource-hub/lib/parse";
+import { buildArticlePathFromFrontmatter } from "@/resource-hub/lib/article-url";
 
 /**
  * PATCH published article content.
@@ -27,8 +29,12 @@ export async function PATCH(req: Request) {
     const storage = getStorage();
     await storage.writeArticle(slug, content);
 
+    const { frontmatter } = parseFrontmatter(content);
+    const articlePath = buildArticlePathFromFrontmatter(slug, frontmatter);
+
     revalidatePath("/resource-hub");
     revalidatePath(`/resource-hub/${slug}`);
+    revalidatePath(articlePath);
 
     return NextResponse.json({ success: true });
   } catch (err) {

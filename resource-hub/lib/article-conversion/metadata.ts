@@ -1,5 +1,5 @@
 import type { SourceItem } from "../article-schema";
-import { ARTICLE_CATEGORIES } from "../constants";
+import { ARTICLE_CATEGORIES, normalizeArticleCategory } from "../constants";
 import { parseSourcesSection } from "./sources";
 
 function parseDate(value: string | undefined): string | undefined {
@@ -40,8 +40,7 @@ export function parseMetadataBlock(markdown: string): {
   const subtitle = unescapeSimpleMarkdown(rawSubtitle);
   const categoryRaw = unescapeSimpleMarkdown(rawCategory ?? "");
 
-  const category =
-    ARTICLE_CATEGORIES.find((c) => c.toLowerCase() === categoryRaw.toLowerCase()) ?? "Research";
+  const category = normalizeArticleCategory(categoryRaw);
 
   const metaEnds = [titleMatch, subtitleMatch, categoryMatch, dateMatch]
     .filter((m): m is RegExpMatchArray => !!m)

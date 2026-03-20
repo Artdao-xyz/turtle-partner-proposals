@@ -126,7 +126,7 @@
 ```
 Title: <article title>
 Subtitle: <article subtitle>
-Category: Playbooks|Benchmark|Guides|Research|Comparisons|Updates
+Category: Usecases|Benchmark|Guides|Research|Comparisons|Updates
 
 [hero image]
 

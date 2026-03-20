@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { revalidatePath } from "next/cache";
 import { unpublishBlobArticle, getBlobArticleContent } from "@/resource-hub/lib/storage";
 import { parseFrontmatter } from "@/resource-hub/lib/parse";
+import { buildArticlePathFromFrontmatter } from "@/resource-hub/lib/article-url";
 
 export async function POST(req: Request) {
   if (process.env.CONTENT_SOURCE !== "blob") {
@@ -42,10 +43,14 @@ export async function POST(req: Request) {
       });
     }
 
+    const rawBeforeUnpublish = await getBlobArticleContent(slug);
+    const { frontmatter: beforeFrontmatter } = parseFrontmatter(rawBeforeUnpublish);
+    const articlePath = buildArticlePathFromFrontmatter(slug, beforeFrontmatter);
     const { title } = await unpublishBlobArticle(slug);
 
     revalidatePath("/resource-hub");
     revalidatePath(`/resource-hub/${slug}`);
+    revalidatePath(articlePath);
 
     return NextResponse.json({
       success: true,

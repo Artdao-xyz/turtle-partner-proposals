@@ -5,6 +5,8 @@ const CATEGORY_ICONS: Record<string, string> = {
   Comparison: "/hub/Icons/icon-comparison.svg",
   Comparisons: "/hub/Icons/icon-comparison.svg",
   Guides: "/hub/Icons/icon-guide.svg",
+  Usecases: "/hub/Icons/icon-playbook.svg",
+  "Case Studies": "/hub/Icons/icon-playbook.svg",
   Playbooks: "/hub/Icons/icon-playbook.svg",
   Research: "/hub/Icons/icon-casestudy.svg",
   Updates: "/hub/Icons/icon-benchmark.svg", // fallback

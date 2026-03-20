@@ -17,7 +17,7 @@ Category: Research
 Date: 2025-03-15
 ```
 
-**Categories you can use:** Benchmark, Guides, Playbooks, Research, Comparisons, Updates
+**Categories you can use:** Benchmark, Guides, Usecases, Research, Comparisons, Updates
 
 **Date format:** YYYY-MM-DD (e.g. 2025-03-15)
 

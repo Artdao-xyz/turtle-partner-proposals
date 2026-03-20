@@ -1,7 +1,7 @@
 import { readFile, readdir } from "fs/promises";
 import { join } from "path";
 import { cache } from "react";
-import { FILTER_OPTIONS } from "./constants";
+import { FILTER_OPTIONS, normalizeArticleCategory } from "./constants";
 import type { ResourceCardData } from "./types";
 import { parseFrontmatter } from "./parse";
 import {
@@ -66,11 +66,7 @@ export const getAllResources = cache(async (): Promise<ResourceCardData[]> => {
 
     const title = frontmatter.title || slug;
     const subtitle = frontmatter.subtitle || "";
-    const category =
-      frontmatter.category &&
-      (ARTICLE_CATEGORIES as readonly string[]).includes(frontmatter.category)
-        ? frontmatter.category
-        : "Research";
+    const category = normalizeArticleCategory(frontmatter.category);
     resources.push({
       slug,
       title,
