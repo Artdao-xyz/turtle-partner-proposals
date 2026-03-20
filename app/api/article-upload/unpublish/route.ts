@@ -3,6 +3,8 @@ import { revalidatePath } from "next/cache";
 import { unpublishBlobArticle, getBlobArticleContent } from "@/resource-hub/lib/storage";
 import { parseFrontmatter } from "@/resource-hub/lib/parse";
 import { buildArticlePathFromFrontmatter } from "@/resource-hub/lib/article-url";
+import { getResourceSlugs } from "@/resource-hub/lib/getResource";
+import { toStorageSlug } from "@/resource-hub/lib/slug-aliases";
 
 export async function POST(req: Request) {
   if (process.env.CONTENT_SOURCE !== "blob") {
@@ -14,20 +16,27 @@ export async function POST(req: Request) {
 
   try {
     const body = await req.json();
-    const slug = body?.slug;
-    if (!slug || typeof slug !== "string") {
+    const inputSlug = body?.slug;
+    if (!inputSlug || typeof inputSlug !== "string") {
       return NextResponse.json(
         { error: "slug is required" },
         { status: 400 }
       );
     }
 
-    const sanitized = slug.replace(/[^a-z0-9-]/g, "");
-    if (sanitized !== slug) {
+    const sanitized = inputSlug.replace(/[^a-z0-9-]/g, "");
+    if (sanitized !== inputSlug) {
       return NextResponse.json(
         { error: "Invalid slug" },
         { status: 400 }
       );
+    }
+
+    const allStorageSlugs = await getResourceSlugs();
+    const slug =
+      allStorageSlugs.includes(inputSlug) ? inputSlug : toStorageSlug(inputSlug);
+    if (!slug || !allStorageSlugs.includes(slug)) {
+      return NextResponse.json({ error: "Article not found" }, { status: 404 });
     }
 
     const preview = body?.preview === true;

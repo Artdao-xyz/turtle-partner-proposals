@@ -1,4 +1,5 @@
 import type { ResourceFrontmatter } from "./parse";
+import { toPublicSlug } from "./slug-aliases";
 
 const CATEGORY_SEGMENT_MAP: Record<string, string> = {
   Research: "research",
@@ -31,6 +32,6 @@ export function buildArticlePathFromFrontmatter(
 }
 
 export function buildArticlePath(slug: string, category?: string): string {
-  return `/blog/${categoryToSegment(category)}/${slug}`;
+  return `/blog/${categoryToSegment(category)}/${toPublicSlug(slug)}`;
 }
 
