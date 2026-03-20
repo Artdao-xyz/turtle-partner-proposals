@@ -32,8 +32,7 @@ export async function PATCH(req: Request) {
     const { frontmatter } = parseFrontmatter(content);
     const articlePath = buildArticlePathFromFrontmatter(slug, frontmatter);
 
-    revalidatePath("/resource-hub");
-    revalidatePath(`/resource-hub/${slug}`);
+    revalidatePath("/blog");
     revalidatePath(articlePath);
 
     return NextResponse.json({ success: true });

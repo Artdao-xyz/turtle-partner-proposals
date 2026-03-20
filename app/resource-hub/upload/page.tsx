@@ -101,10 +101,10 @@ export default function ArticleUploadPage() {
     >
       <div className="w-full max-w-3xl mx-auto px-4 sm:px-6 md:px-10 pt-28 pb-12 sm:pt-32 sm:pb-28">
         <Link
-          href="/resource-hub"
+          href="/blog"
           className="inline-flex items-center gap-2 text-wise-white/70 hover:text-wise-white text-sm mb-8"
         >
-          ← Back to Resource Hub
+          ← Back to Resources
         </Link>
 
         <h1 className="text-2xl font-semibold text-wise-white mb-2">
@@ -204,7 +204,7 @@ export default function ArticleUploadPage() {
                 >
                   <div className="w-full max-w-[1440px] mx-auto px-4 sm:px-6 md:px-10 pt-28 pb-12 sm:pt-32 sm:pb-28 md:pt-36 md:pb-24">
                     <div className="space-y-10 lg:space-y-5">
-                      <GoBackButton href="/resource-hub/upload" />
+                      <GoBackButton href="/blog/upload" />
                       <ResourceHubHeroImage src={result.heroImage} />
                       <ResourceHubTitle
                         title={result.frontmatter.title}

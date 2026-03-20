@@ -40,7 +40,7 @@ export function buildArticleMetadata({
   const fullTitle = `${title}${isDraft ? " (Draft)" : ""} | ${SITE_NAME}`;
   const description = subtitle?.trim() || undefined;
   const ogImage = getAbsoluteOgImageUrl(heroImage);
-  const resolvedPath = articlePath ?? (slug ? `/resource-hub/${slug}` : undefined);
+  const resolvedPath = articlePath ?? (slug ? `/blog/${slug}` : undefined);
   const url = resolvedPath ? `${base}${resolvedPath}` : undefined;
 
   return {
@@ -67,7 +67,7 @@ export function buildArticleMetadata({
 }
 
 export function buildHubListingMetadata(): Metadata {
-  const title = `Resource Hub | ${SITE_NAME}`;
+  const title = `Resources | ${SITE_NAME}`;
   const description =
     "Research, benchmarks, and guides for DeFi incentive programs and liquidity campaigns.";
 
@@ -77,7 +77,7 @@ export function buildHubListingMetadata(): Metadata {
     openGraph: {
       title,
       description,
-      url: `${getBaseUrl()}/resource-hub`,
+      url: `${getBaseUrl()}/blog`,
       siteName: SITE_NAME,
       type: "website",
       images: [{ url: "/opengraph-image", width: 1200, height: 630, alt: title }],

@@ -1,0 +1,18 @@
+import { getAllResources } from "@/resource-hub/lib/getResource";
+import ResourceHubListing from "@/resource-hub/components/ResourceHubListing";
+import { buildHubListingMetadata } from "@/resource-hub/lib/metadata";
+
+export const metadata = buildHubListingMetadata();
+export const dynamic = "force-dynamic";
+
+export default async function BlogListingPage() {
+  const resources = await getAllResources();
+  return (
+    <main className="w-full min-h-screen" style={{ backgroundColor: "var(--black-turtle)" }}>
+      <div className="w-full flex flex-col items-center px-4 sm:px-6 lg:px-20 pt-28 pb-12 sm:pt-32 sm:pb-16 md:pt-36 md:pb-24">
+        <ResourceHubListing resources={resources} />
+      </div>
+    </main>
+  );
+}
+

@@ -58,9 +58,13 @@ export default async function DraftPreviewEditPage({ params }: EditPageProps) {
               Preview ID:{" "}
               <span className="font-mono text-wise-white/80">{previewId}</span>
             </p>
+            <p className="text-wise-white/70 text-xs sm:text-sm">
+              Slug:{" "}
+              <span className="font-mono text-wise-white/80">{frontmatter.slug || "(missing)"}</span>
+            </p>
           </div>
           <Link
-            href={`/resource-hub/preview/${previewId}`}
+            href={`/blog/preview/${previewId}`}
             className="text-sm text-wise-white/70 hover:text-wise-white"
           >
             ← Back to preview

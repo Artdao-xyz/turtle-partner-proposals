@@ -7,7 +7,7 @@ interface GoBackButtonProps {
   href?: string;
 }
 
-export default function GoBackButton({ href = "/resource-hub" }: GoBackButtonProps) {
+export default function GoBackButton({ href = "/blog" }: GoBackButtonProps) {
   return (
     <Link
       href={href}

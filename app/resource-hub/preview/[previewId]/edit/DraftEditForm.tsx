@@ -46,6 +46,7 @@ export default function DraftEditForm({
   const [body, setBody] = useState(initialBody);
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
+  const draftSlug = preservedFrontmatter.slug?.trim() || "(missing)";
 
   function buildFullContent(): string {
     const raw: Record<string, unknown> = {
@@ -116,7 +117,16 @@ export default function DraftEditForm({
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="space-y-2">
+              <label className="block text-wise-white/70 text-sm mb-1">Slug</label>
+              <input
+                type="text"
+                value={draftSlug}
+                readOnly
+                className="w-full px-4 py-2 rounded-lg bg-white/5 border border-white/10 text-wise-white/80 font-mono text-sm"
+              />
+            </div>
             <div className="space-y-2">
               <label className="block text-wise-white/70 text-sm mb-1">Category</label>
               <select

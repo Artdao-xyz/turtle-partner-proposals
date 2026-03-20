@@ -8,7 +8,7 @@ export default function EditorLoginPage() {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [redirectTo, setRedirectTo] = useState("/resource-hub/editor");
+  const [redirectTo, setRedirectTo] = useState("/blog/editor");
 
   useEffect(() => {
     try {
@@ -60,7 +60,7 @@ export default function EditorLoginPage() {
         <div>
           <h1 className="text-2xl font-semibold text-wise-white">Editor login</h1>
           <p className="text-wise-white/70 text-sm mt-1">
-            Internal access for the Resource Hub editor.
+            Internal access for the Resources editor.
           </p>
         </div>
         <form onSubmit={handleSubmit} className="space-y-4">

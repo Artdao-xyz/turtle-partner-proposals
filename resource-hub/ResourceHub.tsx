@@ -40,7 +40,7 @@ export default async function ResourceHub({
         {/* Wide: go back, hero image, title, subtitle */}
         <div className="space-y-10 lg:space-y-5">
           <div className="flex items-center justify-between gap-3">
-            <GoBackButton href="/resource-hub" />
+            <GoBackButton href="/blog" />
             {headerRight}
           </div>
           <ResourceHubHeroImage src={frontmatter.heroImage} />

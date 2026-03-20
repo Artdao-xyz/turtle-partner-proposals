@@ -27,7 +27,7 @@
 
 | Step | What | Details |
 |------|------|---------|
-| 1 | **Page** | `/resource-hub/upload` — form: paste Google Doc URL. |
+| 1 | **Page** | `/blog/upload` — form: paste Google Doc URL. |
 | 2 | **Fetch** | Extract doc ID, fetch `export?format=html`. If 403: show "Set sharing to anyone with link can view." |
 | 3 | **Convert** | LLM: HTML → markdown + frontmatter. Same prompt as full plan. |
 | 4 | **Preview** | Show rendered article (reuse ArticleLayoutTemplate). Editable slug, category. |
@@ -41,7 +41,7 @@
 
 **Effort:** ~1–2 days.
 
-**Implemented:** Branch `feat/article-upload-mvp`. Add `ANTHROPIC_API_KEY` to `.env.local`. Visit `/resource-hub/upload`.
+**Implemented:** Branch `feat/article-upload-mvp`. Add `ANTHROPIC_API_KEY` to `.env.local`. Visit `/blog/upload`.
 
 **MVP storage:** Writes to `resource-hub/content/{slug}.md` (filesystem). Works locally. **On Vercel prod, the app filesystem is read-only at runtime** — writes would fail. For production, use Blob (Phase 1) or a DB. The full plan migrates to Blob.
 
@@ -56,7 +56,7 @@
 | 1.1 | **Vercel Blob** | Create store. Paths: `articles/{slug}.md`, `articles/images/{slug}-{index}.{ext}` (0=hero), `drafts/{previewId}.md`, `drafts/images/{previewId}-{index}.{ext}`. |
 | 1.2 | **Redis** | Store draft state: `draft:{previewId}` → `{ slug, userId, platform, threadId, createdAt }`. TTL 24h. Use Upstash Redis (Vercel KV sunset Dec 2024). |
 | 1.3 | **POST /api/articles** | Accept JSON: slug, title, subtitle, category, publishedDate, heroImage (base64 or URL), body, sources?, disclaimer?, `draft=true`, `previewId?` (agent generates before upload for image paths). Validate, write to Blob `drafts/` or `articles/`. Return previewId. Require API auth (same as publish). |
-| 1.4 | **POST /api/articles/publish** | Accept `{ previewId, slug }`. Move draft to articles. Revalidate `/resource-hub` and `/resource-hub/[slug]`. Delete draft. Require API auth. |
+| 1.4 | **POST /api/articles/publish** | Accept `{ previewId, slug }`. Move draft to articles. Revalidate `/blog` and `/blog/[category]/[slug]`. Delete draft. Require API auth. |
 | 1.5 | **PATCH /api/articles/drafts/[previewId]** | Accept `{ heroImage: url }`. Update draft hero. For URL override flow. |
 | 1.6 | **DELETE /api/articles/drafts/[previewId]** | Delete draft and images from Blob. For Cancel button. |
 | 1.7 | **getResource refactor** | Read from Blob when `CONTENT_SOURCE=blob`. `getResourceSlugs`: list `articles/*.md`, exclude drafts. `getResourceContent(slug)`: fetch published. `getDraftContent(previewId)`: fetch `drafts/{previewId}.md`. Fallback to filesystem for dev. |
@@ -92,7 +92,7 @@
 
 | # | Task | Details |
 |---|------|---------|
-| 5.1 | **Preview route** | `/resource-hub/preview/[previewId]`. Add `getDraftContent(previewId)` to fetch `drafts/{previewId}.md` from Blob. Reuse ArticleLayoutTemplate for rendering. |
+| 5.1 | **Preview route** | `/blog/preview/[previewId]`. Add `getDraftContent(previewId)` to fetch `drafts/{previewId}.md` from Blob. Reuse ArticleLayoutTemplate for rendering. |
 | 5.2 | **Exclude from listing** | `getResourceSlugs` / `getAllResources` never list drafts. Preview only for direct link. |
 | 5.3 | **Banner** | Preview page shows "Draft preview" banner. |
 

@@ -32,6 +32,134 @@ function ensureUniqueSlug(baseSlug: string, existingSlugs: string[]): string {
   return slug;
 }
 
+const SLUG_STOPWORDS = new Set([
+  "a",
+  "an",
+  "and",
+  "as",
+  "at",
+  "by",
+  "for",
+  "from",
+  "in",
+  "into",
+  "of",
+  "on",
+  "or",
+  "the",
+  "to",
+  "via",
+  "with",
+]);
+
+const DOMAIN_KEYWORDS = new Set([
+  "defi",
+  "tvl",
+  "amm",
+  "dex",
+  "l2",
+  "arbitrum",
+  "optimism",
+  "avalanche",
+  "liquidity",
+  "incentive",
+  "incentives",
+  "benchmark",
+  "benchmarks",
+  "yield",
+  "borrow",
+  "supply",
+  "stablecoin",
+]);
+
+const WEAK_KEYWORDS = new Set([
+  "complete",
+  "actually",
+  "what",
+  "how",
+  "guide",
+  "introduction",
+  "overview",
+]);
+
+const MIN_SLUG_TOKENS = 3;
+const MAX_SLUG_TOKENS = 6;
+const MAX_SLUG_CHARS = 55;
+
+function tokenizeTitle(text: string): string[] {
+  return slugify(text).split("-").filter(Boolean);
+}
+
+function scoreToken(token: string): number {
+  let score = 0;
+  if (DOMAIN_KEYWORDS.has(token)) score += 4;
+  if (/\d/.test(token)) score += 3;
+  if (!SLUG_STOPWORDS.has(token)) score += 1;
+  if (WEAK_KEYWORDS.has(token)) score -= 1;
+  return score;
+}
+
+function pickPrimaryTitleSegment(title: string): string {
+  const segments = title
+    .split(/\s*[:|]\s*|\s+[—–]\s+|\s+-\s+/)
+    .map((s) => s.trim())
+    .filter(Boolean);
+
+  if (segments.length <= 1) return title;
+
+  let best = segments[0];
+  let bestScore = Number.NEGATIVE_INFINITY;
+  for (const segment of segments) {
+    const tokens = tokenizeTitle(segment);
+    const score =
+      tokens.reduce((acc, t) => acc + scoreToken(t), 0) + Math.min(tokens.length, 6) * 0.1;
+    if (score > bestScore) {
+      best = segment;
+      bestScore = score;
+    }
+  }
+
+  return best;
+}
+
+function uniqueTokens(tokens: string[]): string[] {
+  const seen = new Set<string>();
+  const out: string[] = [];
+  for (const t of tokens) {
+    if (seen.has(t)) continue;
+    seen.add(t);
+    out.push(t);
+  }
+  return out;
+}
+
+function buildCleanBaseSlug(title: string): string {
+  const primarySegment = pickPrimaryTitleSegment(title);
+  const primaryTokens = tokenizeTitle(primarySegment);
+  const allTokens = tokenizeTitle(title);
+  const preferredTokens = uniqueTokens([...primaryTokens, ...allTokens]);
+
+  let chosen = preferredTokens.filter(
+    (token) => /\d/.test(token) || DOMAIN_KEYWORDS.has(token) || (!SLUG_STOPWORDS.has(token) && token.length > 2)
+  );
+
+  if (chosen.length < MIN_SLUG_TOKENS) {
+    const fallback = preferredTokens.filter((token) => !SLUG_STOPWORDS.has(token));
+    chosen = uniqueTokens([...chosen, ...fallback]);
+  }
+  if (chosen.length < MIN_SLUG_TOKENS) {
+    chosen = preferredTokens;
+  }
+
+  const baseTokens = chosen.slice(0, MAX_SLUG_TOKENS);
+  let candidate = baseTokens.join("-");
+  while (candidate.length > MAX_SLUG_CHARS && baseTokens.length > 1) {
+    baseTokens.pop();
+    candidate = baseTokens.join("-");
+  }
+  return candidate || slugify(title) || "untitled";
+}
+
 function stripBoldMarkdown(text: string): string {
   return text.replace(/^__|__$/g, "").trim();
 }
@@ -119,7 +247,7 @@ export async function convertGoogleDoc(html: string): Promise<ConvertResult> {
     parseMetadataBlock(fullMarkdown) ?? parseFallbackMetadata(fullMarkdown);
 
   const existingSlugs = await getResourceSlugs();
-  const baseSlug = slugify(parsed.title);
+  const baseSlug = buildCleanBaseSlug(parsed.title);
   const slug = ensureUniqueSlug(baseSlug, existingSlugs);
 
   const heroImage = extractFirstImageFromHtml(html);
@@ -148,7 +276,7 @@ export async function convertDocxMarkdown(markdown: string): Promise<ConvertResu
     parseMetadataBlock(normalized) ?? parseFallbackMetadata(normalized);
 
   const existingSlugs = await getResourceSlugs();
-  const baseSlug = slugify(parsed.title);
+  const baseSlug = buildCleanBaseSlug(parsed.title);
   const slug = ensureUniqueSlug(baseSlug, existingSlugs);
 
   const heroImage = extractFirstImageFromMarkdown(normalized);

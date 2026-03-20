@@ -62,7 +62,7 @@ export default async function ResourceHubPreviewPage({ params }: PreviewPageProp
             Draft preview
           </div>
           <Link
-            href={`/resource-hub/preview/${previewId}/edit`}
+            href={`/blog/preview/${previewId}/edit`}
             className="px-4 py-2 rounded-lg bg-green-turtle/20 border border-green-turtle/40 text-green-turtle text-sm font-medium hover:bg-green-turtle/30"
           >
             Edit

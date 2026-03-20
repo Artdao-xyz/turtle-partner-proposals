@@ -141,7 +141,7 @@ export default function Header() {
         {/* Desktop menu - Centered with absolute positioning */}
         <div className="hidden md:flex absolute left-1/2 transform -translate-x-1/2 space-x-10">
           <Link className="font-dm-sans font-medium hover:underline text-wise-white hover:opacity-60 underline-offset-2" href="/">Home</Link>
-          <Link className="font-dm-sans font-medium hover:underline text-wise-white hover:opacity-60 underline-offset-2" href="/resource-hub">Resource Hub</Link>
+          <Link className="font-dm-sans font-medium hover:underline text-wise-white hover:opacity-60 underline-offset-2" href="/blog">Resources</Link>
           <a className="font-dm-sans font-medium hover:underline text-wise-white hover:opacity-60 underline-offset-2" href="https://turtle.club/about-us" target="_blank" rel="noopener noreferrer">About Us</a>
           <a className="font-dm-sans font-medium hover:underline text-wise-white hover:opacity-60 underline-offset-2" href="https://docs.turtle.club/" target="_blank" rel="noopener noreferrer">Docs</a>
         </div>
@@ -198,11 +198,11 @@ export default function Header() {
                 </motion.div>
                 <motion.div variants={itemVariants}>
                   <Link
-                    href="/resource-hub"
+                    href="/blog"
                     className="text-lg font-dm-sans font-medium text-wise-white active:underline active:underline-offset-2 active:opacity-60"
                     onClick={() => setMobileOpen(false)}
                   >
-                    Resource Hub
+                    Resources
                   </Link>
                 </motion.div>
                 <motion.div variants={itemVariants}>

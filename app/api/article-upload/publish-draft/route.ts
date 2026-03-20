@@ -28,8 +28,7 @@ export async function POST(req: Request) {
     const { frontmatter } = parseFrontmatter(rawContent);
     const articlePath = buildArticlePathFromFrontmatter(slug, frontmatter);
 
-    revalidatePath("/resource-hub");
-    revalidatePath(`/resource-hub/${slug}`);
+    revalidatePath("/blog");
     revalidatePath(articlePath);
 
     return NextResponse.json({

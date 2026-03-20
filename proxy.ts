@@ -5,6 +5,9 @@ export function proxy(req: NextRequest) {
   const { pathname } = req.nextUrl;
 
   const isEditorPage =
+    pathname.startsWith("/blog/editor") ||
+    (pathname.startsWith("/blog/preview/") && pathname.endsWith("/edit")) ||
+    pathname.startsWith("/blog/preview-local") ||
     pathname.startsWith("/resource-hub/editor") ||
     (pathname.startsWith("/resource-hub/preview/") && pathname.endsWith("/edit")) ||
     pathname.startsWith("/resource-hub/preview-local");
@@ -43,6 +46,9 @@ export function proxy(req: NextRequest) {
 
 export const config = {
   matcher: [
+    "/blog/editor/:path*",
+    "/blog/preview-local",
+    "/blog/preview/:previewId/edit",
     "/resource-hub/editor/:path*",
     "/resource-hub/preview-local",
     "/resource-hub/preview/:previewId/edit",

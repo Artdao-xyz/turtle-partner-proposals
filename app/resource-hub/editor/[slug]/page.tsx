@@ -37,11 +37,11 @@ export default async function ResourceHubEditorPage({ params }: EditorPageProps)
               Edit article
             </h1>
             <p className="text-wise-white/70 text-xs sm:text-sm">
-              Url: <span className="font-mono text-wise-white/80">{slug}</span>
+              Slug: <span className="font-mono text-wise-white/80">{slug}</span>
             </p>
           </div>
           <Link
-            href="/resource-hub/editor"
+            href="/blog/editor"
             className="text-sm text-wise-white/70 hover:text-wise-white"
           >
             ← Back to editor

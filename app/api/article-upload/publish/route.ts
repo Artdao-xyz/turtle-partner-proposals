@@ -80,8 +80,7 @@ export async function POST(req: Request) {
 
     const articlePath = buildArticlePath(data.slug, data.category);
 
-    revalidatePath("/resource-hub");
-    revalidatePath(`/resource-hub/${data.slug}`);
+    revalidatePath("/blog");
     revalidatePath(articlePath);
 
     return NextResponse.json({

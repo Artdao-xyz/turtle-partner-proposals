@@ -103,7 +103,7 @@ export async function POST(req: Request) {
       process.env.VERCEL_URL
         ? `https://${process.env.VERCEL_URL}`
         : process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
-    const previewUrl = `${baseUrl}/resource-hub/preview/${previewId}`;
+    const previewUrl = `${baseUrl}/blog/preview/${previewId}`;
 
     return NextResponse.json({
       success: true,

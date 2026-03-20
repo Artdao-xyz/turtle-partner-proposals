@@ -16,14 +16,14 @@ export default async function ResourceHubEditorListPage() {
           <div className="flex items-center justify-between gap-4">
             <div>
               <h1 className="text-2xl font-semibold text-wise-white mb-1">
-                Resource Hub Editor
+                Resources Editor
               </h1>
               <p className="text-wise-white/70 text-sm">
                 Select an article to edit its metadata and body.
               </p>
             </div>
             <Link
-              href="/resource-hub"
+              href="/blog"
               className="text-sm text-wise-white/70 hover:text-wise-white"
             >
               ← Back to hub
@@ -72,7 +72,7 @@ export default async function ResourceHubEditorListPage() {
                   </td>
                   <td className="px-4 py-2 align-top text-right">
                     <Link
-                      href={`/resource-hub/editor/${r.slug}`}
+                      href={`/blog/editor/${r.slug}`}
                       className="inline-flex items-center px-3 py-1.5 rounded-lg bg-green-turtle/20 border border-green-turtle/40 text-green-turtle text-xs font-medium hover:bg-green-turtle/30"
                     >
                       Edit

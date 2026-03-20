@@ -48,8 +48,7 @@ export async function POST(req: Request) {
     const articlePath = buildArticlePathFromFrontmatter(slug, beforeFrontmatter);
     const { title } = await unpublishBlobArticle(slug);
 
-    revalidatePath("/resource-hub");
-    revalidatePath(`/resource-hub/${slug}`);
+    revalidatePath("/blog");
     revalidatePath(articlePath);
 
     return NextResponse.json({
