@@ -112,6 +112,41 @@ export async function POST(req: Request) {
   }
 }
 
+/** Update existing draft markdown (from draft editor Save). Body: { previewId, content } */
+export async function PATCH(req: Request) {
+  if (process.env.CONTENT_SOURCE !== "blob") {
+    return NextResponse.json(
+      { error: "Drafts require CONTENT_SOURCE=blob" },
+      { status: 503 }
+    );
+  }
+
+  try {
+    const body = await req.json();
+    const previewId = body?.previewId;
+    const content = body?.content;
+    if (!previewId || typeof previewId !== "string") {
+      return NextResponse.json({ error: "previewId is required" }, { status: 400 });
+    }
+    if (typeof content !== "string" || !content.trim()) {
+      return NextResponse.json({ error: "content is required" }, { status: 400 });
+    }
+
+    await writeBlobDraft(previewId, content);
+
+    return NextResponse.json({ success: true });
+  } catch (err) {
+    console.error("[article-upload/draft PATCH]", err);
+    return NextResponse.json(
+      {
+        error:
+          err instanceof Error ? err.message : "Failed to update draft. Please try again.",
+      },
+      { status: 500 }
+    );
+  }
+}
+
 /** DELETE draft (for Cancel button). Body: { previewId } or ?previewId=xxx */
 export async function DELETE(req: Request) {
   if (process.env.CONTENT_SOURCE !== "blob") {
